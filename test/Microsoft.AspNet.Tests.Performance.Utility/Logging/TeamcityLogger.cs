@@ -35,6 +35,10 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
             {
                 Console.WriteLine(_dataMessageTemplate, data.Item1, data.Item2);
             }
+            else
+            {
+                Console.WriteLine("[{0}] {1}", logLevel, state);
+            }
         }
     }
 }

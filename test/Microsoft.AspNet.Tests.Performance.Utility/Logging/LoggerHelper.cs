@@ -13,11 +13,14 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
         {
             var factory = new LoggerFactory();
             factory.AddProvider(new ArchiveLoggerProvider());
-            factory.AddConsole();
 
             if (Environment.GetEnvironmentVariable(TeamcityLoggerProvider.EnvTeamcityProjectName) != null)
             {
                 factory.AddProvider(new TeamcityLoggerProvider());
+            }
+            else
+            {
+                factory.AddConsole();
             }
 
             return factory;

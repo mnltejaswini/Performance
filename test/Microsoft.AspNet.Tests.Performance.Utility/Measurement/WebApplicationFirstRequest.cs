@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Framework.Logging;
 
@@ -17,7 +16,6 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
         private readonly int _port;
         private readonly string _path;
 
-        private readonly EventWaitHandle _waitWebListenerReady;
         private ILogger _logger;
 
         public WebApplicationFirstRequest(ProcessStartInfo processInfo,
@@ -31,94 +29,81 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
             _port = port;
             _path = path;
 
-            _waitWebListenerReady = new AutoResetEvent(false);
-
             _logger = logger;
         }
 
         public bool Run()
         {
-            _logger.LogData("Measurer", typeof(WebApplicationFirstRequest).Name, infoOnly: true);
-
             var client = new HttpClient();
             var url = string.Format("http://localhost:{0}{1}", _port, _path);
 
-            Task<HttpResponseMessage> webtask = null;
-            bool failure = false;
-
-            _processInfo.RedirectStandardOutput = true;
-            _processInfo.RedirectStandardError = true;
-            _processInfo.UseShellExecute = false;
-
+            _logger.LogData("Measurer", typeof(WebApplicationFirstRequest).Name, infoOnly: true);
             _logger.LogData("CommandFilename", _processInfo.FileName, infoOnly: true);
             _logger.LogData("CommandArguments", _processInfo.Arguments, infoOnly: true);
+            _logger.LogData("Url", url, infoOnly: true);
+
+            const int retry = 10;
+            Task<HttpResponseMessage> webtask = null;
+            bool responseRetrived = false;
 
             var sw = new Stopwatch();
             sw.Start();
 
             var process = Process.Start(_processInfo);
-            process.OutputDataReceived += Process_OutputDataReceived;
-            process.BeginOutputReadLine();
 
-            var timeout = !_waitWebListenerReady.WaitOne(_timeout * 1000);
-
-            if (timeout)
+            for (int i = 0; i < retry; ++i)
             {
-                _logger.LogError("Web listener timeout during starting.");
-                return false;
-            }
-
-            try
-            {
-                webtask = client.GetAsync(url);
-                timeout = !webtask.Wait(_timeout * 1000);
-
-                if (timeout)
+                try
                 {
-                    _logger.LogError("Test case timeout");
-                    failure = true;
+                    _logger.LogInformation("Try {0}: GET {1}", i, url);
+                    webtask = client.GetAsync(url);
+
+                    if (webtask.Wait(_timeout * 1000))
+                    {
+                        responseRetrived = true;
+                        break;
+                    }
+                    else
+                    {
+                        _logger.LogError("Http client timeout");
+                        break;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Test failed for unexpected exception: " + ex.Message + "\n" + ex.StackTrace);
-                failure = true;
-            }
-            finally
-            {
-                if (process != null && !process.HasExited)
+                catch (Exception)
                 {
-                    Console.WriteLine("Kill proces {0}", process.Id);
-                    process.Kill();
+                    continue;
                 }
             }
 
             sw.Stop();
 
-            if (failure)
+            _logger.LogInformation("Response retrieved.");
+
+            if (process != null && !process.HasExited)
             {
-                return false;
+                _logger.LogInformation("Kill proces {0}", process.Id);
+                process.Kill();
             }
 
-            var response = webtask.Result;
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogError(string.Format("Request failed. {0}", response.StatusCode));
-                return false;
-            }
-
-            _logger.LogData("StatusCode", response.StatusCode, infoOnly: true);
-            _logger.LogData("ResponseHead", response.ToString(), infoOnly: true);
             _logger.LogData("Time", sw.ElapsedMilliseconds);
 
-            return true;
-        }
-
-        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data == "Started")
+            if (responseRetrived)
             {
-                _waitWebListenerReady.Set();
+                var response = webtask.Result;
+                _logger.LogData("StatusCode", response.StatusCode, infoOnly: true);
+                _logger.LogData("ResponseHead", response.ToString(), infoOnly: true);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError(string.Format("Request failed. {0}", response.StatusCode));
+                    return false;
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }
