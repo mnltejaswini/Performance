@@ -38,6 +38,8 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
 
         public bool Run()
         {
+            _logger.LogData("Measurer", typeof(WebApplicationFirstRequest).Name, infoOnly: true);
+
             var client = new HttpClient();
             var url = string.Format("http://localhost:{0}{1}", _port, _path);
 
@@ -47,6 +49,9 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
             _processInfo.RedirectStandardOutput = true;
             _processInfo.RedirectStandardError = true;
             _processInfo.UseShellExecute = false;
+
+            _logger.LogData("CommandFilename", _processInfo.FileName, infoOnly: true);
+            _logger.LogData("CommandArguments", _processInfo.Arguments, infoOnly: true);
 
             var sw = new Stopwatch();
             sw.Start();
@@ -102,12 +107,8 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
                 return false;
             }
 
-            _logger.LogData("Measurer", typeof(WebApplicationFirstRequest).Name, infoOnly: true);
             _logger.LogData("StatusCode", response.StatusCode, infoOnly: true);
             _logger.LogData("ResponseHead", response.ToString(), infoOnly: true);
-            _logger.LogData("CommandFilename", _processInfo.FileName, infoOnly: true);
-            _logger.LogData("CommandArguments", _processInfo.Arguments, infoOnly: true);
-
             _logger.LogData("Time", sw.ElapsedMilliseconds);
 
             return true;
