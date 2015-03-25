@@ -6,11 +6,11 @@ using System.Diagnostics;
 
 namespace Microsoft.AspNet.Tests.Performance.Utility.Helpers
 {
-    public class KpmHelper
+    public class DnuHelper
     {
         public static bool RestorePackage(string workingDir, string framework, bool quiet = false)
         {
-            var kpmPath = DnxHelper.GetKpmExecutable(alias: "default", framework: framework);
+            var kpmPath = DnxHelper.GetDnuExecutable(alias: "default", framework: framework);
 
             var psi = new ProcessStartInfo(kpmPath)
             {

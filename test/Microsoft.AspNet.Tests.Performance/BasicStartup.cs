@@ -34,7 +34,7 @@ namespace Microsoft.AspNet.Tests.Performance
                 logger.LogInformation("Probe application under " + samplePath);
                 Assert.NotNull(samplePath);
 
-                var restoreResult = KpmHelper.RestorePackage(samplePath, framework, quiet: true);
+                var restoreResult = DnuHelper.RestorePackage(samplePath, framework, quiet: true);
                 Assert.True(restoreResult, "Failed to restore packages");
 
                 var prepare = EnvironmentHelper.Prepare();
@@ -62,7 +62,7 @@ namespace Microsoft.AspNet.Tests.Performance
 
                 Assert.NotNull(samplePath);
 
-                var restoreResult = KpmHelper.RestorePackage(samplePath, framework, quiet: true);
+                var restoreResult = DnuHelper.RestorePackage(samplePath, framework, quiet: true);
                 Assert.True(restoreResult, "Failed to restore packages");
 
                 var prepare = EnvironmentHelper.Prepare();

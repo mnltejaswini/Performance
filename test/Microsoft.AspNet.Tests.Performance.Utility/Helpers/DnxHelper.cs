@@ -81,9 +81,9 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Helpers
             return GetExecutable(alias, framework, "dnx.exe");
         }
 
-        public static string GetKpmExecutable(string alias = "default", string framework = "clr")
+        public static string GetDnuExecutable(string alias = "default", string framework = "clr")
         {
-            return GetExecutable(alias, framework, "kpm.cmd");
+            return GetExecutable(alias, framework, "dnu.cmd");
         }
 
         private static string GetExecutable(string alias, string framework, string executable)
