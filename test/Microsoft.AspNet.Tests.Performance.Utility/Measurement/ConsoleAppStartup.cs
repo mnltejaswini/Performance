@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Framework.Logging;
 
@@ -8,45 +11,80 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
 {
     public class ConsoleAppStartup
     {
-        private readonly ProcessStartInfo _processInfo;
-        private readonly ILogger _logger;
+        private readonly StartupRunnerOptions _options;
 
-        public ConsoleAppStartup(ProcessStartInfo processInfo, ILogger logger)
+        public ConsoleAppStartup(StartupRunnerOptions options)
         {
-            _processInfo = processInfo;
-            _logger = logger;
+            _options = options;
         }
 
         public bool Run()
         {
-            var sw = new Stopwatch();
-            sw.Start();
+            var results = new List<RunResult>();
 
-            var process = Process.Start(_processInfo);
+            _options.Logger.LogData("Measurer", typeof(ConsoleAppStartup).Name, infoOnly: true);
+            _options.Logger.LogData("CommandFilename", _options.ProcessStartInfo.FileName, infoOnly: true);
+            _options.Logger.LogData("CommandArguments", _options.ProcessStartInfo.Arguments, infoOnly: true);
 
-            var timeout = !process.WaitForExit(300 * 100);
-            sw.Stop();
-
-            if (timeout)
+            for (int i = 0; i < _options.IterationCount; ++i)
             {
-                _logger.LogError("Test case timeout");
-                return false;
+                var result = new RunResult();
+
+                try
+                {
+                    var sw = new Stopwatch();
+                    sw.Start();
+
+                    var process = Process.Start(_options.ProcessStartInfo);
+
+                    var timeout = !process.WaitForExit(300 * 100);
+                    sw.Stop();
+
+                    if (timeout)
+                    {
+                        _options.Logger.LogError("Test case timeout. [Iteration {0}]", i);
+                        return false;
+                    }
+
+                    if (process.ExitCode != 0)
+                    {
+                        _options.Logger.LogError("Test sample exit code is not zero. [iteration {0}]", i);
+                        return false;
+                    }
+
+                    result.Elapsed = sw.ElapsedMilliseconds;
+                    result.ExitCode = process.ExitCode;
+                }
+                catch (Exception ex)
+                {
+                    result.Elapsed = -1;
+                    result.ExitCode = -1;
+                    result.Exception = ex;
+
+                    _options.Logger.LogError("Unexpected exception at iteration " + i, ex);
+                }
+                finally
+                {
+                    results.Add(result);
+                }
             }
 
-            if (process.ExitCode != 0)
-            {
-                _logger.LogError("Test sample exit code is not zero.");
-                return false;
-            }
+            var successful = results.Where(r => r.ExitCode == 0);
 
-            _logger.LogData("Measurer", typeof(ConsoleAppStartup).Name, infoOnly: true);
-            _logger.LogData("ExitCode", process.ExitCode, infoOnly: true);
-            _logger.LogData("CommandFilename", _processInfo.FileName, infoOnly: true);
-            _logger.LogData("CommandArguments", _processInfo.Arguments, infoOnly: true);
-
-            _logger.LogData("Time", sw.ElapsedMilliseconds);
+            _options.Logger.LogData("Successful rate", successful.Count() / results.Count(), infoOnly: true);
+            _options.Logger.LogData("Successful iteration", successful.Count(), infoOnly: true);
+            _options.Logger.LogData("Time", successful.Average(r => r.Elapsed));
 
             return true;
+        }
+
+        private class RunResult
+        {
+            public long Elapsed { get; set; }
+
+            public int ExitCode { get; set; }
+
+            public Exception Exception { get; set; }
         }
     }
 }

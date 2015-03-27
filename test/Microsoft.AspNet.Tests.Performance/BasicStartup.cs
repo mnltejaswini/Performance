@@ -40,8 +40,13 @@ namespace Microsoft.AspNet.Tests.Performance
                 var prepare = EnvironmentHelper.Prepare();
                 Assert.True(prepare, "Failed to prepare the environment");
 
-                var testAppStartInfo = DnxHelper.BuildStartInfo(samplePath, framework: framework);
-                var runner = new ConsoleAppStartup(testAppStartInfo, logger);
+                var options = new StartupRunnerOptions
+                {
+                    ProcessStartInfo = DnxHelper.BuildStartInfo(samplePath, framework: framework),
+                    Logger = logger,
+                    IterationCount = 20
+                };
+                var runner = new ConsoleAppStartup(options);
 
                 var errors = new List<string>();
                 var result = runner.Run();
