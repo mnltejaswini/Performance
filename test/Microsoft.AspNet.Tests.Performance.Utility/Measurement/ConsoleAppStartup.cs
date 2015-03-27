@@ -2,9 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.Framework.Logging;
 
 namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
@@ -20,17 +19,12 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
 
         public bool Run()
         {
-            var results = new List<RunResult>();
-
             _options.Logger.LogData("Measurer", typeof(ConsoleAppStartup).Name, infoOnly: true);
             _options.Logger.LogData("CommandFilename", _options.ProcessStartInfo.FileName, infoOnly: true);
             _options.Logger.LogData("CommandArguments", _options.ProcessStartInfo.Arguments, infoOnly: true);
 
-            for (int i = 0; i < _options.IterationCount; ++i)
-            {
-                var result = new RunResult();
-
-                try
+            var repeater = new Repeater<RunResult>(
+                body: (iteration, result) =>
                 {
                     var sw = new Stopwatch();
                     sw.Start();
@@ -42,33 +36,29 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
 
                     if (timeout)
                     {
-                        _options.Logger.LogError("Test case timeout. [Iteration {0}]", i);
-                        return false;
+                        _options.Logger.LogError("Test case timeout. [Iteration {0}]", iteration);
+                        return;
                     }
 
                     if (process.ExitCode != 0)
                     {
-                        _options.Logger.LogError("Test sample exit code is not zero. [iteration {0}]", i);
-                        return false;
+                        _options.Logger.LogError("Test sample exit code is not zero. [iteration {0}]", iteration);
+                        return;
                     }
 
                     result.Elapsed = sw.ElapsedMilliseconds;
                     result.ExitCode = process.ExitCode;
-                }
-                catch (Exception ex)
+                },
+                exceptionHandler: (ex, iteration, result) =>
                 {
                     result.Elapsed = -1;
                     result.ExitCode = -1;
                     result.Exception = ex;
 
-                    _options.Logger.LogError("Unexpected exception at iteration " + i, ex);
-                }
-                finally
-                {
-                    results.Add(result);
-                }
-            }
+                    _options.Logger.LogError("Unexpected exception at iteration " + iteration, ex);
+                });
 
+            var results = repeater.Execute(_options.IterationCount);
             var successful = results.Where(r => r.ExitCode == 0);
 
             _options.Logger.LogData("Successful rate", successful.Count() / results.Count(), infoOnly: true);
