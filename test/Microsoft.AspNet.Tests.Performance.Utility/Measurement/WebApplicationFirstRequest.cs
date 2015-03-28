@@ -2,7 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Framework.Logging;
@@ -11,100 +13,130 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
 {
     public class WebApplicationFirstRequest
     {
-        private readonly ProcessStartInfo _processInfo;
-        private readonly int _timeout; // in seconds
-        private readonly int _port;
-        private readonly string _path;
+        //private readonly ProcessStartInfo _processInfo;
+        //private readonly int _port;
+        //private readonly string _path;
 
+        private readonly StartupRunnerOptions _options;
+        private readonly string _url;
         private ILogger _logger;
+        private readonly int _timeout; // in seconds
+        private readonly int _retry = 10;
 
-        public WebApplicationFirstRequest(ProcessStartInfo processInfo,
-                                          ILogger logger,
+        public WebApplicationFirstRequest(StartupRunnerOptions options,
                                           int timeout = 60,
-                                          int port = -1,
+                                          int port = 5000,
                                           string path = "/")
         {
-            _processInfo = processInfo;
-            _timeout = timeout;
-            _port = port;
-            _path = path;
+            _options = options;
 
-            _logger = logger;
+            _url = string.Format("http://localhost:{0}{1}", port, path);
+            _logger = _options.Logger;
+            _timeout = timeout;
         }
 
         public bool Run()
         {
             var client = new HttpClient();
-            var url = string.Format("http://localhost:{0}{1}", _port, _path);
 
             _logger.LogData("Measurer", typeof(WebApplicationFirstRequest).Name, infoOnly: true);
-            _logger.LogData("CommandFilename", _processInfo.FileName, infoOnly: true);
-            _logger.LogData("CommandArguments", _processInfo.Arguments, infoOnly: true);
-            _logger.LogData("Url", url, infoOnly: true);
+            _logger.LogData("CommandFilename", _options.ProcessStartInfo.FileName, infoOnly: true);
+            _logger.LogData("CommandArguments", _options.ProcessStartInfo.Arguments, infoOnly: true);
+            _logger.LogData("Url", _url, infoOnly: true);
+            _logger.LogData("Timeout", _timeout, infoOnly: true);
 
-            const int retry = 10;
-            Task<HttpResponseMessage> webtask = null;
-            bool responseRetrived = false;
-
-            var sw = new Stopwatch();
-            sw.Start();
-
-            var process = Process.Start(_processInfo);
-
-            for (int i = 0; i < retry; ++i)
-            {
-                try
+            var repeater = new Repeater<RunResult>(
+                body: (iteration, result) =>
                 {
-                    _logger.LogInformation("Try {0}: GET {1}", i, url);
-                    webtask = client.GetAsync(url);
+                    Task<HttpResponseMessage> webtask = null;
+                    bool responseRetrived = false;
 
-                    if (webtask.Wait(_timeout * 1000))
+                    var sw = new Stopwatch();
+                    sw.Start();
+
+                    var process = Process.Start(_options.ProcessStartInfo);
+
+                    for (int i = 0; i < _retry; ++i)
                     {
-                        responseRetrived = true;
-                        break;
+                        try
+                        {
+                            _logger.LogInformation("Try {0}: GET {1}. [Iteration {2}]", i, _url, iteration);
+                            webtask = client.GetAsync(_url);
+
+                            if (webtask.Wait(_timeout * 1000))
+                            {
+                                responseRetrived = true;
+                                break;
+                            }
+                            else
+                            {
+                                _logger.LogError("Http client timeout. [Iteration {0}]", iteration);
+                                break;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
+                    }
+
+                    sw.Stop();
+
+
+                    if (process != null && !process.HasExited)
+                    {
+                        _logger.LogInformation("Kill proces {0}", process.Id);
+                        process.Kill();
+                    }
+
+                    result.Elapsed = sw.ElapsedMilliseconds;
+
+                    if (responseRetrived)
+                    {
+                        var response = webtask.Result;
+                        result.StatusCode = response.StatusCode;
+                        result.ResponseHead = response.ToString();
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            _logger.LogError(string.Format("Request failed. {0}", response.StatusCode));
+                            result.Success = false;
+                        }
+
+                        result.Success = true;
                     }
                     else
                     {
-                        _logger.LogError("Http client timeout");
-                        break;
+                        result.Success = false;
                     }
-                }
-                catch (Exception)
+                },
+                exceptionHandler: (ex, iteration, result) =>
                 {
-                    continue;
-                }
-            }
+                    result.Success = false;
+                    result.Exception = ex;
+                });
 
-            sw.Stop();
+            var results = repeater.Execute(_options.IterationCount);
+            var successful = results.Where(r => r.Success);
 
-            _logger.LogInformation("Response retrieved.");
+            _logger.LogData("Successful rate", successful.Count() / results.Count(), infoOnly: true);
+            _logger.LogData("Successful iteration", successful.Count(), infoOnly: true);
+            _logger.LogData("Time", successful.Average(r => r.Elapsed));
 
-            if (process != null && !process.HasExited)
-            {
-                _logger.LogInformation("Kill proces {0}", process.Id);
-                process.Kill();
-            }
+            return true;
+        }
 
-            _logger.LogData("Time", sw.ElapsedMilliseconds);
+        private class RunResult
+        {
+            public HttpStatusCode StatusCode { get; set; }
 
-            if (responseRetrived)
-            {
-                var response = webtask.Result;
-                _logger.LogData("StatusCode", response.StatusCode, infoOnly: true);
-                _logger.LogData("ResponseHead", response.ToString(), infoOnly: true);
+            public string ResponseHead { get; set; }
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogError(string.Format("Request failed. {0}", response.StatusCode));
-                    return false;
-                }
+            public long Elapsed { get; set; }
 
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            public Exception Exception { get; set; }
+
+            public bool Success { get; set; }
         }
     }
 }

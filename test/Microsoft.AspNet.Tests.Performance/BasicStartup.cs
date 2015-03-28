@@ -74,7 +74,9 @@ namespace Microsoft.AspNet.Tests.Performance
                 Assert.True(prepare, "Failed to prepare the environment");
 
                 var testAppStartInfo = DnxHelper.BuildStartInfo(samplePath, framework: framework, command: "web");
-                var runner = new WebApplicationFirstRequest(testAppStartInfo, port: 5000, path: "/", timeout: 60 /*second*/, logger: logger);
+                var runner = new WebApplicationFirstRequest(
+                    new StartupRunnerOptions { ProcessStartInfo = testAppStartInfo, Logger = logger, IterationCount = 20 },
+                    port: 5000, path: "/", timeout: 60 /*second*/);
 
                 var errors = new List<string>();
                 var result = runner.Run();
