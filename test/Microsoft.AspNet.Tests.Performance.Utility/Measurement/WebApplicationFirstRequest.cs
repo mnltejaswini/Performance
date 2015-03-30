@@ -20,13 +20,13 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
         private readonly StartupRunnerOptions _options;
         private readonly string _url;
         private ILogger _logger;
-        private readonly int _timeout; // in seconds
         private readonly int _retry = 10;
+        private readonly TimeSpan _timeout; // in seconds
 
         public WebApplicationFirstRequest(StartupRunnerOptions options,
-                                          int timeout = 60,
-                                          int port = 5000,
-                                          string path = "/")
+                                          TimeSpan timeout,
+                                          int port,
+                                          string path)
         {
             _options = options;
 
@@ -63,7 +63,7 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
                             _logger.LogInformation("Try {0}: GET {1}. [Iteration {2}]", i, _url, iteration);
                             webtask = client.GetAsync(_url);
 
-                            if (webtask.Wait(_timeout * 1000))
+                            if (webtask.Wait(_timeout))
                             {
                                 responseRetrived = true;
                                 break;

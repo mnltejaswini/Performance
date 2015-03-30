@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNet.Tests.Performance.Utility.Helpers;
 using Microsoft.AspNet.Tests.Performance.Utility.Logging;
@@ -76,7 +77,7 @@ namespace Microsoft.AspNet.Tests.Performance
                 var testAppStartInfo = DnxHelper.BuildStartInfo(samplePath, framework: framework, command: "web");
                 var runner = new WebApplicationFirstRequest(
                     new StartupRunnerOptions { ProcessStartInfo = testAppStartInfo, Logger = logger, IterationCount = 20 },
-                    port: 5000, path: "/", timeout: 60 /*second*/);
+                    port: 5000, path: "/", timeout: TimeSpan.FromSeconds(60));
 
                 var errors = new List<string>();
                 var result = runner.Run();

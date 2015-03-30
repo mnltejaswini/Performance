@@ -9,7 +9,6 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
     public class TeamcityLogger : ILogger
     {
         private readonly string _dataMessageTemplate;
-        private readonly bool _isEnable;
         private readonly string _name;
 
         public TeamcityLogger(string name)
