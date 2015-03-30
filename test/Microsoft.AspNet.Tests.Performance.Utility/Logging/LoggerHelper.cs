@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.Framework.Logging;
-using Microsoft.Framework.Logging.Console;
 
 namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
 {
