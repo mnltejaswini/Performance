@@ -5,10 +5,10 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.ViewData;
-using Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.Filters;
+using StandardMvc.ViewData;
+using StandardMvc.Filters;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc
+namespace StandardMvc
 {
     [DummyAuthorization]
     public class UsersController : Controller

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.ViewData
+namespace StandardMvc.ViewData
 {
     /// <summary>
     /// Summary description for Order

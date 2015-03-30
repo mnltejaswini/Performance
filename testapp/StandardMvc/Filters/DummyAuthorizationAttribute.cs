@@ -3,7 +3,7 @@
 
 using Microsoft.AspNet.Mvc;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.Filters
+namespace StandardMvc.Filters
 {
     public class DummyAuthorizationAttribute : AuthorizationFilterAttribute
     {

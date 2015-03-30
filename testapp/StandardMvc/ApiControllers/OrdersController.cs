@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.ViewData;
+using StandardMvc.ViewData;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.ApiControllers
+namespace StandardMvc.ApiControllers
 {
     /// <summary>
     /// There is no performance test scenario runs through this contoller yet. The solo purpose of this controller

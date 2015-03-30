@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Mvc;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.Areas.Travel.Controllers
+namespace StandardMvc.Areas.Travel.Controllers
 {
     /// <summary>
     /// There is no performance test scenario runs through this contoller yet. The solo purpose of this controller

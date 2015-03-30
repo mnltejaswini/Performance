@@ -3,7 +3,7 @@
 
 using Microsoft.AspNet.Mvc;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.ApiControllers
+namespace StandardMvc.ApiControllers
 {
     /// <summary>
     /// There is no performance test scenario runs through this contoller yet. The solo purpose of this controller

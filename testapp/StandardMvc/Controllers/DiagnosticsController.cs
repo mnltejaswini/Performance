@@ -4,7 +4,7 @@
 using System;
 using Microsoft.AspNet.Mvc;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.Controllers
+namespace StandardMvc.Controllers
 {
     /// <summary>
     /// Used in memory test case to force GC

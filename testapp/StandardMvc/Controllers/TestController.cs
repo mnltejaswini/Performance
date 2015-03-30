@@ -3,7 +3,7 @@
 
 using Microsoft.AspNet.Mvc;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.Controllers
+namespace StandardMvc.Controllers
 {
     public class TestController : Controller
     {

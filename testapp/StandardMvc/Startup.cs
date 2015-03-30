@@ -4,7 +4,7 @@
 using Microsoft.AspNet.Builder;
 using Microsoft.Framework.DependencyInjection;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc
+namespace StandardMvc
 {
     public class Startup
     {
@@ -25,11 +25,6 @@ namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc
                     "controllerActionRoute",
                     "{controller}/{action}",
                     new { controller = "Home", action = "Index" });
-
-                routes.MapRoute(
-                    "controllerRoute",
-                    "{controller}",
-                    new { controller = "Home" });
             });
         }
     }

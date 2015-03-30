@@ -3,9 +3,9 @@
 
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.ViewData;
+using StandardMvc.ViewData;
 
-namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.Controllers
+namespace StandardMvc.Controllers
 {
     /// <summary>
     /// There is no performance test scenario runs through this contoller yet. The solo purpose of this controller
