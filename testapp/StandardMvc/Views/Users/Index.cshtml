@@ -1,0 +1,25 @@
+@using Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.ViewData
+@model SiteUser
+
+<h1>User detail</h1>
+<p>This is a test page for performance app. The data is not fetched from a database but created dynamically. Except id, nothing is persistent.</p>
+<p>@ViewBag.Message</p>
+
+<table>
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <td>@Model.Name</td>
+        </tr>
+        <tr>
+            <th>Age</th>
+            <td>@Model.Age</td>
+        </tr>
+        <tr>
+            <th>Id</th>
+            <td>@Model.Id</td>
+        </tr>
+    </tbody>
+</table>
+
+@Html.ActionLink("Edit", "EditUser", new { id = Model.Id })

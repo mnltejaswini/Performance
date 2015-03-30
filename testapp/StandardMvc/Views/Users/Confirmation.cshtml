@@ -1,0 +1,27 @@
+@using Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.ViewData
+@model SiteUser
+
+<h1>Update confirmation</h1>
+<p>@ViewBag.Message</p>
+
+@if (Model != null)
+{
+    <table>
+        <tbody>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Id)</th>
+                <td>@Html.DisplayFor(model => model.Id)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                <td>@Html.DisplayFor(model => model.Name)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Age)</th>
+                <td>@Html.DisplayFor(model => model.Age)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    @Html.ActionLink("Edit", "EditUser", new { id = Model.Id })
+}

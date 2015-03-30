@@ -1,0 +1,68 @@
+@using Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloMvc.ViewData
+@model SiteUser
+
+<h1 class="title">Create a user user</h1>
+
+<p>Page for creating user information.</p>
+<p>This is a test page. User id is the only thing persisited, other data are created dynamically. There is no db operation.</p>
+
+@using (Html.BeginForm("CreateUser", "Users", FormMethod.Post))
+{
+    @Html.HiddenFor(model => model.Id)
+    <h3>Id: @Model.Id</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Item name</th>
+                <th>Current</th>
+                <th>New</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <td>
+                    @Html.DisplayFor(model => model.Id)
+                </td>
+                <td>
+                    @Html.ValueFor(model => model.Id)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <td>
+                    @Html.DisplayFor(model => model.Name)
+                </td>
+                <td>
+                    @Html.TextBox("Name")
+                </td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.Name)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Age)
+                </th>
+                <td>
+                    @Html.DisplayFor(model => Model.Age)
+                </td>
+                <td>
+                    @Html.DropDownListFor(model => model.Age, (IEnumerable<SelectListItem>)ViewBag.Ages)
+                </td>
+                <td>
+                    @Html.ValidationMessageFor(model => model.Age)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Save" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
