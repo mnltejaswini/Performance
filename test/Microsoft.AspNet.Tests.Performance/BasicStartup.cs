@@ -59,10 +59,10 @@ namespace Microsoft.AspNet.Tests.Performance
         [Theory]
         [InlineData("BasicWeb", "clr")]
         [InlineData("BasicWeb", "coreclr")]
-        [InlineData("StartWebApi", "clr")]
-        [InlineData("StartWebApi", "coreclr")]
         [InlineData("StandardMvc", "clr")]
         [InlineData("StandardMvc", "coreclr")]
+        [InlineData("StandardMvcApi", "clr")]
+        [InlineData("StandardMvcApi", "coreclr")]
         public void SelfhostWeb_Designtime(string sampleName, string framework)
         {
             var logger = _loggerFactory.CreateLogger(this.GetType(), sampleName, "SelfhostWeb_Designtime", framework);
