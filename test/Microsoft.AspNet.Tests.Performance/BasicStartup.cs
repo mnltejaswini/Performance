@@ -57,6 +57,8 @@ namespace Microsoft.AspNet.Tests.Performance
         }
 
         [Theory]
+        [InlineData("BasicWeb", "clr")]
+        [InlineData("BasicWeb", "coreclr")]
         [InlineData("StartWebApi", "clr")]
         [InlineData("StartWebApi", "coreclr")]
         [InlineData("StandardMvc", "clr")]
