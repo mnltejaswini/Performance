@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Framework.Logging;
+using Microsoft.Framework.Logging.Internal;
 
 namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
 {
@@ -36,7 +37,15 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
             }
             else
             {
-                Console.WriteLine("[{0}] {1}", logLevel, state);
+                var logValues = state as FormattedLogValues;
+                if (logValues != null)
+                {
+                    Console.WriteLine("[{0}] {1}", logLevel, logValues.Format());
+                }
+                else
+                {
+                    Console.WriteLine("[{0}] {1}", logLevel, state);
+                }
             }
         }
     }
