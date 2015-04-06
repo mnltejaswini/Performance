@@ -22,7 +22,7 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
             _artifactsFolder = artifactsFolder;
         }
 
-        public IDisposable BeginScope(object state)
+        public IDisposable BeginScopeImpl(object state)
         {
             if (_logfileHandler == null || _logfileHandler.Disposed)
             {

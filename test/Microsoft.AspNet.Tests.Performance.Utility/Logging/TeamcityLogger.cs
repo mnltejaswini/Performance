@@ -18,7 +18,7 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
             _dataMessageTemplate = "##teamcity[buildStatisticValue key='" + _name + ".{0}' value='{1}']";
         }
 
-        public IDisposable BeginScope(object state)
+        public IDisposable BeginScopeImpl(object state)
         {
             return null;
         }
@@ -40,7 +40,7 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
                 var logValues = state as FormattedLogValues;
                 if (logValues != null)
                 {
-                    Console.WriteLine("[{0}] {1}", logLevel, logValues.Format());
+                    Console.WriteLine("[{0}] {1}", logLevel, logValues.ToString());
                 }
                 else
                 {

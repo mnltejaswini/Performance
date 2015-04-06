@@ -29,7 +29,7 @@ namespace Microsoft.AspNet.Tests.Performance
         public void Console_DesignTime(string sampleName, string framework)
         {
             var logger = _loggerFactory.CreateLogger(GetType(), "run", sampleName, nameof(Console_DesignTime), framework);
-            using (logger.BeginScope(null))
+            using (logger.BeginScope("Root"))
             {
                 var samplePath = PathHelper.GetTestAppFolder(sampleName);
 
@@ -73,7 +73,7 @@ namespace Microsoft.AspNet.Tests.Performance
         public void SelfhostWeb_Designtime(string sampleName, string framework, string command, int port)
         {
             var logger = _loggerFactory.CreateLogger(this.GetType(), sampleName, command, nameof(SelfhostWeb_Designtime), framework);
-            using (logger.BeginScope(null))
+            using (logger.BeginScope("Root"))
             {
                 var samplePath = PathHelper.GetTestAppFolder(sampleName);
 
