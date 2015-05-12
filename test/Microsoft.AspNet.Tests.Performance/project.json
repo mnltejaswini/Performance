@@ -1,18 +1,18 @@
 {
-    "version": "1.0.0-*",
-    "dependencies": {
-        "Microsoft.AspNet.Tests.Performance.Utility": "1.0.0-*",
-        "Microsoft.Framework.Logging.Interfaces": "1.0.0-*",
-        "xunit.runner.aspnet": "2.0.0-aspnet-*"
-    },
-    "frameworks": {
-        "dnx451": {
-            "frameworkAssemblies": {
-                "System.Runtime": ""
-            }
-        }
-    },
-    "commands": {
-        "test": "xunit.runner.aspnet"
+  "version": "1.0.0-*",
+  "dependencies": {
+    "Microsoft.AspNet.Tests.Performance.Utility": "1.0.0-*",
+    "Microsoft.Framework.Logging.Abstractions": "1.0.0-*",
+    "xunit.runner.aspnet": "2.0.0-aspnet-*"
+  },
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Runtime": ""
+      }
     }
+  },
+  "commands": {
+    "test": "xunit.runner.aspnet"
+  }
 }
