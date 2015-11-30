@@ -25,15 +25,14 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
             return factory;
         }
 
-        public static ILogger CreateLogger(this ILoggerFactory self,
-            Type testclassType,
-            string testSample,
-            string testSampleCommand,
-            string testMethod,
-            string testFramework)
+        public static ILogger CreateLogger<T>(
+            this ILoggerFactory self,
+            string testname,
+            string testsample,
+            string testframework)
         {
-            var categoryName = string.Format("Perf.{0}.{1}.{2}.{3}_{4}", 
-                testclassType.Name, testSample, testSampleCommand, testMethod, testFramework);
+            var categoryName = string.Format("Perf.{0}.{1}.{2}.{3}", 
+                typeof(T).Name, testname, testsample, testframework);
 
             return self.CreateLogger(categoryName);
         }

@@ -13,10 +13,6 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
 {
     public class WebApplicationFirstRequest
     {
-        //private readonly ProcessStartInfo _processInfo;
-        //private readonly int _port;
-        //private readonly string _path;
-
         private readonly StartupRunnerOptions _options;
         private readonly string _url;
         private ILogger _logger;
@@ -121,7 +117,8 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
 
             _logger.LogData("Successful rate", successful.Count() / results.Count(), infoOnly: true);
             _logger.LogData("Successful iteration", successful.Count(), infoOnly: true);
-            _logger.LogData("Time", successful.Average(r => r.Elapsed));
+            _logger.LogData("Mean", successful.Select(s => s.Elapsed).Mean());
+            _logger.LogData("SD", successful.Select(s => s.Elapsed).StandardDeviation());
 
             return true;
         }
@@ -132,7 +129,7 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
 
             public string ResponseHead { get; set; }
 
-            public long Elapsed { get; set; }
+            public double Elapsed { get; set; }
 
             public Exception Exception { get; set; }
 

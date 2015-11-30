@@ -18,5 +18,12 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
 
             return samples.Sum() / samples.Count();
         }
+
+        public static double StandardDeviation(this IEnumerable<double> samples)
+        {
+            var mean = samples.Mean();
+
+            return Math.Sqrt(samples.Sum(v => Math.Pow(v - mean, 2)));
+        }
     }
 }

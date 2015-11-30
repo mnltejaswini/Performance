@@ -1,14 +1,13 @@
 {
+    "version": "1.0.0",
     "frameworks": {
-        "dnxcore50": { },
-        "dnx451": { }
+        "dnxcore50": {},
+        "dnx451": {}
     },
     "dependencies": {
-        "Microsoft.AspNet.Server.IIS": "1.0.0-*",
-        "Kestrel": "1.0.0-*"
+        "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-update1"
     },
     "commands": {
-        "kestrel": "Microsoft.AspNet.Hosting server=Kestrel server.urls=http://localhost:5010"
-    },
-    "version": "1.0.0-*"
+        "kestrel": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:5001"
+    }
 }

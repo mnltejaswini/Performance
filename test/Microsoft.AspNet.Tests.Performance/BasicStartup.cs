@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNet.Tests.Performance.Utility.Helpers;
 using Microsoft.AspNet.Tests.Performance.Utility.Logging;
 using Microsoft.AspNet.Tests.Performance.Utility.Measurement;
@@ -16,76 +17,77 @@ namespace Microsoft.AspNet.Tests.Performance
         private readonly ILoggerFactory _loggerFactory;
         private readonly int _iterationCount = 10;
 
+        private readonly DnxHelper _dnx = new DnxHelper("perf");
+
         public BasicStartup()
         {
             _loggerFactory = LoggerHelper.GetLoggerFactory();
         }
 
         [Theory]
-        [InlineData("BasicConsole", "coreclr")]
-        [InlineData("BasicConsole", "clr")]
-        [InlineData("HeavyConsole", "coreclr")]
-        [InlineData("HeavyConsole", "clr")]
-        public void Console_DesignTime(string sampleName, string framework)
+        [InlineData("BasicKestrel", "clr", "kestrel", 5001)]
+        [InlineData("BasicKestrel", "coreclr", "kestrel", 5001)]
+        [InlineData("StarterMvc", "clr", "web", 5000)]
+        [InlineData("StarterMvc", "coreclr", "web", 5000)]
+        public void DevelopmentScenario(string sampleName, string framework, string command, int port)
         {
-            var logger = _loggerFactory.CreateLogger(GetType(), "run", sampleName, nameof(Console_DesignTime), framework);
-            using (logger.BeginScope("Root"))
+            var logger = _loggerFactory.CreateLogger<BasicStartup>(nameof(DevelopmentScenario), sampleName, framework);
+            using (logger.BeginScope("root"))
             {
                 var samplePath = PathHelper.GetTestAppFolder(sampleName);
 
-                logger.LogInformation("Probe application under " + samplePath);
                 Assert.NotNull(samplePath);
 
-                var restoreResult = DnuHelper.RestorePackage(samplePath, framework, quiet: true);
+                var restoreResult = _dnx.Restore(samplePath, framework, quiet: true);
                 Assert.True(restoreResult, "Failed to restore packages");
 
                 var prepare = EnvironmentHelper.Prepare();
                 Assert.True(prepare, "Failed to prepare the environment");
 
-                var options = new StartupRunnerOptions
-                {
-                    ProcessStartInfo = DnxHelper.BuildStartInfo(samplePath, framework: framework),
-                    Logger = logger,
-                    IterationCount = _iterationCount
-                };
-                var runner = new ConsoleAppStartup(options);
+                var testAppStartInfo = _dnx.BuildStartInfo(samplePath, framework: framework, argument: command);
+                var runner = new WebApplicationFirstRequest(
+                    new StartupRunnerOptions { ProcessStartInfo = testAppStartInfo, Logger = logger, IterationCount = _iterationCount },
+                    port: port, path: "/", timeout: TimeSpan.FromSeconds(60));
 
                 var errors = new List<string>();
                 var result = runner.Run();
 
                 Assert.True(result, "Fail:\t" + string.Join("\n\t", errors));
             }
+
         }
 
         [Theory]
-        [InlineData("BasicWeb", "clr", "web", 5000)]
-        [InlineData("BasicWeb", "coreclr", "web", 5000)]
-        [InlineData("BasicKestrel", "clr", "kestrel", 5010)]
-        [InlineData("BasicKestrel", "coreclr", "kestrel", 5010)]
-        [InlineData("StandardMvc", "clr", "web", 5001)]
-        [InlineData("StandardMvc", "coreclr", "web", 5001)]
-        [InlineData("StandardMvc", "clr", "kestrel", 5011)]
-        [InlineData("StandardMvc", "coreclr", "kestrel", 5011)]
-        [InlineData("StandardMvcApi", "clr", "web", 5002)]
-        [InlineData("StandardMvcApi", "coreclr", "web", 5002)]
-        [InlineData("StandardMvcApi", "clr", "kestrel", 5012)]
-        [InlineData("StandardMvcApi", "coreclr", "kestrel", 5012)]
-        public void SelfhostWeb_Designtime(string sampleName, string framework, string command, int port)
+        [InlineData("BasicKestrel", "clr", "kestrel", 5001)]
+        [InlineData("BasicKestrel", "coreclr", "kestrel", 5001)]
+        [InlineData("StarterMvc", "clr", "web", 5000)]
+        [InlineData("StarterMvc", "coreclr", "web", 5000)]
+        public void ProductionScenario(string sampleName, string framework, string command, int port)
         {
-            var logger = _loggerFactory.CreateLogger(this.GetType(), sampleName, command, nameof(SelfhostWeb_Designtime), framework);
-            using (logger.BeginScope("Root"))
+            var logger = _loggerFactory.CreateLogger<BasicStartup>(nameof(ProductionScenario), sampleName, framework);
+            using (logger.BeginScope("root"))
             {
                 var samplePath = PathHelper.GetTestAppFolder(sampleName);
 
                 Assert.NotNull(samplePath);
 
-                var restoreResult = DnuHelper.RestorePackage(samplePath, framework, quiet: true);
+                var restoreResult = _dnx.Restore(samplePath, framework, quiet: true);
                 Assert.True(restoreResult, "Failed to restore packages");
+
+                var output = Path.Combine(PathHelper.GetArtifactFolder(), "publish", $"{nameof(ProductionScenario)}_{sampleName}_{framework}");
+                if (Directory.Exists(output))
+                {
+                    Directory.Delete(output, recursive: true);
+                }
+                var publishResult = _dnx.Publish(samplePath, framework, output, nosource: true, quiet: true);
+                Assert.True(publishResult, "Failed to publish application");
 
                 var prepare = EnvironmentHelper.Prepare();
                 Assert.True(prepare, "Failed to prepare the environment");
 
-                var testAppStartInfo = DnxHelper.BuildStartInfo(samplePath, framework: framework, command: command);
+                // --project "%~dp0packages\BasicKestrel\1.0.0\root"
+                var root = Path.Combine(output, "approot", "packages", sampleName, "1.0.0", "root");
+                var testAppStartInfo = _dnx.BuildStartInfo(output, framework, $"--project {root} {command}");
                 var runner = new WebApplicationFirstRequest(
                     new StartupRunnerOptions { ProcessStartInfo = testAppStartInfo, Logger = logger, IterationCount = _iterationCount },
                     port: port, path: "/", timeout: TimeSpan.FromSeconds(60));

@@ -9,19 +9,22 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Helpers
 {
     public class DnxHelper
     {
-        private static readonly string DnxHome = ".dnx";
-        private static readonly string StartCommandtemplate = "--appbase \"{0}\" \"{1}\" {2}";
+        private readonly string DnxHome = ".dnx";
+        private readonly string _alias;
 
-        public static ProcessStartInfo BuildStartInfo(string appbasePath,
-                                                      string dnxAlias = "default",
-                                                      string framework = "clr",
-                                                      string command = "run",
-                                                      string host = "Microsoft.Framework.ApplicationHost")
+        public DnxHelper() : this("default") { }
+
+        public DnxHelper(string alias)
         {
-            var dnxPath = GetDnxExecutable(alias: dnxAlias, framework: framework);
-            var arguments = string.Format(StartCommandtemplate, appbasePath, host, command);
+            _alias = alias;
+        }
 
-            var psi = new ProcessStartInfo(dnxPath, arguments)
+        public ProcessStartInfo BuildStartInfo(string appbasePath,
+                                               string framework,
+                                               string argument)
+        {
+            var dnxPath = GetDnxExecutable(framework);
+            var psi = new ProcessStartInfo(dnxPath, argument)
             {
                 WorkingDirectory = appbasePath,
                 UseShellExecute = true
@@ -30,15 +33,56 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Helpers
             return psi;
         }
 
-        public static string GetDnxPath(string alias = "default", string framework = "clr")
+        public bool Restore(string workingDir, string framework, bool quiet = false)
+        {
+            var dnu = GetDnuExecutable(framework);
+
+            var psi = new ProcessStartInfo(dnu)
+            {
+                Arguments = "restore" + (quiet ? " --quiet" : ""),
+                WorkingDirectory = workingDir,
+                UseShellExecute = false
+            };
+
+            var proc = Process.Start(psi);
+
+            var exited = proc.WaitForExit(300 * 1000);
+
+            return exited && proc.ExitCode == 0;
+        }
+
+        public bool Publish(string workingDir, string framework, string outputDir, bool nosource, bool quiet)
+        {
+            var dnu = GetDnuExecutable(framework);
+
+            var psi = new ProcessStartInfo(dnu)
+            {
+                Arguments = $"publish --out {outputDir}" + (nosource ? " --no-source" : "") + (quiet ? " --quiet" : ""),
+                WorkingDirectory = workingDir,
+                UseShellExecute = false
+            };
+
+            var proc = Process.Start(psi);
+
+            var exited = proc.WaitForExit(300 * 1000);
+
+            return exited && proc.ExitCode == 0;
+        }
+
+        public string GetDnxPath(string framework = "clr")
         {
             var home = Environment.GetEnvironmentVariable("USERPROFILE");
-            var aliasFile = Path.Combine(home, DnxHome, "alias", alias + ".txt");
+            var aliasFile = Path.Combine(home, DnxHome, "alias", _alias + ".txt");
             var dnxRuntimes = Path.Combine(home, DnxHome, "runtimes");
 
             if (!File.Exists(aliasFile))
             {
-                return null;
+                // fall back to use default alias
+                aliasFile = Path.Combine(home, DnxHome, "alias", "default.txt");
+                if (!File.Exists(aliasFile))
+                {
+                    return null;
+                }
             }
 
             var aliasFileContent = File.ReadAllLines(aliasFile);
@@ -76,19 +120,19 @@ namespace Microsoft.AspNet.Tests.Performance.Utility.Helpers
             }
         }
 
-        public static string GetDnxExecutable(string alias = "default", string framework = "clr")
+        public string GetDnxExecutable(string framework = "clr")
         {
-            return GetExecutable(alias, framework, "dnx.exe");
+            return GetExecutable(framework, "dnx.exe");
         }
 
-        public static string GetDnuExecutable(string alias = "default", string framework = "clr")
+        public string GetDnuExecutable(string framework = "clr")
         {
-            return GetExecutable(alias, framework, "dnu.cmd");
+            return GetExecutable(framework, "dnu.cmd");
         }
 
-        private static string GetExecutable(string alias, string framework, string executable)
+        private string GetExecutable(string framework, string executable)
         {
-            var dnxPath = DnxHelper.GetDnxPath(alias, framework);
+            var dnxPath = GetDnxPath(framework);
             if (dnxPath != null)
             {
                 return Path.Combine(dnxPath, "bin", executable);
