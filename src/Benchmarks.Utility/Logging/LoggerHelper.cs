@@ -4,7 +4,7 @@
 using System;
 using Microsoft.Framework.Logging;
 
-namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
+namespace Benchmarks.Utility.Logging
 {
     public static class LoggerHelper
     {

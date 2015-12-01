@@ -7,7 +7,7 @@ using System.IO;
 using Microsoft.Framework.Logging;
 using Newtonsoft.Json;
 
-namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
+namespace Benchmarks.Utility.Logging
 {
     public class ArchiveLogger : ILogger
     {

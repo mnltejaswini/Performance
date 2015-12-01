@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
+namespace Benchmarks.Utility.Measurement
 {
     public class Repeater<TResult>
         where TResult : new()

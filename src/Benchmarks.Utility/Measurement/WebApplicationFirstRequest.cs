@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Framework.Logging;
 
-namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
+namespace Benchmarks.Utility.Measurement
 {
     public class WebApplicationFirstRequest
     {

@@ -5,7 +5,7 @@ using System;
 using Microsoft.Framework.Logging;
 using Microsoft.Framework.Logging.Internal;
 
-namespace Microsoft.AspNet.Tests.Performance.Utility.Logging
+namespace Benchmarks.Utility.Logging
 {
     public class TeamcityLogger : ILogger
     {

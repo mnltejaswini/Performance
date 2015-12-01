@@ -4,7 +4,7 @@
 using System.Diagnostics;
 using Microsoft.Framework.Logging;
 
-namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
+namespace Benchmarks.Utility.Measurement
 {
     public class StartupRunnerOptions
     {

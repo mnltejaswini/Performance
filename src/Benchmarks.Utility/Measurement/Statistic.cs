@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.AspNet.Tests.Performance.Utility.Measurement
+namespace Benchmarks.Utility.Measurement
 {
     public static class Statistic
     {

@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Microsoft.AspNet.Tests.Performance.Utility.Helpers
+namespace Benchmarks.Utility.Helpers
 {
     public class DnxHelper
     {

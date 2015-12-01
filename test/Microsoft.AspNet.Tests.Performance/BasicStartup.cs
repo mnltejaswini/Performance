@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.AspNet.Tests.Performance.Utility.Helpers;
-using Microsoft.AspNet.Tests.Performance.Utility.Logging;
-using Microsoft.AspNet.Tests.Performance.Utility.Measurement;
+using Benchmarks.Utility.Helpers;
+using Benchmarks.Utility.Logging;
+using Benchmarks.Utility.Measurement;
 using Microsoft.Framework.Logging;
 using Xunit;
 
