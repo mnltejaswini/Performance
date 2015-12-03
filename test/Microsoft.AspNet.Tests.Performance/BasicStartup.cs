@@ -35,7 +35,6 @@ namespace Microsoft.AspNet.Tests.Performance
             using (logger.BeginScope("root"))
             {
                 var samplePath = PathHelper.GetTestAppFolder(sampleName);
-
                 Assert.NotNull(samplePath);
 
                 var restoreResult = _dnx.Restore(samplePath, framework, quiet: true);
@@ -54,7 +53,6 @@ namespace Microsoft.AspNet.Tests.Performance
 
                 Assert.True(result, "Fail:\t" + string.Join("\n\t", errors));
             }
-
         }
 
         [Theory]
@@ -68,7 +66,6 @@ namespace Microsoft.AspNet.Tests.Performance
             using (logger.BeginScope("root"))
             {
                 var samplePath = PathHelper.GetTestAppFolder(sampleName);
-
                 Assert.NotNull(samplePath);
 
                 var restoreResult = _dnx.Restore(samplePath, framework, quiet: true);

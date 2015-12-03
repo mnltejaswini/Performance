@@ -32,6 +32,5 @@ nuget.exe
 *.ipch
 .settings
 *.sln.ide
-node_modules
 **/[Cc]ompiler/[Rr]esources/**/*.js
 *launchSettings.json
