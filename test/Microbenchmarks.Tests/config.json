@@ -1,10 +1,10 @@
 ﻿{
   "benchmarks": {
-    "runIterations": false,
+    "runIterations": true,
     "resultDatabases": {
-      "local": "Server=(localdb)\\mssqllocaldb;Database=Benchmarks;Trusted_Connection=True;"
+      "local": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-PerformanceDashboard-06b64eaf-0d24-4465-ad57-c9d7a5c5a511;Trusted_Connection=True;"
     },
     "benchmarkDatabaseInstance": "(localdb)\\mssqllocaldb",
-    "productReportingVersion": "AspNet5"
+    "productReportingVersion": "Default"
   }
 }

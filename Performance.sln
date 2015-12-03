@@ -26,6 +26,10 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microbenchmarks.Tests", "te
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Benchmarks.Utility", "src\Benchmarks.Utility\Benchmarks.Utility.xproj", "{65DCA477-590C-4453-B688-7BBD057B2C6F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dashboard", "dashboard", "{6D839E2E-5C8E-4350-BEE4-D132FEC8DD9D}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PerformanceDashboard", "dashboard\PerformanceDashboard\PerformanceDashboard.xproj", "{8BE8D424-5C77-4651-93D2-F4FA14198B15}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,10 @@ Global
 		{65DCA477-590C-4453-B688-7BBD057B2C6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65DCA477-590C-4453-B688-7BBD057B2C6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65DCA477-590C-4453-B688-7BBD057B2C6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BE8D424-5C77-4651-93D2-F4FA14198B15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BE8D424-5C77-4651-93D2-F4FA14198B15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BE8D424-5C77-4651-93D2-F4FA14198B15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BE8D424-5C77-4651-93D2-F4FA14198B15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,5 +75,6 @@ Global
 		{488D79ED-7138-4CCB-9A9F-458FA4A076A8} = {F42CBBCE-8CB7-4139-B084-3586FB68ACDA}
 		{9B73D4A3-CA9D-4396-8000-F69E9B0EB9D3} = {39290E57-4492-4F65-89D6-64C95DE73976}
 		{65DCA477-590C-4453-B688-7BBD057B2C6F} = {F42CBBCE-8CB7-4139-B084-3586FB68ACDA}
+		{8BE8D424-5C77-4651-93D2-F4FA14198B15} = {6D839E2E-5C8E-4350-BEE4-D132FEC8DD9D}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,109 @@
+﻿@using PerformanceDashboard.ViewModels
+@using PerformanceDashboard.ViewModels.Dashboard
+@model IndexViewModel
+
+@{
+    ViewData["Title"] = "Latest Results";
+
+    var totalColumns = 2 + (Model.Frameworks.Count() * 3);
+
+    var dayOptions = new Dictionary<string, int>
+        {
+            { "Latest result each variation", 0},
+            { "1 day", 1 },
+            { "2 days", 2 },
+            { "3 days", 3 },
+            { "5 days", 5 },
+            { "10 days", 10 }
+        };
+    var metricOptions = MetricHelper.DisplayList;
+}
+
+<h1>ASP.NET (Latest Results)</h1>
+
+<strong>Average of last:</strong>
+@for (int i = 0; i < dayOptions.Count; i++)
+{
+    var option = dayOptions.ElementAt(i);
+
+    if (i != 0)
+    {
+        <text> |</text>
+    }
+
+    if (option.Value == Model.Days)
+    {
+        <strong>@option.Key</strong>
+    }
+    else
+    {
+        @Html.ActionLink(option.Key, "Index", new { days = option.Value, metric = Model.Metric })
+    }
+}
+
+<br />
+<strong>Metric:</strong>
+@for (int i = 0; i < metricOptions.Count; i++)
+{
+    if (i != 0)
+    {
+        <text> |</text>
+    }
+
+    var metric = metricOptions.ElementAt(i);
+    if (metric.Value == Model.Metric)
+    {
+        <strong>@metric.Key</strong>
+    }
+    else
+    {
+        @Html.ActionLink(metric.Key, "Index", new { days = Model.Days, metric = metric.Value })
+    }
+}
+
+
+<table class="table table-striped">
+    @foreach (var testClass in Model.Results)
+    {
+        <thead>
+            <tr>
+                <th colspan="2">
+                    <span class="lead">
+                        <a href="@testClass.GitHubLink"><img src="~/images/github.png" /></a>
+                        @testClass.TestClassName
+                    </span>
+                </th>
+            </tr>
+            <tr>
+                <th>Test</th>
+                <th>Variation</th>
+                @for (int i = 0; i < Model.Frameworks.Length; i++)
+                {
+                    <th class="@(i % 2 == 0 ? "active": "")">@Model.Frameworks[i]</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var variation in testClass.Results)
+            {
+                <tr>
+                    <td>@Html.ActionLink(variation.TestMethodName, "History", new { testClass = testClass.TestClassName, testMethod = variation.TestMethodName, metric = Model.Metric })</td>
+                    <td>@variation.VariationName</td>
+                    @for (int i = 0; i < Model.Frameworks.Length; i++)
+                    {
+                        <td class="@(i % 2 == 0 ? "active": "")">
+                            <span>@variation.Results[i].Result</span>
+                        </td>
+                    }
+                </tr>
+            }
+            <tr>
+                <td colspan="2">&nbsp;</td>
+                @for (int i = 0; i < Model.Frameworks.Length; i++)
+                {
+                    <td colspan="3"></td>
+                }
+            </tr>
+        </tbody>
+    }
+</table>

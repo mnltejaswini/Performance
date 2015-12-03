@@ -1,0 +1,123 @@
+﻿@using PerformanceDashboard.ViewModels
+@using PerformanceDashboard.ViewModels.Dashboard
+@model HistoryViewModel
+
+@{
+    ViewData["Title"] = "History";
+
+    var frameworks = Model.Runs
+        .GroupBy(r => r.Framework)
+        .Select(r => new
+        {
+            FrameworkName = r.Key,
+            Variations = r.GroupBy(x => x.Variation)
+                          .Select(x => new
+                          {
+                              VariationName = x.Key,
+                              Results = x
+                          })
+                          .OrderBy(x => x.VariationName)
+                          .ToArray()
+        })
+        .OrderBy(f => f.FrameworkName)
+        .ToArray();
+
+    var metricHelper = MetricHelper.Create(Model.Metric);
+
+    var dayOptions = new int[] { 90, 60, 30, 10, 5, 1 };
+    var metricOptions = MetricHelper.DisplayList;
+}
+
+<h1>@Model.TestClass.@Model.TestMethod</h1>
+
+<strong>Show last:</strong>
+@for (int i = 0; i < dayOptions.Length; i++)
+{
+    if (i != 0)
+    {
+        <text> |</text>
+    }
+
+    if (dayOptions[i] == Model.Days)
+    {
+        @:<strong>@Model.Days days</strong>
+    }
+    else
+    {
+        @Html.ActionLink($"{dayOptions[i]} days", "History", new { testClass = Model.TestClass, testMethod = Model.TestMethod, days = dayOptions[i], metric = Model.Metric })
+    }
+}
+
+<br />
+<strong>Metric:</strong>
+@for (int i = 0; i < metricOptions.Count; i++)
+{
+    if (i != 0)
+    {
+        <text> |</text>
+    }
+
+    var metric = metricOptions.ElementAt(i);
+    if (metric.Value == Model.Metric)
+    {
+        @:<strong>@metric.Key</strong>
+    }
+    else
+    {
+        @Html.ActionLink(metric.Key, "History", new { testClass = Model.TestClass, testMethod = Model.TestMethod, days = Model.Days, metric = metric.Value })
+    }
+}
+
+@for (int i = 0; i < frameworks.Length; i++)
+{
+    <h2>@frameworks[i].FrameworkName</h2>
+    for (int j = 0; j < frameworks[i].Variations.Length; j++)
+    {
+        <h3>@frameworks[i].Variations[j].VariationName</h3>
+        <div id="chart_@($"{i}_{j}")" style="height:600px; width:800px; "></div>
+    }
+}
+
+@section Scripts {
+    @for (int i = 0; i < frameworks.Length; i++)
+    {
+        var framework = frameworks[i];
+
+        for (int j = 0; j < frameworks[i].Variations.Length; j++)
+        {
+            var variation = framework.Variations[j];
+
+            var versionSeries = variation
+                .Results
+                .GroupBy(r => r.ProductReportingVersion)
+                .OrderByDescending(r => r.Key)
+                .ToArray();
+
+            <script>
+            $(document).ready(function () {
+                $.jqplot(
+                    'chart_@($"{i}_{j}")',
+                    [
+                        @foreach (var series in versionSeries)
+                        {
+                        <text>[@Html.Raw(string.Join(", ", series.Select(point => $"['{point.RunStarted}', {metricHelper.GetMetric(point)}]")))],</text>
+                        }
+                    ],
+                    {
+                        axes: {
+                            xaxis: {
+                                renderer: $.jqplot.DateAxisRenderer
+                            },
+                            yaxis: {
+                                min: 0
+                            }
+                        },
+                        legend: { show: true },
+                        series: [@Html.Raw(string.Join(", ", versionSeries.Select(s => $"{{label: '{s.Key}'}}")))]
+                    }
+                );
+            });
+            </script>
+        }
+    }
+}
