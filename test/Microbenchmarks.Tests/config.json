@@ -1,10 +1,10 @@
 ﻿{
-  "benchmarks": {
-    "runIterations": false,
-    "resultDatabases": {
-      "local": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-PerformanceDashboard-06b64eaf-0d24-4465-ad57-c9d7a5c5a511;Trusted_Connection=True;"
+  "Benchmarks": {
+    "RunIterations": true,
+    "ResultDatabases": {
+      "Local": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-PerformanceDashboard-06b64eaf-0d24-4465-ad57-c9d7a5c5a511;Trusted_Connection=True;"
     },
-    "benchmarkDatabaseInstance": "(localdb)\\mssqllocaldb",
-    "productReportingVersion": "Default"
+    "BenchmarkDatabaseInstance": "(localdb)\\mssqllocaldb",
+    "ProductReportingVersion": "Default"
   }
 }
