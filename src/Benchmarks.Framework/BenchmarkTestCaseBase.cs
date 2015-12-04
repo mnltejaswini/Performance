@@ -101,7 +101,7 @@ namespace Benchmarks.Framework
                 }
             }
 
-            if (typeInfo.BaseType != null)
+            if ((typeInfo.BaseType as ReflectionTypeInfo).Type != null)
             {
                 return IsMetricCollector(typeInfo.BaseType);
             }
