@@ -1,11 +1,13 @@
-﻿{
+{
   "dependencies": {
     "Benchmarks.Framework": "1.0.0-*",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-*",
     "Microsoft.AspNet.Hosting": "1.0.0-*",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-*",
     "Microsoft.AspNet.Server.WebListener": "1.0.0-*",
-    "xunit.runner.aspnet": "2.0.0-aspnet-*"
+    "Microsoft.AspNet.Mvc": "6.0.0-*",
+    "xunit.runner.aspnet": "2.0.0-aspnet-*",
+    "Microsoft.AspNet.TestHost": "1.0.0-*"
   },
   "commands": {
     "test": "xunit.runner.aspnet"
