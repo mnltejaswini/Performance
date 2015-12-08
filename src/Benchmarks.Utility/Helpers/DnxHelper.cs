@@ -4,6 +4,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace Benchmarks.Utility.Helpers
 {
@@ -118,6 +120,25 @@ namespace Benchmarks.Utility.Helpers
             {
                 return null;
             }
+        }
+
+        public string BuildGlobalJson(string framework = "clr")
+        {
+            var dnxname = Path.GetFileName(GetDnxPath(framework));
+            var parts = dnxname.Split(new char[] { '.' }, 2);
+
+            var architecture = parts[0].Split('-').Last();
+            var version = parts[1];
+
+            return JsonConvert.SerializeObject(new
+            {
+                sdk = new
+                {
+                    architecture = architecture,
+                    runtime = framework,
+                    version = version
+                }
+            });
         }
 
         public string GetDnxExecutable(string framework = "clr")

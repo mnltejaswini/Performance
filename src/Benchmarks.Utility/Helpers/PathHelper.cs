@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
+using System.Xml.Linq;
 
 namespace Benchmarks.Utility.Helpers
 {
@@ -9,6 +10,13 @@ namespace Benchmarks.Utility.Helpers
     {
         private static readonly string TestAppFolder = "testapp";
         private static readonly string ArtifactFolder = "artifacts";
+
+        public static string GetNuGetConfig()
+        {
+            var testFolder = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory()));
+
+            return Path.Combine(testFolder, "NuGet.config");
+        }
 
         public static string GetTestAppFolder(string sampleName)
         {

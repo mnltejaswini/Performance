@@ -101,5 +101,10 @@ namespace Benchmarks.Utility.Azure
 
             return JsonConvert.DeserializeObject<JArray>(_runner.LastOutput);
         }
+
+        public void AddAppSetting(string sitename, string key, string value)
+        {
+            _runner.Execute($"site appsetting add {key}={value} {sitename}");
+        }
     }
 }

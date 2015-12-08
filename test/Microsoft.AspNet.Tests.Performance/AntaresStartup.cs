@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using Benchmarks.Framework;
 using Benchmarks.Utility.Azure;
 using Benchmarks.Utility.Helpers;
 using Microsoft.Framework.Logging;
@@ -12,10 +13,9 @@ using Xunit;
 
 namespace Microsoft.AspNet.Tests.Performance
 {
-    public class AntaresStartup : IDisposable
+    public class AntaresStartup : StartupTestBase, IDisposable
     {
         private readonly string _location = "North Central US";
-        private readonly ILoggerFactory _loggerFactory;
         private readonly string _username;
         private readonly string _password;
         private readonly Random _rand;
@@ -25,11 +25,8 @@ namespace Microsoft.AspNet.Tests.Performance
         private string _testsitesource;
         private AzureCli _azure;
 
-        public AntaresStartup()
+        public AntaresStartup() : base(1)
         {
-            _loggerFactory = new LoggerFactory();
-            _loggerFactory.AddConsole();
-
             _rand = new Random((int)DateTime.Now.Ticks);
             _username = GenerateRandomePassword();
             _password = GenerateRandomePassword();
@@ -39,7 +36,7 @@ namespace Microsoft.AspNet.Tests.Performance
         {
             if (!string.IsNullOrEmpty(_testsitename) && _azure != null)
             {
-                _azure.DeleteWebSite(_testsitename);
+                //_azure.DeleteWebSite(_testsitename);
             }
         }
 
@@ -48,8 +45,10 @@ namespace Microsoft.AspNet.Tests.Performance
         [InlineData("StarterMvc", "coreclr")]
         public void PublishAndRun(string sampleName, string framework)
         {
+            _dnx.GetDnxExecutable(framework);
+
             _log = _loggerFactory.CreateLogger($"{nameof(AntaresStartup)}.{nameof(PublishAndRun)}.{sampleName}.{framework}");
-            DeployTestSite(sampleName);
+            DeployTestSite(sampleName, framework);
 
             var client = new HttpClient();
             var url = $"http://{_testsitename}.azurewebsites.net";
@@ -61,15 +60,24 @@ namespace Microsoft.AspNet.Tests.Performance
             if (webstask.Wait(TimeSpan.FromMinutes(10)))
             {
                 sw.Stop();
+
                 _log.LogInformation($"Latency: {sw.ElapsedMilliseconds}");
+                _log.LogInformation($"Response: {webstask.Result.StatusCode}");
+
+                if (webstask.Result.IsSuccessStatusCode)
+                {
+                    _summary.Aggregate(new BenchmarkIterationSummary { TimeElapsed = (long)sw.ElapsedMilliseconds });
+                }
             }
             else
             {
                 _log.LogError("Http client timeout after 10 minute.");
             }
+
+            SaveSummary(_log);
         }
 
-        private void DeployTestSite(string sampleName)
+        private void DeployTestSite(string sampleName, string framework)
         {
             var runner = new CommandLineRunner() { Timeout = TimeSpan.FromMinutes(5) };
 
@@ -82,6 +90,8 @@ namespace Microsoft.AspNet.Tests.Performance
 
             runner.Execute($"git clean -xdff .", sourcePath);
             Assert.NotEqual(-1, runner.Execute($"robocopy {sourcePath} {_testsitesource} /E /S /XD node_modules")); // robcopy doesn't return 0
+            File.WriteAllText(Path.Combine(_testsitesource, "global.json"), _dnx.BuildGlobalJson(framework));
+            File.Copy(PathHelper.GetNuGetConfig(), Path.Combine(_testsitesource, "NuGet.config"));
 
             _log.LogInformation($"Testsite sources are copied to {_testsitesource}.");
 
@@ -129,6 +139,7 @@ namespace Microsoft.AspNet.Tests.Performance
                 Assert.False(true, $"Fail to create test web site name after {retry} tries");
             }
 
+            _azure.AddAppSetting(_testsitename, "DNX_FEED", "https://www.myget.org/F/aspnetcidev/api/v2");
             _azure.SetWebSiteScaleMode(_testsitename, "Basic");
             _azure.ResetCredential(_username, _password);
         }

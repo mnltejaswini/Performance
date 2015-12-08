@@ -4,35 +4,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Benchmarks.Framework;
 using Benchmarks.Utility.Helpers;
 using Benchmarks.Utility.Measurement;
-using Microsoft.Framework.Logging;
 using Xunit;
 
 namespace Microsoft.AspNet.Tests.Performance
 {
-    public class BasicStartup
+    public class BasicStartup : StartupTestBase
     {
-        private readonly ILoggerFactory _loggerFactory;
-        private readonly BenchmarkRunSummary _summary;
-        private readonly int _iterationCount = 10;
-        private readonly DnxHelper _dnx = new DnxHelper("perf");
-
-        public BasicStartup()
+        public BasicStartup() : base(10)
         {
-            _loggerFactory = new LoggerFactory();
-            _loggerFactory.AddConsole();
-
-            _summary = new BenchmarkRunSummary
-            {
-                TestClassFullName = GetType().FullName,
-                TestClass = GetType().Name,
-                RunStarted = DateTime.Now,
-                Iterations = _iterationCount
-            };
+            _summary.TestClassFullName = GetType().FullName;
+            _summary.TestClass = GetType().Name;
         }
-
 
         [Theory]
         [InlineData("BasicKestrel", "clr", "kestrel", 5001)]
@@ -44,7 +28,6 @@ namespace Microsoft.AspNet.Tests.Performance
             _summary.TestMethod = nameof(DevelopmentScenario);
             _summary.Variation = sampleName;
             _summary.Framework = framework;
-
 
             var samplePath = PathHelper.GetTestAppFolder(sampleName);
             Assert.NotNull(samplePath);
@@ -123,22 +106,6 @@ namespace Microsoft.AspNet.Tests.Performance
             SaveSummary(logger);
 
             Assert.True(result, "Fail:\t" + string.Join("\n\t", errors));
-        }
-
-        private void SaveSummary(ILogger logger)
-        {
-            foreach (var database in BenchmarkConfig.Instance.ResultDatabases)
-            {
-                try
-                {
-                    new SqlServerBenchmarkResultProcessor(database).SaveSummary(_summary);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError($"Failed to save results to {database} {ex}");
-                    throw;
-                }
-            }
         }
     }
 }
