@@ -24,6 +24,18 @@ namespace Microbenchmarks.Tests
             }
         }
 
+        [Benchmark]
+        public void BuildServiceProvider_MvcServices()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddMvc(); ;
+
+            using (Collector.StartCollection())
+            {
+                serviceCollection.BuildServiceProvider();
+            }
+        }
+
         private interface IFakeService
         {
         }
