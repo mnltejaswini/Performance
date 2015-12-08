@@ -5,10 +5,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
-using System.Threading;
 using Benchmarks.Utility.Azure;
 using Benchmarks.Utility.Helpers;
-using Benchmarks.Utility.Logging;
 using Microsoft.Framework.Logging;
 using Xunit;
 
@@ -29,7 +27,9 @@ namespace Microsoft.AspNet.Tests.Performance
 
         public AntaresStartup()
         {
-            _loggerFactory = LoggerHelper.GetLoggerFactory();
+            _loggerFactory = new LoggerFactory();
+            _loggerFactory.AddConsole();
+
             _rand = new Random((int)DateTime.Now.Ticks);
             _username = GenerateRandomePassword();
             _password = GenerateRandomePassword();
@@ -48,29 +48,24 @@ namespace Microsoft.AspNet.Tests.Performance
         [InlineData("StarterMvc", "coreclr")]
         public void PublishAndRun(string sampleName, string framework)
         {
-            _log = _loggerFactory.CreateLogger<AntaresStartup>(nameof(PublishAndRun), sampleName, framework);
-            using (_log.BeginScope("root"))
+            _log = _loggerFactory.CreateLogger($"{nameof(AntaresStartup)}.{nameof(PublishAndRun)}.{sampleName}.{framework}");
+            DeployTestSite(sampleName);
+
+            var client = new HttpClient();
+            var url = $"http://{_testsitename}.azurewebsites.net";
+
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var webstask = client.GetAsync(url);
+            if (webstask.Wait(TimeSpan.FromMinutes(10)))
             {
-                DeployTestSite(sampleName);
-
-                var client = new HttpClient();
-                var url = $"http://{_testsitename}.azurewebsites.net";
-
-                var sw = new Stopwatch();
-                sw.Start();
-
-                var webstask = client.GetAsync(url);
-                if (webstask.Wait(TimeSpan.FromMinutes(10)))
-                {
-                    sw.Stop();
-                    _log.LogData("Latency", sw.ElapsedMilliseconds);
-                    _log.LogData("Success", true);
-                }
-                else
-                {
-                    _log.LogError("Http client timeout after 10 minute.");
-                    _log.LogData("Success", false);
-                }
+                sw.Stop();
+                _log.LogInformation($"Latency: {sw.ElapsedMilliseconds}");
+            }
+            else
+            {
+                _log.LogError("Http client timeout after 10 minute.");
             }
         }
 

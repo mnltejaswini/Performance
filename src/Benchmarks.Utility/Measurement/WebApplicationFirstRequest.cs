@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Benchmarks.Framework;
 using Microsoft.Framework.Logging;
 
 namespace Benchmarks.Utility.Measurement
@@ -35,11 +36,11 @@ namespace Benchmarks.Utility.Measurement
         {
             var client = new HttpClient();
 
-            _logger.LogData("Measurer", typeof(WebApplicationFirstRequest).Name, infoOnly: true);
-            _logger.LogData("CommandFilename", _options.ProcessStartInfo.FileName, infoOnly: true);
-            _logger.LogData("CommandArguments", _options.ProcessStartInfo.Arguments, infoOnly: true);
-            _logger.LogData("Url", _url, infoOnly: true);
-            _logger.LogData("Timeout", _timeout, infoOnly: true);
+            _logger.LogInformation($"Measurer: {typeof(WebApplicationFirstRequest).Name}");
+            _logger.LogInformation($"CommandFilename: { _options.ProcessStartInfo.FileName}");
+            _logger.LogInformation($"CommandArguments: {_options.ProcessStartInfo.Arguments}");
+            _logger.LogInformation($"Url: {_url}");
+            _logger.LogInformation($"Timeout: {_timeout}");
 
             var repeater = new Repeater<RunResult>(
                 body: (iteration, result) =>
@@ -115,10 +116,16 @@ namespace Benchmarks.Utility.Measurement
             var results = repeater.Execute(_options.IterationCount);
             var successful = results.Where(r => r.Success);
 
-            _logger.LogData("Successful rate", successful.Count() / results.Count(), infoOnly: true);
-            _logger.LogData("Successful iteration", successful.Count(), infoOnly: true);
-            _logger.LogData("Mean", successful.Select(s => s.Elapsed).Mean());
-            _logger.LogData("SD", successful.Select(s => s.Elapsed).StandardDeviation());
+            foreach (var one in successful)
+            {
+                _options.Summary.Aggregate(new BenchmarkIterationSummary
+                {
+                    TimeElapsed = (long)one.Elapsed
+                });
+            }
+            _options.Summary.PopulateMetrics();
+
+            _logger.LogInformation(_options.Summary.ToString());
 
             return true;
         }

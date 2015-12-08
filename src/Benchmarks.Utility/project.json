@@ -1,10 +1,11 @@
 {
   "version": "1.0.0-*",
   "dependencies": {
-    "xunit.runner.aspnet": "2.0.0-aspnet-*",
+    "Benchmarks.Framework": "",
     "Microsoft.Framework.Logging": "1.0.0-*",
     "Microsoft.Framework.Logging.Console": "1.0.0-*",
-    "Newtonsoft.Json": "7.0.1"
+    "Newtonsoft.Json": "7.0.1",
+    "xunit.runner.aspnet": "2.0.0-aspnet-*"
   },
   "frameworks": {
     "dnx451": {
