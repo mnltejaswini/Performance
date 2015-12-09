@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Microbenchmarks.Tests
 {
-    public class DITest : BenchmarkTestBase
+    public class DITests : BenchmarkTestBase
     {
         [Benchmark]
         public void BuildServiceProvider()

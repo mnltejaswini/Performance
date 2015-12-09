@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Microbenchmarks.Tests.Mvc
 {
-    public class MvcRoutingTest : BenchmarkTestBase
+    public class MvcRoutingTests : BenchmarkTestBase
     {
         [Benchmark]
         public async Task RouteToAction()
