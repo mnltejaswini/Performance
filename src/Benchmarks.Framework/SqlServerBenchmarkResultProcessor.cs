@@ -95,11 +95,18 @@ ELSE IF NOT EXISTS (SELECT * FROM syscolumns WHERE name = 'Architecture')
 
         public void SaveSummary(BenchmarkRunSummary summary)
         {
-            using (var conn = new SqlConnection(_connectionString))
+            try
             {
-                conn.Open();
-                EnsureRunsTableCreated(conn);
-                WriteSummaryRecord(summary, conn);
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    conn.Open();
+                    EnsureRunsTableCreated(conn);
+                    WriteSummaryRecord(summary, conn);
+                }
+            }
+            catch
+            {
+                throw new Exception("Could not save results into the database.");
             }
         }
 
