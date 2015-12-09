@@ -11,7 +11,6 @@ namespace Benchmarks.Utility.Helpers
 {
     public class DnxHelper
     {
-        private readonly string DnxHome = ".dnx";
         private readonly string _alias;
 
         public DnxHelper() : this("default") { }
@@ -73,14 +72,16 @@ namespace Benchmarks.Utility.Helpers
 
         public string GetDnxPath(string framework = "clr")
         {
-            var home = Environment.GetEnvironmentVariable("USERPROFILE");
-            var aliasFile = Path.Combine(home, DnxHome, "alias", _alias + ".txt");
-            var dnxRuntimes = Path.Combine(home, DnxHome, "runtimes");
+            var dnxHome = Environment.GetEnvironmentVariable("DNX_HOME") ??
+                          Path.Combine(Environment.ExpandEnvironmentVariables(Environment.GetEnvironmentVariable("USERPROFILE")), ".dnx");
+
+            var aliasFile = Path.Combine(dnxHome, "alias", _alias + ".txt");
+            var dnxRuntimes = Path.Combine(dnxHome, "runtimes");
 
             if (!File.Exists(aliasFile))
             {
                 // fall back to use default alias
-                aliasFile = Path.Combine(home, DnxHome, "alias", "default.txt");
+                aliasFile = Path.Combine(dnxHome, "alias", "default.txt");
                 if (!File.Exists(aliasFile))
                 {
                     return null;
