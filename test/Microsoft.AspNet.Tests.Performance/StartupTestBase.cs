@@ -42,7 +42,7 @@ namespace Microsoft.AspNet.Tests.Performance
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError($"Failed to save results to {database} {ex}");
+                    logger.LogError($"Failed to save results to {ex}");
                     throw;
                 }
             }
