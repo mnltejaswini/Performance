@@ -24,7 +24,11 @@ namespace Microsoft.AspNet.Tests.Performance
                 TestClassFullName = GetType().FullName,
                 TestClass = GetType().Name,
                 RunStarted = DateTime.Now,
-                Iterations = iterations
+                MachineName = GetMachineName(),
+                Iterations = iterations,
+                Architecture = IntPtr.Size > 4 ? "x64" : "x86",
+                WarmupIterations = 0,
+                CustomData = BenchmarkConfig.Instance.CustomData
             };
         }
 
@@ -42,6 +46,20 @@ namespace Microsoft.AspNet.Tests.Performance
                     throw;
                 }
             }
+        }
+
+        private static string GetMachineName()
+        {
+#if DNXCORE50
+            var config = new ConfigurationBuilder()
+                .SetBasePath(".")
+                .AddEnvironmentVariables()
+                .Build();
+
+            return config["computerName"];
+#else
+            return Environment.MachineName;
+#endif
         }
     }
 }

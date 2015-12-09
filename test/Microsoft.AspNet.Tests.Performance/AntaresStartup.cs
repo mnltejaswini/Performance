@@ -36,7 +36,7 @@ namespace Microsoft.AspNet.Tests.Performance
         {
             if (!string.IsNullOrEmpty(_testsitename) && _azure != null)
             {
-                //_azure.DeleteWebSite(_testsitename);
+                _azure.DeleteWebSite(_testsitename);
             }
         }
 
