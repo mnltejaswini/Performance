@@ -1,7 +1,7 @@
 ﻿using System;
 using Benchmarks.Framework;
 using Benchmarks.Utility.Helpers;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNet.Tests.Performance
 {

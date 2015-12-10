@@ -8,7 +8,7 @@ using System.Net.Http;
 using Benchmarks.Framework;
 using Benchmarks.Utility.Azure;
 using Benchmarks.Utility.Helpers;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace Microsoft.AspNet.Tests.Performance

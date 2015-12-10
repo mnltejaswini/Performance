@@ -8,7 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Benchmarks.Framework;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Benchmarks.Utility.Measurement
 {

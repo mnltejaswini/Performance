@@ -3,7 +3,7 @@
 
 using System.Diagnostics;
 using Benchmarks.Framework;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Benchmarks.Utility.Measurement
 {

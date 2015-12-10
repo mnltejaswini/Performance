@@ -54,7 +54,8 @@ namespace Benchmarks.Utility.Helpers
 
         public bool Publish(string workingDir, string framework, string outputDir, bool nosource, bool quiet)
         {
-            var dnu = GetDnuExecutable(framework);
+            // always use coreclr DNX to avoid long path issue during publishing
+            var dnu = GetDnuExecutable("coreclr");
 
             var psi = new ProcessStartInfo(dnu)
             {
@@ -72,8 +73,8 @@ namespace Benchmarks.Utility.Helpers
 
         public string GetDnxPath(string framework = "clr")
         {
-            var dnxHome = Environment.GetEnvironmentVariable("DNX_HOME") ??
-                          Path.Combine(Environment.ExpandEnvironmentVariables(Environment.GetEnvironmentVariable("USERPROFILE")), ".dnx");
+            var dnxHome = Environment.ExpandEnvironmentVariables(Environment.GetEnvironmentVariable("DNX_HOME")) ??
+                          Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), ".dnx");
 
             var aliasFile = Path.Combine(dnxHome, "alias", _alias + ".txt");
             var dnxRuntimes = Path.Combine(dnxHome, "runtimes");

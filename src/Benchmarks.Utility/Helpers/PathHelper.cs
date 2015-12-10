@@ -45,5 +45,14 @@ namespace Benchmarks.Utility.Helpers
 
             return result;
         }
+
+        public static string GetNewTempFolder()
+        {
+            var result = Path.GetTempFileName();
+            File.Delete(result);
+            Directory.CreateDirectory(result);
+
+            return result;
+        }
     }
 }

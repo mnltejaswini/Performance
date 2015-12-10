@@ -224,7 +224,7 @@ namespace Benchmarks.Framework
             protected override object CreateTestClass()
             {
                 var testClass = base.CreateTestClass();
-                var benchmarkTestBase = testClass as BenchmarkTestBase;
+                var benchmarkTestBase = testClass as IBenchmarkTest;
 
                 if (benchmarkTestBase != null)
                 {

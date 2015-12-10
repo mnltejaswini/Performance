@@ -2,110 +2,116 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using Benchmarks.Utility.Helpers;
-using Benchmarks.Utility.Measurement;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Benchmarks.Framework;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 using Xunit;
 
 namespace Microsoft.AspNet.Tests.Performance
 {
-    public class BasicStartup : StartupTestBase
+    public class BasicStartup : IBenchmarkTest, IClassFixture<TestSampleManager>
     {
-        public BasicStartup() : base(10)
+        private readonly TestSampleManager _sampleManager;
+        private readonly TimeSpan _timeout = TimeSpan.FromSeconds(60);
+        private readonly int _retry = 10;
+
+        public BasicStartup(TestSampleManager sampleManager)
         {
-            _summary.TestClassFullName = GetType().FullName;
-            _summary.TestClass = GetType().Name;
+            _sampleManager = sampleManager;
         }
 
-        [Theory]
-        [InlineData("BasicKestrel", "Clr", "kestrel", 5001)]
-        [InlineData("BasicKestrel", "CoreClr", "kestrel", 5001)]
-        [InlineData("StarterMvc", "Clr", "web", 5000)]
-        [InlineData("StarterMvc", "CoreClr", "web", 5000)]
-        public void DevelopmentScenario(string sampleName, string framework, string command, int port)
+        public IMetricCollector Collector { get; set; } = new NullMetricCollector();
+
+        [Benchmark(Iterations = 10, WarmupIterations = 0)]
+        [BenchmarkVariation("BasicKestrel_DevelopmentScenario", "BasicKestrel", "kestrel", 5001)]
+        [BenchmarkVariation("StarterMvc_DevelopmentScenario", "StarterMvc", "web", 5000)]
+        public void DevelopmentScenario(string sampleName, string command, int port)
         {
-            _summary.TestMethod = nameof(DevelopmentScenario);
-            _summary.Variation = sampleName;
-            _summary.Framework = $"DNX.{framework}";
+            var framework = PlatformServices.Default.Runtime.RuntimeType;
+            var testName = $"{sampleName}.{framework}.{nameof(DevelopmentScenario)}";
+            var testProject = _sampleManager.PrepareSample(testName, sampleName);
+            Assert.True(testProject != null, $"Fail to set up test project.");
 
-            var samplePath = PathHelper.GetTestAppFolder(sampleName);
-            Assert.NotNull(samplePath);
+            var logger = _sampleManager.LoggerFactory.CreateLogger(testName);
+            logger.LogInformation($"Test project is set up at {testProject}");
 
-            var restoreResult = _dnx.Restore(samplePath, framework, quiet: true);
-            Assert.True(restoreResult, "Failed to restore packages");
+            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, command);
 
-            var prepare = EnvironmentHelper.Prepare();
-            Assert.True(prepare, "Failed to prepare the environment");
-
-            var logger = _loggerFactory.CreateLogger($"{nameof(BasicStartup)}.{nameof(DevelopmentScenario)}.{sampleName}.{framework}");
-            var testAppStartInfo = _dnx.BuildStartInfo(samplePath, framework: framework, argument: command);
-            var options = new StartupRunnerOptions
-            {
-                ProcessStartInfo = testAppStartInfo,
-                Logger = logger,
-                IterationCount = _iterationCount,
-                Summary = _summary
-            };
-
-            var runner = new WebApplicationFirstRequest(options, port: port, path: "/", timeout: TimeSpan.FromSeconds(60));
-
-            var errors = new List<string>();
-            var result = runner.Run();
-
-            SaveSummary(logger);
-
-            Assert.True(result, "Fail:\t" + string.Join("\n\t", errors));
+            RunStartup(port, logger, testAppStartInfo);
         }
 
-        [Theory]
-        [InlineData("BasicKestrel", "Clr", "kestrel", 5001)]
-        [InlineData("BasicKestrel", "CoreClr", "kestrel", 5001)]
-        [InlineData("StarterMvc", "Clr", "web", 5000)]
-        [InlineData("StarterMvc", "CoreClr", "web", 5000)]
-        public void ProductionScenario(string sampleName, string framework, string command, int port)
+        [Benchmark(Iterations = 10, WarmupIterations = 0)]
+        [BenchmarkVariation("BasicKestrel_ProductionScenario", "BasicKestrel", "kestrel", 5001)]
+        [BenchmarkVariation("StarterMvc_ProductionScenario", "StarterMvc", "web", 5000)]
+        public void ProductionScenario(string sampleName, string command, int port)
         {
-            _summary.TestMethod = nameof(ProductionScenario);
-            _summary.Variation = sampleName;
-            _summary.Framework = $"DNX.{framework}";
+            var framework = PlatformServices.Default.Runtime.RuntimeType;
+            var testName = $"{sampleName}.{framework}.{nameof(ProductionScenario)}";
+            var testProject = _sampleManager.PrepareSample(testName, sampleName, publish: true);
+            Assert.True(testProject != null, $"Fail to set up test project.");
 
-            var samplePath = PathHelper.GetTestAppFolder(sampleName);
-            Assert.NotNull(samplePath);
-
-            var restoreResult = _dnx.Restore(samplePath, framework, quiet: true);
-            Assert.True(restoreResult, "Failed to restore packages");
-
-            var output = Path.Combine(PathHelper.GetArtifactFolder(), "publish", $"{nameof(ProductionScenario)}_{sampleName}_{framework}");
-            if (Directory.Exists(output))
-            {
-                Directory.Delete(output, recursive: true);
-            }
-            var publishResult = _dnx.Publish(samplePath, framework, output, nosource: true, quiet: true);
-            Assert.True(publishResult, "Failed to publish application");
-
-            var prepare = EnvironmentHelper.Prepare();
-            Assert.True(prepare, "Failed to prepare the environment");
+            var logger = _sampleManager.LoggerFactory.CreateLogger(testName);
+            logger.LogInformation($"Test project is set up at {testProject}");
 
             // --project "%~dp0packages\BasicKestrel\1.0.0\root"
-            var logger = _loggerFactory.CreateLogger($"{nameof(BasicStartup)}.{nameof(ProductionScenario)}.{sampleName}.{framework}");
-            var root = Path.Combine(output, "approot", "packages", sampleName, "1.0.0", "root");
-            var testAppStartInfo = _dnx.BuildStartInfo(output, framework, $"--project {root} {command}");
-            var options = new StartupRunnerOptions
+            var root = Path.Combine(testProject, "approot", "packages", testName, "1.0.0", "root");
+            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, $"--project {root} {command}");
+
+            RunStartup(port, logger, testAppStartInfo);
+        }
+
+        private void RunStartup(int port, ILogger logger, ProcessStartInfo testAppStartInfo)
+        {
+            Task<HttpResponseMessage> webtask = null;
+            Process process = null;
+            var responseRetrived = false;
+            var url = $"http://localhost:{port}/";
+
+            var client = new HttpClient();
+
+            using (Collector.StartCollection())
             {
-                ProcessStartInfo = testAppStartInfo,
-                Logger = logger,
-                IterationCount = _iterationCount,
-                Summary = _summary
-            };
+                process = Process.Start(testAppStartInfo);
+                for (int i = 0; i < _retry; ++i)
+                {
+                    try
+                    {
+                        webtask = client.GetAsync(url);
 
-            var runner = new WebApplicationFirstRequest(options, port: port, path: "/", timeout: TimeSpan.FromSeconds(60));
+                        if (webtask.Wait(_timeout))
+                        {
+                            responseRetrived = true;
+                            break;
+                        }
+                        else
+                        {
+                            logger.LogError("Http client timeout.");
+                            break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                }
+            }
 
-            var errors = new List<string>();
-            var result = runner.Run();
+            if (process != null && !process.HasExited)
+            {
+                logger.LogDebug($"Kill process {process.Id}");
+                process.Kill();
+            }
 
-            SaveSummary(logger);
-
-            Assert.True(result, "Fail:\t" + string.Join("\n\t", errors));
+            if (responseRetrived)
+            {
+                var response = webtask.Result;
+                logger.LogInformation($"Response {response.StatusCode}");
+                response.EnsureSuccessStatusCode();
+            }
         }
     }
 }
