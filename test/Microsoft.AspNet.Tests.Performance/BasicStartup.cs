@@ -65,7 +65,7 @@ namespace Microsoft.AspNet.Tests.Performance
         [InlineData("StarterMvc", "coreclr", "web", 5000)]
         public void ProductionScenario(string sampleName, string framework, string command, int port)
         {
-            _summary.TestMethod = nameof(DevelopmentScenario);
+            _summary.TestMethod = nameof(ProductionScenario);
             _summary.Variation = sampleName;
             _summary.Framework = framework;
 

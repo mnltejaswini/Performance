@@ -28,7 +28,8 @@ namespace Microsoft.AspNet.Tests.Performance
                 Iterations = iterations,
                 Architecture = IntPtr.Size > 4 ? "x64" : "x86",
                 WarmupIterations = 0,
-                CustomData = BenchmarkConfig.Instance.CustomData
+                CustomData = BenchmarkConfig.Instance.CustomData,
+                ProductReportingVersion = BenchmarkConfig.Instance.ProductReportingVersion,
             };
         }
 
