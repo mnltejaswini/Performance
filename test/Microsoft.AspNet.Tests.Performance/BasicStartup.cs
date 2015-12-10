@@ -19,15 +19,15 @@ namespace Microsoft.AspNet.Tests.Performance
         }
 
         [Theory]
-        [InlineData("BasicKestrel", "clr", "kestrel", 5001)]
-        [InlineData("BasicKestrel", "coreclr", "kestrel", 5001)]
-        [InlineData("StarterMvc", "clr", "web", 5000)]
-        [InlineData("StarterMvc", "coreclr", "web", 5000)]
+        [InlineData("BasicKestrel", "Clr", "kestrel", 5001)]
+        [InlineData("BasicKestrel", "CoreClr", "kestrel", 5001)]
+        [InlineData("StarterMvc", "Clr", "web", 5000)]
+        [InlineData("StarterMvc", "CoreClr", "web", 5000)]
         public void DevelopmentScenario(string sampleName, string framework, string command, int port)
         {
             _summary.TestMethod = nameof(DevelopmentScenario);
             _summary.Variation = sampleName;
-            _summary.Framework = framework;
+            _summary.Framework = $"DNX.{framework}";
 
             var samplePath = PathHelper.GetTestAppFolder(sampleName);
             Assert.NotNull(samplePath);
@@ -59,15 +59,15 @@ namespace Microsoft.AspNet.Tests.Performance
         }
 
         [Theory]
-        [InlineData("BasicKestrel", "clr", "kestrel", 5001)]
-        [InlineData("BasicKestrel", "coreclr", "kestrel", 5001)]
-        [InlineData("StarterMvc", "clr", "web", 5000)]
-        [InlineData("StarterMvc", "coreclr", "web", 5000)]
+        [InlineData("BasicKestrel", "Clr", "kestrel", 5001)]
+        [InlineData("BasicKestrel", "CoreClr", "kestrel", 5001)]
+        [InlineData("StarterMvc", "Clr", "web", 5000)]
+        [InlineData("StarterMvc", "CoreClr", "web", 5000)]
         public void ProductionScenario(string sampleName, string framework, string command, int port)
         {
             _summary.TestMethod = nameof(ProductionScenario);
             _summary.Variation = sampleName;
-            _summary.Framework = framework;
+            _summary.Framework = $"DNX.{framework}";
 
             var samplePath = PathHelper.GetTestAppFolder(sampleName);
             Assert.NotNull(samplePath);
