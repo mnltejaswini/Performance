@@ -37,7 +37,11 @@ namespace Benchmarks.Utility.Helpers
         {
             var startinfo = new ProcessStartInfo(_command, ProcessArguments(arguments))
             {
+#if DNX451
                 UseShellExecute = !RedirectOutput,
+#else
+                UseShellExecute = false,
+#endif
                 RedirectStandardOutput = RedirectOutput,
                 WorkingDirectory = workingDirectory ?? Directory.GetCurrentDirectory()
             };

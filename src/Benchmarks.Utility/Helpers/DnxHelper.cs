@@ -28,7 +28,7 @@ namespace Benchmarks.Utility.Helpers
             var psi = new ProcessStartInfo(dnxPath, argument)
             {
                 WorkingDirectory = appbasePath,
-                UseShellExecute = true
+                UseShellExecute = false
             };
 
             return psi;
