@@ -11,6 +11,8 @@
       "frameworkAssemblies": {
         "System.Runtime": ""
       }
+    },
+    "dnxcore50": {
     }
   },
   "commands": {
