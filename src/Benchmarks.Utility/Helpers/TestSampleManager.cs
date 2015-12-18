@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using Benchmarks.Utility.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 
-namespace Microsoft.AspNet.Tests.Performance
+namespace Benchmarks.Utility.Helpers
 {
     public class TestSampleManager
     {

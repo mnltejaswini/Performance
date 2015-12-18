@@ -1,0 +1,236 @@
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.PlatformAbstractions;
+using Xunit.Abstractions;
+using Xunit.Sdk;
+using XunitDiagnosticMessage = Xunit.DiagnosticMessage;
+
+namespace Stress.Framework
+{
+    public class StressTestCaseRunner : XunitTestCaseRunner
+    {
+        private static readonly string _machineName = GetMachineName();
+        private static readonly string _framework = GetFramework();
+        private readonly IMessageSink _diagnosticMessageSink;
+
+        public StressTestCaseRunner(
+            StressTestCase testCase,
+            string displayName,
+            string skipReason,
+            object[] constructorArguments,
+            object[] testMethodArguments,
+            IMessageBus messageBus,
+            ExceptionAggregator aggregator,
+            CancellationTokenSource cancellationTokenSource,
+            IMessageSink diagnosticMessageSink)
+            : base(
+                testCase,
+                displayName,
+                skipReason,
+                constructorArguments,
+                testMethodArguments,
+                messageBus,
+                aggregator,
+                cancellationTokenSource)
+        {
+            TestCase = testCase;
+            _diagnosticMessageSink = diagnosticMessageSink;
+        }
+
+        public new StressTestCase TestCase { get; }
+
+        protected override async Task<RunSummary> RunTestAsync()
+        {
+            var runSummary = new StressRunSummary
+            {
+                TestClassFullName = TestCase.TestMethod.TestClass.Class.Name,
+                TestClass = TestCase.TestMethod.TestClass.Class.Name.Split('.').Last(),
+                TestMethod = TestCase.TestMethodName,
+                Variation = TestCase.Variation,
+                RunStarted = DateTime.UtcNow,
+                MachineName = _machineName,
+                Framework = _framework,
+                Architecture = IntPtr.Size > 4 ? "x64" : "x86",
+                Iterations = TestCase.Iterations,
+            };
+
+            // Warmup
+            var server = new StressTestServer(
+                TestCase.TestApplicationName,
+                TestCase.TestMethodName,
+                port: 5000,
+                command: "run",
+                metricCollector: TestCase.MetricCollector);
+            var startResult = await server.StartAsync();
+
+            if (!startResult.SuccessfullyStarted)
+            {
+                _diagnosticMessageSink.OnMessage(
+                    new XunitDiagnosticMessage("Failed to start application server."));
+
+                return runSummary;
+            }
+
+            using (startResult.ServerHandle)
+            {
+                await (Task)TestCase.WarmupMethod?.ToRuntimeMethod().Invoke(null, new[] { server.Client });
+
+                TestCase.MetricCollector.Reset();
+                var runner = CreateRunner(server, TestCase);
+                runSummary.Aggregate(await runner.RunAsync());
+            }
+
+            if (runSummary.Failed != 0)
+            {
+                _diagnosticMessageSink.OnMessage(
+                    new XunitDiagnosticMessage($"No valid results for {TestCase.DisplayName}. {runSummary.Failed} of {TestCase.Iterations} iterations failed."));
+            }
+            else
+            {
+                runSummary.PopulateMetrics(TestCase.MetricCollector);
+                _diagnosticMessageSink.OnMessage(new XunitDiagnosticMessage(runSummary.ToString()));
+
+                runSummary.PublishOutput();
+            }
+
+            return runSummary;
+        }
+
+        private XunitTestRunner CreateRunner(StressTestServer server, StressTestCase testCase)
+        {
+            var name = DisplayName;
+
+            return new StressTestRunner(
+                server,
+                new XunitTest(TestCase, name),
+                MessageBus,
+                TestClass,
+                ConstructorArguments,
+                TestMethod,
+                TestMethodArguments,
+                SkipReason,
+                BeforeAfterAttributes,
+                Aggregator,
+                CancellationTokenSource);
+        }
+
+        private static string GetFramework()
+        {
+            var env = PlatformServices.Default.Runtime;
+            return "DNX." + env.RuntimeType;
+        }
+
+        private static string GetMachineName()
+        {
+#if DNXCORE50
+            var config = new ConfigurationBuilder()
+                .SetBasePath(".")
+                .AddEnvironmentVariables()
+                .Build();
+
+            return config["computerName"];
+#else
+            return Environment.MachineName;
+#endif
+        }
+
+        private class StressTestRunner : XunitTestRunner
+        {
+            private readonly StressTestServer _server;
+
+            public StressTestRunner(
+                StressTestServer server,
+                ITest test,
+                IMessageBus messageBus,
+                Type testClass,
+                object[] constructorArguments,
+                MethodInfo testMethod,
+                object[] testMethodArguments,
+                string skipReason,
+                IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+                ExceptionAggregator aggregator,
+                CancellationTokenSource cancellationTokenSource)
+                : base(
+                      test,
+                      messageBus,
+                      testClass,
+                      constructorArguments,
+                      testMethod,
+                      testMethodArguments,
+                      skipReason,
+                      beforeAfterAttributes,
+                      aggregator,
+                      cancellationTokenSource)
+            {
+                _server = server;
+            }
+
+            protected override Task<decimal> InvokeTestMethodAsync(ExceptionAggregator aggregator) =>
+                new StressTestInvoker(
+                    _server,
+                    Test,
+                    MessageBus,
+                    TestClass,
+                    ConstructorArguments,
+                    TestMethod,
+                    TestMethodArguments,
+                    BeforeAfterAttributes,
+                    aggregator,
+                    CancellationTokenSource).RunAsync();
+        }
+
+        private class StressTestInvoker : XunitTestInvoker
+        {
+            private readonly StressTestServer _server;
+
+            public StressTestInvoker(
+                StressTestServer server,
+                ITest test,
+                IMessageBus messageBus,
+                Type testClass,
+                object[] constructorArguments,
+                MethodInfo testMethod,
+                object[] testMethodArguments,
+                IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+                ExceptionAggregator aggregator,
+                CancellationTokenSource cancellationTokenSource)
+                : base(
+                     test,
+                     messageBus,
+                     testClass,
+                     constructorArguments,
+                     testMethod,
+                     testMethodArguments,
+                     beforeAfterAttributes,
+                     aggregator,
+                     cancellationTokenSource)
+            {
+                _server = server;
+            }
+
+            protected override object CreateTestClass()
+            {
+                var testClass = base.CreateTestClass();
+                var StressTestBase = testClass as StressTestBase;
+
+                if (StressTestBase != null)
+                {
+                    var stressTestCase = (TestCase as StressTestCase);
+                    StressTestBase.Iterations = stressTestCase.Iterations;
+                    StressTestBase.Collector = stressTestCase.MetricCollector;
+                    StressTestBase.Client = _server.Client;
+                }
+
+                return testClass;
+            }
+        }
+    }
+}

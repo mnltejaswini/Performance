@@ -1,0 +1,6 @@
+﻿{
+  "Stress": {
+    "RunIterations": false,
+    "Iterations": 1000000
+  }
+}

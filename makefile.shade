@@ -5,3 +5,10 @@ var AUTHORS='Microsoft Open Technologies, Inc.'
 
 use-standard-lifecycle
 k-standard-goals
+
+#stress-test .compile
+  @{
+    var projectFiles = Files.Include("stress-test/**/project.json").Exclude("**/bin/*/app/project.json").ToList();
+
+    projectFiles.ForEach(projectFile => DnxTest(projectFile, testParallel: false));
+  }

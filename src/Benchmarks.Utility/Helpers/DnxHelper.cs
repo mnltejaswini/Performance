@@ -20,9 +20,10 @@ namespace Benchmarks.Utility.Helpers
             _alias = alias;
         }
 
-        public ProcessStartInfo BuildStartInfo(string appbasePath,
-                                               string framework,
-                                               string argument)
+        public ProcessStartInfo BuildStartInfo(
+            string appbasePath,
+            string framework,
+            string argument)
         {
             var dnxPath = GetDnxExecutable(framework);
             var psi = new ProcessStartInfo(dnxPath, argument)
@@ -73,7 +74,8 @@ namespace Benchmarks.Utility.Helpers
 
         public string GetDnxPath(string framework = "clr")
         {
-            var dnxHome = Environment.ExpandEnvironmentVariables(Environment.GetEnvironmentVariable("DNX_HOME")) ??
+            var envDnxHome = Environment.GetEnvironmentVariable("DNX_HOME");
+            var dnxHome = envDnxHome != null ? Environment.ExpandEnvironmentVariables(envDnxHome) :
                           Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), ".dnx");
 
             var aliasFile = Path.Combine(dnxHome, "alias", _alias + ".txt");
