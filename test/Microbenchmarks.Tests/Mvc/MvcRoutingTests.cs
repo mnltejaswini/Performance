@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Benchmarks.Framework;
 using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,9 +16,10 @@ namespace Microbenchmarks.Tests.Mvc
         [Benchmark]
         public async Task RouteToAction()
         {
-            using (var testServer = TestServer.Create(
-                configureApp: app => app.UseMvcWithDefaultRoute(),
-                configureServices: services => services.AddMvc()))
+            var builder = new WebApplicationBuilder()
+                .Configure(app => app.UseMvcWithDefaultRoute())
+                .ConfigureServices(services => services.AddMvc());
+            using (var testServer = new TestServer(builder))
             {
                 using (var client = testServer.CreateClient())
                 {

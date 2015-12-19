@@ -9,6 +9,7 @@ using Microsoft.AspNet.Hosting.Server;
 using Microsoft.AspNet.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Microbenchmarks.Tests
 {
@@ -23,7 +24,7 @@ namespace Microbenchmarks.Tests
         [BenchmarkVariation("WebListener", "Microsoft.AspNet.Server.WebListener")]
         public void MainToConfigureOverhead(string variationServer)
         {
-            var args = new[] { "--server", variationServer };
+            var args = new[] { "--server", variationServer, "--captureStartupErrors", "true" };
 
             using (Collector.StartCollection())
             {
@@ -39,13 +40,13 @@ namespace Microbenchmarks.Tests
                     .AddCommandLine(args)
                     .Build();
 
-                var hostBuilder = new WebHostBuilder(config, captureStartupErrors: true);
-                hostBuilder
+                var builder = new WebApplicationBuilder()
+                    .UseConfiguration(config)
                     .UseStartup(typeof(TestStartup))
-                    .UseServices(ConfigureTestServices);
+                    .ConfigureServices(ConfigureTestServices);
 
-                var host = hostBuilder.Build();
-                host.Start().Dispose();
+                var application = builder.Build();
+                application.Start().Dispose();
             }
         }
 
@@ -66,7 +67,15 @@ namespace Microbenchmarks.Tests
                 collector.StopCollection();
             }
 
-            public static void Main(string[] args) => WebApplication.Run<TestStartup>(args);
+            public static void Main(string[] args)
+            {
+                var application = new WebApplicationBuilder()
+                    .UseConfiguration(WebApplicationConfiguration.GetDefault(args))
+                    .UseStartup<TestStartup>()
+                    .Build();
+
+                application.Run();
+            }
         }
 
         private class TestServerLoader : IServerLoader
