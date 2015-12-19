@@ -15,10 +15,6 @@ namespace Microbenchmarks.Tests
 {
     public class HostingTests : BenchmarkTestBase
     {
-        private const string HostingJsonFile = "hosting.json";
-        private const string EnvironmentVariablesPrefix = "ASPNET_";
-        private const string ConfigFileKey = "config";
-
         [Benchmark]
         [BenchmarkVariation("Kestrel", "Microsoft.AspNet.Server.Kestrel")]
         [BenchmarkVariation("WebListener", "Microsoft.AspNet.Server.WebListener")]
@@ -28,20 +24,8 @@ namespace Microbenchmarks.Tests
 
             using (Collector.StartCollection())
             {
-                // Duplicating the work done in WebApplication.Run. We can't call directly into it because it'd
-                // normally perform a blocking operation preventing the tests from continuing.
-                var tempBuilder = new ConfigurationBuilder().AddCommandLine(args);
-                var tempConfig = tempBuilder.Build();
-                var configFilePath = tempConfig[ConfigFileKey] ?? HostingJsonFile;
-                var config = new ConfigurationBuilder()
-                    .AddJsonFile(configFilePath, optional: true)
-                    .AddEnvironmentVariables()
-                    .AddEnvironmentVariables(prefix: EnvironmentVariablesPrefix)
-                    .AddCommandLine(args)
-                    .Build();
-
                 var builder = new WebApplicationBuilder()
-                    .UseConfiguration(config)
+                    .UseConfiguration(WebApplicationConfiguration.GetDefault(args))
                     .UseStartup(typeof(TestStartup))
                     .ConfigureServices(ConfigureTestServices);
 
