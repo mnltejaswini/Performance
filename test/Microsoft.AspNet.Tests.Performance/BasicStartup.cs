@@ -39,7 +39,7 @@ namespace Microsoft.AspNet.Tests.Performance
             var logger = _sampleManager.LoggerFactory.CreateLogger(testName);
             logger.LogInformation($"Test project is set up at {testProject}");
 
-            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, "web");
+            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, "run");
 
             RunStartup(5000, logger, testAppStartInfo);
         }
@@ -59,7 +59,7 @@ namespace Microsoft.AspNet.Tests.Performance
 
             // --project "%~dp0packages\BasicKestrel\1.0.0\root"
             var root = Path.Combine(testProject, "approot", "packages", testName, "1.0.0", "root");
-            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, $"--project {root} web");
+            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, $"--project {root} run");
 
             RunStartup(5000, logger, testAppStartInfo);
         }
