@@ -27,9 +27,9 @@ namespace Microsoft.AspNet.Tests.Performance
         public IMetricCollector Collector { get; set; } = new NullMetricCollector();
 
         [Benchmark(Iterations = 10, WarmupIterations = 0)]
-        [BenchmarkVariation("BasicKestrel_DevelopmentScenario", "BasicKestrel", "kestrel", 5001)]
-        [BenchmarkVariation("StarterMvc_DevelopmentScenario", "StarterMvc", "web", 5000)]
-        public void DevelopmentScenario(string sampleName, string command, int port)
+        [BenchmarkVariation("BasicKestrel_DevelopmentScenario", "BasicKestrel")]
+        [BenchmarkVariation("StarterMvc_DevelopmentScenario", "StarterMvc")]
+        public void DevelopmentScenario(string sampleName)
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
             var testName = $"{sampleName}.{framework}.{nameof(DevelopmentScenario)}";
@@ -39,15 +39,15 @@ namespace Microsoft.AspNet.Tests.Performance
             var logger = _sampleManager.LoggerFactory.CreateLogger(testName);
             logger.LogInformation($"Test project is set up at {testProject}");
 
-            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, command);
+            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, "web");
 
-            RunStartup(port, logger, testAppStartInfo);
+            RunStartup(5000, logger, testAppStartInfo);
         }
 
         [Benchmark(Iterations = 10, WarmupIterations = 0)]
-        [BenchmarkVariation("BasicKestrel_ProductionScenario", "BasicKestrel", "kestrel", 5001)]
-        [BenchmarkVariation("StarterMvc_ProductionScenario", "StarterMvc", "web", 5000)]
-        public void ProductionScenario(string sampleName, string command, int port)
+        [BenchmarkVariation("BasicKestrel_ProductionScenario", "BasicKestrel")]
+        [BenchmarkVariation("StarterMvc_ProductionScenario", "StarterMvc")]
+        public void ProductionScenario(string sampleName)
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
             var testName = $"{sampleName}.{framework}.{nameof(ProductionScenario)}";
@@ -59,9 +59,9 @@ namespace Microsoft.AspNet.Tests.Performance
 
             // --project "%~dp0packages\BasicKestrel\1.0.0\root"
             var root = Path.Combine(testProject, "approot", "packages", testName, "1.0.0", "root");
-            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, $"--project {root} {command}");
+            var testAppStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, $"--project {root} web");
 
-            RunStartup(port, logger, testAppStartInfo);
+            RunStartup(5000, logger, testAppStartInfo);
         }
 
         private void RunStartup(int port, ILogger logger, ProcessStartInfo testAppStartInfo)
