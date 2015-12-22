@@ -13,6 +13,7 @@ namespace Stress.Framework
         private readonly Stopwatch _timer = new Stopwatch();
         private long _memoryOnCurrentCollectionStarted;
         private long _requestCount;
+        private Process _process;
 
         public StressMetricCollector()
         {
@@ -51,20 +52,20 @@ namespace Stress.Framework
             _requestCount = 0;
         }
 
+        public void TrackMemoryFor(Process process)
+        {
+            _process = process;
+        }
+
         public Stopwatch Time => _timer;
 
         public long MemoryDelta { get; private set; }
 
         public long Requests => _requestCount;
 
-        private static long GetCurrentMemory()
+        private long GetCurrentMemory()
         {
-            for (var i = 0; i < 5; i++)
-            {
-                GC.GetTotalMemory(forceFullCollection: true);
-            }
-
-            return GC.GetTotalMemory(forceFullCollection: true);
+            return _process.WorkingSet64;
         }
 
         private class Scope : IDisposable

@@ -51,6 +51,7 @@ namespace Stress.Framework
             var serverStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, _command);
 
             _serverProcess = Process.Start(serverStartInfo);
+            _metricCollector.TrackMemoryFor(_serverProcess);
 
             var result = new StressTestServerStartResult
             {

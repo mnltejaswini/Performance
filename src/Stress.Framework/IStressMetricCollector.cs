@@ -12,6 +12,7 @@ namespace Stress.Framework
         void StopCollection();
         void NewRequest();
         void Reset();
+        void TrackMemoryFor(Process process);
         Stopwatch Time { get; }
         long MemoryDelta { get; }
         long Requests { get; }
