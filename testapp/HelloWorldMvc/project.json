@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+  "frameworks": {
+    "dnxcore50": { },
+    "dnx451": { }
+  },
+  "dependencies": {
+    "Microsoft.AspNet.Mvc": "6.0.0-*",
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-*"
+  },
+  "commands": {
+    "web": "HelloWorldMvc"
+  }
+}

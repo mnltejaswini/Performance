@@ -34,7 +34,7 @@ namespace Microsoft.AspNet.Tests.Performance
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
             var testName = $"{sampleName}.{framework}.{nameof(DevelopmentScenario)}";
-            var testProject = _sampleManager.PrepareSample(testName, sampleName);
+            var testProject = _sampleManager.PrepareSample(testName, sampleName, BenchmarkConfig.Instance.RunIterations);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
             var logger = _sampleManager.LoggerFactory.CreateLogger(testName);
@@ -52,7 +52,7 @@ namespace Microsoft.AspNet.Tests.Performance
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
             var testName = $"{sampleName}.{framework}.{nameof(ProductionScenario)}";
-            var testProject = _sampleManager.PrepareSample(testName, sampleName, publish: true);
+            var testProject = _sampleManager.PreparePublishingSample(testName, sampleName, publish: true);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
             var logger = _sampleManager.LoggerFactory.CreateLogger(testName);

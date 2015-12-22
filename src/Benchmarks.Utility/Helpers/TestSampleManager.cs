@@ -25,7 +25,7 @@ namespace Benchmarks.Utility.Helpers
 
         public DnxHelper DnxHelper { get; }
 
-        public string PrepareSample(string testName, string sampleName)
+        public string PrepareSample(string testName, string sampleName, bool cleanProject)
         {
             string result;
             if (_cache.TryGetValue(testName, out result))
@@ -42,7 +42,10 @@ namespace Benchmarks.Utility.Helpers
             var target = Path.Combine(PathHelper.GetNewTempFolder(), testName);
             Directory.CreateDirectory(target);
 
-            _runner.Execute("git clean -xdff .", source);
+            if (cleanProject)
+            {
+                _runner.Execute("git clean -xdff .", source);
+            }
             _runner.Execute($"robocopy {source} {target} /E /S /XD node_modules");
 
             if (!DnxHelper.Restore(target, "coreclr", quiet: true))
@@ -56,11 +59,11 @@ namespace Benchmarks.Utility.Helpers
             return target;
         }
 
-        public string PrepareSample(string testName, string sampleName, bool publish)
+        public string PreparePublishingSample(string testName, string sampleName, bool publish)
         {
             if (!publish)
             {
-                return PrepareSample(testName, sampleName);
+                return PrepareSample(testName, sampleName, cleanProject: true);
             }
 
             var key = $"{testName}_out";
@@ -70,7 +73,7 @@ namespace Benchmarks.Utility.Helpers
                 return result;
             }
 
-            var source = PrepareSample(testName, sampleName);
+            var source = PrepareSample(testName, sampleName, cleanProject: true);
             if (source == null)
             {
                 return null;

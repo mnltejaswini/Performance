@@ -42,7 +42,7 @@ namespace Stress.Framework
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
             var fullTestName = $"{_testName}.{framework}.{nameof(_testMethodName)}";
-            var testProject = _sampleManager.PrepareSample(fullTestName, _testName);
+            var testProject = _sampleManager.PrepareSample(fullTestName, _testName, StressConfig.Instance.RunIterations);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
             var logger = _sampleManager.LoggerFactory.CreateLogger(fullTestName);

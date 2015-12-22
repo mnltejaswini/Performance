@@ -7,16 +7,26 @@ using Stress.Framework;
 
 namespace Microsoft.AspNet.Tests.Stress
 {
-    public class KestrelTests : StressTestBase
+    public class HelloWorldTests : StressTestBase
     {
-        public static async Task HelloWorldMiddleware_Warmup(HttpClient client)
+        public static async Task HelloWorld_Warmup(HttpClient client)
         {
             var response = await client.GetAsync("/");
             response.EnsureSuccessStatusCode();
         }
 
-        [Stress("BasicKestrel", WarmupMethodName = nameof(HelloWorldMiddleware_Warmup))]
-        public async Task HelloWorldMiddleware()
+        [Stress("BasicKestrel", WarmupMethodName = nameof(HelloWorld_Warmup))]
+        public async Task Middleware_HelloWorld()
+        {
+            await IterateAsync(async client =>
+            {
+                var response = await client.GetAsync("/");
+                response.EnsureSuccessStatusCode();
+            });
+        }
+
+        [Stress("HelloWorldMvc", WarmupMethodName = nameof(HelloWorld_Warmup))]
+        public async Task Mvc_HelloWorld()
         {
             await IterateAsync(async client =>
             {
