@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace Stress.Framework
@@ -38,8 +39,14 @@ namespace Stress.Framework
             RequestsPerSecond = RequestCount / elapsedSeconds;
         }
 
-        public void PublishOutput()
+        public void PublishOutput(ITestCase testCase, IMessageBus messageBus)
         {
+            messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "ITER", Iterations));
+            messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "TIME", TimeElapsed.Seconds));
+            messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "MEM", MemoryDelta / 1000));
+            messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "REQ", RequestCount));
+            messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "RPS", RequestsPerSecond));
+
             Console.WriteLine("Iterations: " + Iterations);
             Console.WriteLine("Total time elapsed: " + TimeElapsed);
             Console.WriteLine("Memory Delta: " + string.Format("{0:n0}K", MemoryDelta / 1000));

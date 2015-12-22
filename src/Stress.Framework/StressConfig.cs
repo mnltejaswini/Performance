@@ -22,6 +22,7 @@ namespace Stress.Framework
                 {
                     RunIterations = bool.Parse(config["Stress:RunIterations"]),
                     Iterations = long.Parse(config["Stress:Iterations"]),
+                    MetricReportInterval = int.Parse(config["Stress:MetricReportInterval"]),
                 };
             });
 
@@ -34,5 +35,7 @@ namespace Stress.Framework
         public bool RunIterations { get; private set; }
 
         public long Iterations { get; private set; }
+
+        public int MetricReportInterval { get; private set; }
     }
 }

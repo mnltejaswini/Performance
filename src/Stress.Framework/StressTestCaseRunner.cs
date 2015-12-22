@@ -98,7 +98,7 @@ namespace Stress.Framework
                 runSummary.PopulateMetrics(TestCase.MetricCollector);
                 _diagnosticMessageSink.OnMessage(new XunitDiagnosticMessage(runSummary.ToString()));
 
-                runSummary.PublishOutput();
+                runSummary.PublishOutput(TestCase, MessageBus);
             }
 
             return runSummary;
@@ -230,6 +230,26 @@ namespace Stress.Framework
                 }
 
                 return testClass;
+            }
+
+            protected override Task BeforeTestMethodInvokedAsync()
+            {
+                var stressTestCase = this.TestCase as StressTestCase;
+                if (stressTestCase != null)
+                {
+                    stressTestCase.MetricReporter.Start(MessageBus, stressTestCase);
+                }
+                return base.BeforeTestMethodInvokedAsync();
+            }
+
+            protected override Task AfterTestMethodInvokedAsync()
+            {
+                var testCase = this.TestCase as StressTestCase;
+                if (testCase != null)
+                {
+                    testCase.MetricReporter.Stop();
+                }
+                return base.AfterTestMethodInvokedAsync();
             }
         }
     }

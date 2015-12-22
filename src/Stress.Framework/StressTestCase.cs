@@ -28,9 +28,12 @@ namespace Stress.Framework
         {
             Iterations = iterations;
             MetricCollector = new StressMetricCollector();
+            MetricReporter = new TimedMetricReporter();
         }
 
         public override IStressMetricCollector MetricCollector { get; protected set; }
+
+        public virtual IStressMetricReporter MetricReporter { get; protected set; }
 
         public long Iterations { get; protected set; }
 
