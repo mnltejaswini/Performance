@@ -1,7 +1,7 @@
 ﻿{
   "Stress": {
     "RunIterations": false,
-    "Iterations": 1000000,
+    "Iterations": 1000,
     "MetricReportInterval": 5
   }
 }
