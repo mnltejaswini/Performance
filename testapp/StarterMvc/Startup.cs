@@ -75,8 +75,12 @@ namespace StarterMvc
                 using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
                     .CreateScope())
                 {
-                    serviceScope.ServiceProvider.GetService<ApplicationDbContext>()
-                         .Database.Migrate();
+                    var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+
+                    // We delete the pre-existing database first because each start of the Mvc site should be like running an app for the first time.
+                    dbContext.Database.EnsureDeleted();
+
+                    dbContext.Database.Migrate();
                 }
             }
 
