@@ -22,6 +22,7 @@ namespace Stress.Framework
         private readonly IStressMetricCollector _metricCollector;
         private readonly TestSampleManager _sampleManager;
         private readonly string _command;
+        private ILogger _logger;
 
         public StressTestServer(
             string testName,
@@ -45,8 +46,8 @@ namespace Stress.Framework
             var testProject = _sampleManager.PrepareSample(fullTestName, _testName, StressConfig.Instance.RunIterations);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
-            var logger = _sampleManager.LoggerFactory.CreateLogger(fullTestName);
-            logger.LogInformation($"Test project is set up at {testProject}");
+            _logger = _sampleManager.LoggerFactory.CreateLogger(fullTestName);
+            _logger.LogInformation($"Test project is set up at {testProject}");
 
             var serverStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, _command);
 
@@ -68,18 +69,18 @@ namespace Stress.Framework
             {
                 try
                 {
-                    logger.LogInformation($"Pinging {serverVerificationClient.BaseAddress} to ensure server booted properly");
+                    _logger.LogInformation($"Pinging {serverVerificationClient.BaseAddress} to ensure server booted properly");
                     response = await serverVerificationClient.GetAsync(serverVerificationClient.BaseAddress);
                     break;
                 }
                 catch (TimeoutException)
                 {
-                    logger.LogError("Http client timeout.");
+                    _logger.LogError("Http client timeout.");
                     break;
                 }
                 catch (Exception)
                 {
-                    logger.LogInformation("Failed to ping server. Retrying...");
+                    _logger.LogInformation("Failed to ping server. Retrying...");
                     Thread.Sleep(TimeSpan.FromSeconds(1));
                     continue;
                 }
@@ -87,14 +88,14 @@ namespace Stress.Framework
 
             if (_serverProcess != null && _serverProcess.HasExited)
             {
-                logger.LogError($"Server exited unexpectedly: {_serverProcess.Id}");
+                _logger.LogError($"Server exited unexpectedly: {_serverProcess.Id}");
             }
 
             if (response != null)
             {
-                logger.LogInformation($"Response {response.StatusCode}");
+                _logger.LogInformation($"Response {response.StatusCode}");
                 response.EnsureSuccessStatusCode();
-                logger.LogInformation("Server started successfully");
+                _logger.LogInformation("Server started successfully");
                 result.SuccessfullyStarted = true;
                 Client = new RequestTrackingHttpClient(baseAddress, _metricCollector);
             }
@@ -107,6 +108,7 @@ namespace Stress.Framework
             Client = null;
             if (!_serverProcess.HasExited)
             {
+                _logger.LogInformation("Terminating server.");
                 _serverProcess?.Kill();
             }
         }
