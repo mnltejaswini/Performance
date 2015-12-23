@@ -81,7 +81,7 @@ namespace Stress.Framework
 
             using (startResult.ServerHandle)
             {
-                await (Task)TestCase.WarmupMethod?.ToRuntimeMethod().Invoke(null, new[] { server.Client });
+                await (Task)TestCase.WarmupMethod?.ToRuntimeMethod().Invoke(null, new[] { server.ClientFactory() });
 
                 TestCase.MetricCollector.Reset();
                 var runner = CreateRunner(server, TestCase);
@@ -226,7 +226,7 @@ namespace Stress.Framework
                     var stressTestCase = (TestCase as StressTestCase);
                     StressTestBase.Iterations = stressTestCase.Iterations;
                     StressTestBase.Collector = stressTestCase.MetricCollector;
-                    StressTestBase.Client = _server.Client;
+                    StressTestBase.ClientFactory = _server.ClientFactory;
                 }
 
                 return testClass;

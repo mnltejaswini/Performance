@@ -21,7 +21,7 @@ namespace Stress.Framework
 
         internal long Iterations { get; set; }
 
-        internal HttpClient Client { get; set; }
+        internal Func<HttpClient> ClientFactory { get; set; }
 
         public async Task IterateAsync(Func<HttpClient, Task> iterate)
         {
@@ -29,7 +29,7 @@ namespace Stress.Framework
             {
                 for (var i = 0; i < Iterations; i++)
                 {
-                    await iterate(Client);
+                    await iterate(ClientFactory());
                 }
             }
         }

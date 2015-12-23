@@ -97,7 +97,7 @@ namespace Stress.Framework
                 response.EnsureSuccessStatusCode();
                 _logger.LogInformation("Server started successfully");
                 result.SuccessfullyStarted = true;
-                Client = new RequestTrackingHttpClient(baseAddress, _metricCollector);
+                ClientFactory = () => new RequestTrackingHttpClient(baseAddress, _metricCollector);
             }
 
             return result;
@@ -105,7 +105,7 @@ namespace Stress.Framework
 
         public void Dispose()
         {
-            Client = null;
+            ClientFactory = null;
             if (!_serverProcess.HasExited)
             {
                 _logger.LogInformation("Terminating server.");
@@ -113,7 +113,7 @@ namespace Stress.Framework
             }
         }
 
-        public HttpClient Client { get; private set; }
+        public Func<HttpClient> ClientFactory { get; private set; }
 
         private class RequestTrackingHttpClient : HttpClient
         {
