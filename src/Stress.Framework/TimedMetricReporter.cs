@@ -31,9 +31,11 @@ namespace Stress.Framework
                 return;
             }
 
-            var rps = (int)(collector.Requests / elapsed.TotalSeconds);
+            var rps = Math.Round(collector.Requests / elapsed.TotalSeconds, 1);
+
+            // TODO: Fix Memory collection and then report it.
             _messageBus.QueueMessage(
-                new StressTestProgressMessage($"Test {_testCase.TestMethod.Method.Name} ran {collector.Requests} requests @ {rps} RPS in {elapsed.TotalSeconds} sec with {collector.MemoryDelta} MB"));
+                new StressTestProgressMessage($"Test {_testCase.TestMethod.Method.Name} ran {collector.Requests} requests @ {rps} RPS in {(int)Math.Round(elapsed.TotalSeconds)} seconds."));
         }
 
         public void Start(IMessageBus messageBus, StressTestCase stressTestCase)
