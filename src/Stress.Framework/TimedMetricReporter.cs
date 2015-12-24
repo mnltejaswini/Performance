@@ -33,7 +33,7 @@ namespace Stress.Framework
 
             var rps = (int)(collector.Requests / elapsed.TotalSeconds);
             _messageBus.QueueMessage(
-                new StressTestProgressMessage($"Test {_testCase.TestMethod.Method.Name} ran {collector.Requests} requests @ {rps} RPS in {elapsed.Seconds} sec with {collector.MemoryDelta} MB"));
+                new StressTestProgressMessage($"Test {_testCase.TestMethod.Method.Name} ran {collector.Requests} requests @ {rps} RPS in {elapsed.TotalSeconds} sec with {collector.MemoryDelta} MB"));
         }
 
         public void Start(IMessageBus messageBus, StressTestCase stressTestCase)
