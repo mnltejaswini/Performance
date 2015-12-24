@@ -51,8 +51,16 @@ namespace Stress.Framework
             _logger = _sampleManager.LoggerFactory.CreateLogger(fullTestName);
             _logger.LogInformation($"Test project is set up at {testProject}");
 
-            var root = Path.Combine(testProject, "approot", "packages", fullTestName, "1.0.0", "root");
-            var serverStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, $"--project {root} " + _command);
+            ProcessStartInfo serverStartInfo;
+            if (StressConfig.Instance.RunIterations)
+            {
+                var root = Path.Combine(testProject, "approot", "packages", fullTestName, "1.0.0", "root");
+                serverStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, $"--project {root} " + _command);
+            }
+            else
+            {
+                serverStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, _command);
+            }
 
             _serverProcess = Process.Start(serverStartInfo);
             _metricCollector.TrackMemoryFor(_serverProcess);
