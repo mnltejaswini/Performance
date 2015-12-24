@@ -17,7 +17,6 @@ namespace Stress.Framework
     {
         private Process _serverProcess;
         private readonly string _testName;
-        private readonly string _testMethodName;
         private readonly int _port;
         private readonly IStressMetricCollector _metricCollector;
         private readonly TestSampleManager _sampleManager;
@@ -26,13 +25,11 @@ namespace Stress.Framework
 
         public StressTestServer(
             string testName,
-            string testMethodName,
             int port,
             string command,
             IStressMetricCollector metricCollector)
         {
             _testName = testName;
-            _testMethodName = testMethodName;
             _port = port;
             _command = command;
             _metricCollector = metricCollector;
@@ -42,7 +39,7 @@ namespace Stress.Framework
         public async Task<StressTestServerStartResult> StartAsync()
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
-            var fullTestName = $"{_testName}.{framework}.{nameof(_testMethodName)}";
+            var fullTestName = $"{_testName}.{framework}";
             var testProject = _sampleManager.PreparePublishingSample(fullTestName, _testName, publish: StressConfig.Instance.RunIterations);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
