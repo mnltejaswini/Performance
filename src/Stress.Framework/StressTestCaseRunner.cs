@@ -65,6 +65,7 @@ namespace Stress.Framework
             // Warmup
             var server = new StressTestServer(
                 TestCase.TestApplicationName,
+                TestCase.TestMethodName,
                 port: 5000,
                 command: "run",
                 metricCollector: TestCase.MetricCollector);

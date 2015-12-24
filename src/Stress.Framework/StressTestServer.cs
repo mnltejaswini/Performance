@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,14 +23,17 @@ namespace Stress.Framework
         private readonly TestSampleManager _sampleManager;
         private readonly string _command;
         private ILogger _logger;
+        private readonly string _testMethodName;
 
         public StressTestServer(
             string testName,
+            string testMethodName,
             int port,
             string command,
             IStressMetricCollector metricCollector)
         {
             _testName = testName;
+            _testMethodName = testMethodName;
             _port = port;
             _command = command;
             _metricCollector = metricCollector;
@@ -39,14 +43,15 @@ namespace Stress.Framework
         public async Task<StressTestServerStartResult> StartAsync()
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
-            var fullTestName = $"{_testName}.{framework}";
+            var fullTestName = $"{_testMethodName}.{_testName}.{framework}";
             var testProject = _sampleManager.PreparePublishingSample(fullTestName, _testName, publish: StressConfig.Instance.RunIterations);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
             _logger = _sampleManager.LoggerFactory.CreateLogger(fullTestName);
             _logger.LogInformation($"Test project is set up at {testProject}");
 
-            var serverStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, _command);
+            var root = Path.Combine(testProject, "approot", "packages", fullTestName, "1.0.0", "root");
+            var serverStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, $"--project {root} " + _command);
 
             _serverProcess = Process.Start(serverStartInfo);
             _metricCollector.TrackMemoryFor(_serverProcess);
