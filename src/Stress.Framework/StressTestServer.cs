@@ -44,6 +44,7 @@ namespace Stress.Framework
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
             var fullTestName = $"{_testMethodName}.{_testName}.{framework}";
+            fullTestName = fullTestName.Replace('_', '.');
             var testProject = _sampleManager.PreparePublishingSample(fullTestName, _testName, publish: StressConfig.Instance.RunIterations);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
