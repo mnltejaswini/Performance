@@ -35,7 +35,7 @@ namespace Stress.Framework
 
             // TODO: Fix Memory collection and then report it.
             _messageBus.QueueMessage(
-                new StressTestProgressMessage($"Test {_testCase.TestMethod.Method.Name} ran {collector.Requests} requests @ {rps} RPS in {(int)Math.Round(elapsed.TotalSeconds)} seconds."));
+                new StressTestProgressMessage($"Test {_testCase.TestMethod.Method.Name} ran {collector.Requests} requests @ {rps} RPS in {(int)Math.Round(elapsed.TotalSeconds)}s."));
         }
 
         public void Start(IMessageBus messageBus, StressTestCase stressTestCase)
