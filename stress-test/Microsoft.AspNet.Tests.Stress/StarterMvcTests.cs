@@ -64,7 +64,6 @@ namespace Microsoft.AspNet.Tests.Stress
 
                 // Verify Logoff
                 var logoffRequestContent = CreateLogOffPost(verificationToken);
-
                 var logoffResponse = await client.PostAsync("/Account/LogOff", logoffRequestContent);
                 logoffResponse.EnsureSuccessStatusCode();
 
@@ -84,6 +83,15 @@ namespace Microsoft.AspNet.Tests.Stress
 
                 var longPostResponseContent = await loginPostResponse.Content.ReadAsStringAsync();
                 Assert.DoesNotContain("Invalid login attempt.", longPostResponseContent); // Errored Login page
+
+                // Logoff to get the HttpClient back into a working state.
+                manageResponse = await client.GetAsync("/Manage");
+                manageResponse.EnsureSuccessStatusCode();
+                manageContent = await manageResponse.Content.ReadAsStringAsync();
+                verificationToken = ExtractVerificationToken(manageContent);
+                logoffRequestContent = CreateLogOffPost(verificationToken);
+                logoffResponse = await client.PostAsync("/Account/LogOff", logoffRequestContent);
+                logoffResponse.EnsureSuccessStatusCode();
             });
         }
 
@@ -128,18 +136,6 @@ namespace Microsoft.AspNet.Tests.Stress
             var content = new FormUrlEncodedContent(form);
 
             return content;
-        }
-
-        private void AddCookiesToRequest(HttpHeaders responseHeaders, HttpHeaders requestHeaders)
-        {
-            var cookiehHeaders = responseHeaders.GetValues("Set-Cookie");
-            foreach (var header in cookiehHeaders)
-            {
-                var cookieParts = header.Split(';');
-                var cookie = cookieParts[0];
-                var parts = cookie.Split('=');
-                requestHeaders.Add("Cookie", String.Format("{0}={1}", parts[0], parts[1]));
-            }
         }
 
         private string ExtractVerificationToken(string response)

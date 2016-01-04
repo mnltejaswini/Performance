@@ -27,9 +27,12 @@ namespace Stress.Framework
         {
             using (Collector.StartCollection())
             {
-                for (var i = 0; i < Iterations; i++)
+                using (var client = ClientFactory())
                 {
-                    await iterate(ClientFactory());
+                    for (var i = 0; i < Iterations; i++)
+                    {
+                        await iterate(client);
+                    }
                 }
             }
         }
