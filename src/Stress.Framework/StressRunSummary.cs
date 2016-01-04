@@ -42,7 +42,7 @@ namespace Stress.Framework
         public void PublishOutput(ITestCase testCase, IMessageBus messageBus)
         {
             messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "ITER", Iterations));
-            messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "TIME", TimeElapsed.Seconds));
+            messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "TIME", TimeElapsed.TotalSeconds));
             messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "MEM", MemoryDelta / 1000));
             messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "REQ", RequestCount));
             messageBus.QueueMessage(new StressTestStatisticsMessage(testCase, "RPS", RequestsPerSecond));
