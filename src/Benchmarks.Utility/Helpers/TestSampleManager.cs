@@ -25,6 +25,22 @@ namespace Benchmarks.Utility.Helpers
 
         public DnxHelper DnxHelper { get; }
 
+        public string RestoreSampleInPlace(string sampleName)
+        {
+            var source = PathHelper.GetTestAppFolder(sampleName);
+            if (source == null)
+            {
+                return null;
+            }
+
+            if (!DnxHelper.Restore(source, "coreclr", quiet: true))
+            {
+                return null;
+            }
+
+            return source;
+        }
+
         public string PrepareSample(string testName, string sampleName, bool cleanProject)
         {
             string result;

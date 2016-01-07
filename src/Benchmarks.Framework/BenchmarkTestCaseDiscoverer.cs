@@ -27,7 +27,8 @@ namespace Benchmarks.Framework
                 .Select(a => new
                 {
                     Name = a.GetNamedArgument<string>(nameof(BenchmarkVariationAttribute.VariationName)),
-                    TestMethodArguments = a.GetNamedArgument<object[]>(nameof(BenchmarkVariationAttribute.Data))
+                    TestMethodArguments = a.GetNamedArgument<object[]>(nameof(BenchmarkVariationAttribute.Data)),
+                    Framework = a.GetNamedArgument<string>(nameof(BenchmarkVariationAttribute.Framework))
                 })
                 .ToList();
 
@@ -36,7 +37,8 @@ namespace Benchmarks.Framework
                 variations.Add(new
                 {
                     Name = "Default",
-                    TestMethodArguments = new object[0]
+                    TestMethodArguments = new object[0],
+                    Framework = (string)null
                 });
             }
 
@@ -48,6 +50,7 @@ namespace Benchmarks.Framework
                     tests.Add(new BenchmarkTestCase(
                         factAttribute.GetNamedArgument<int>(nameof(BenchmarkAttribute.Iterations)),
                         factAttribute.GetNamedArgument<int>(nameof(BenchmarkAttribute.WarmupIterations)),
+                        variation.Framework,
                         variation.Name,
                         _diagnosticMessageSink,
                         testMethod,

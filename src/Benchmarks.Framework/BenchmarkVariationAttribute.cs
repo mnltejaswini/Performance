@@ -17,6 +17,8 @@ namespace Benchmarks.Framework
 
         public string VariationName { get; private set; }
 
+        public string Framework { get; set; }
+
         public object[] Data { get; }
 
         public override IEnumerable<object[]> GetData(MethodInfo testMethod)

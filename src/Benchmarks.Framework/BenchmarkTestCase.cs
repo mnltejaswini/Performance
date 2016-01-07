@@ -13,6 +13,7 @@ namespace Benchmarks.Framework
         public BenchmarkTestCase(
             int iterations,
             int warmupIterations,
+            string framework,
             string variation,
             IMessageSink diagnosticMessageSink,
             ITestMethod testMethod,
@@ -21,6 +22,11 @@ namespace Benchmarks.Framework
         {
             Iterations = iterations;
             WarmupIterations = warmupIterations;
+
+            if (!string.IsNullOrEmpty(framework))
+            {
+                Framework = framework;
+            }
         }
 
         public override IMetricCollector MetricCollector { get; } = new MetricCollector();
@@ -28,6 +34,8 @@ namespace Benchmarks.Framework
         public int Iterations { get; protected set; }
 
         public int WarmupIterations { get; protected set; }
+
+        public string Framework { get; }
 
         public override Task<RunSummary> RunAsync(
             IMessageSink diagnosticMessageSink,

@@ -58,7 +58,7 @@ namespace Benchmarks.Framework
                 ProductReportingVersion = BenchmarkConfig.Instance.ProductReportingVersion,
                 RunStarted = DateTime.UtcNow,
                 MachineName = _machineName,
-                Framework = _framework,
+                Framework = TestCase.Framework ?? _framework,
                 Architecture = IntPtr.Size > 4 ? "x64" : "x86",
                 WarmupIterations = TestCase.WarmupIterations,
                 Iterations = TestCase.Iterations,
