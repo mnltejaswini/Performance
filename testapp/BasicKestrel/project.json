@@ -1,12 +1,13 @@
 {
   "version": "1.0.0",
+  "name": "web",
   "compilationOptions": {
     "emitEntryPoint": true
   },
   "frameworks": {
-    "dnxcore50": { },
-    "dnx451": { }
+    "dnxcore50": { }
   },
+  "compileExclude": ["publish"],
   "dependencies": {
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc2-*"
   },
