@@ -30,7 +30,8 @@ namespace Microbenchmarks.Tests
                     .ConfigureServices(ConfigureTestServices);
 
                 var application = builder.Build();
-                application.Start().Dispose();
+                application.Start();
+                application.Dispose();
             }
         }
 
