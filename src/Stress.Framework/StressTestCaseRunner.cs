@@ -64,10 +64,11 @@ namespace Stress.Framework
 
             // Warmup
             var server = new StressTestServer(
+                TestCase.ServerType,
                 TestCase.TestApplicationName,
                 TestCase.TestMethodName,
                 port: 5000,
-                command: "run",
+                command: "web",
                 metricCollector: TestCase.MetricCollector);
             var startResult = await server.StartAsync();
 

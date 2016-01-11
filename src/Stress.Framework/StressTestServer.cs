@@ -11,12 +11,12 @@ using Benchmarks.Utility.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 using Xunit;
+using Microsoft.AspNet.Server.Testing;
 
 namespace Stress.Framework
 {
     public class StressTestServer : IDisposable
     {
-        private Process _serverProcess;
         private readonly string _testName;
         private readonly int _port;
         private readonly IStressMetricCollector _metricCollector;
@@ -24,14 +24,19 @@ namespace Stress.Framework
         private readonly string _command;
         private ILogger _logger;
         private readonly string _testMethodName;
+        private readonly ServerType _serverType;
+
+        private IApplicationDeployer _applicationDeployer;
 
         public StressTestServer(
+            ServerType serverType,
             string testName,
             string testMethodName,
             int port,
             string command,
             IStressMetricCollector metricCollector)
         {
+            _serverType = serverType;
             _testName = testName;
             _testMethodName = testMethodName;
             _port = port;
@@ -45,31 +50,27 @@ namespace Stress.Framework
             var framework = PlatformServices.Default.Runtime.RuntimeType;
             var fullTestName = $"{_testMethodName}.{_testName}.{framework}";
             fullTestName = fullTestName.Replace('_', '.');
-            var testProject = _sampleManager.PreparePublishingSample(fullTestName, _testName, publish: StressConfig.Instance.RunIterations);
-            Assert.True(testProject != null, $"Fail to set up test project.");
 
             _logger = _sampleManager.LoggerFactory.CreateLogger(fullTestName);
-            _logger.LogInformation($"Test project is set up at {testProject}");
 
-            ProcessStartInfo serverStartInfo;
-            if (StressConfig.Instance.RunIterations)
-            {
-                var root = Path.Combine(testProject, "approot", "packages", fullTestName, "1.0.0", "root");
-                serverStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, $"--project {root} " + _command);
-            }
-            else
-            {
-                serverStartInfo = _sampleManager.DnxHelper.BuildStartInfo(testProject, framework, _command);
-            }
+            var baseAddress = $"http://localhost:{_port}/";
 
-            _serverProcess = Process.Start(serverStartInfo);
-            _metricCollector.TrackMemoryFor(_serverProcess);
+            var p = new DeploymentParameters(PathHelper.GetTestAppFolder(_testName), _serverType, RuntimeFlavor.Clr, RuntimeArchitecture.x86)
+            {
+                SiteName = _testName,
+                ApplicationBaseUriHint = baseAddress,
+                Command = _command,
+            };
+            _applicationDeployer = ApplicationDeployerFactory.Create(p, _logger);
+            var deploymentResult = _applicationDeployer.Deploy();
+            baseAddress = deploymentResult.ApplicationBaseUri;
+
+            _logger.LogInformation($"Test project is set up at {deploymentResult.WebRootLocation}");
 
             var result = new StressTestServerStartResult
             {
                 ServerHandle = this
             };
-            var baseAddress = $"http://localhost:{_port}/";
             var serverVerificationClient = new HttpClient
             {
                 BaseAddress = new Uri(baseAddress)
@@ -97,11 +98,6 @@ namespace Stress.Framework
                 }
             }
 
-            if (_serverProcess != null && _serverProcess.HasExited)
-            {
-                _logger.LogError($"Server exited unexpectedly: {_serverProcess.Id}");
-            }
-
             if (response != null)
             {
                 _logger.LogInformation($"Response {response.StatusCode}");
@@ -110,6 +106,10 @@ namespace Stress.Framework
                 result.SuccessfullyStarted = true;
                 ClientFactory = () => new RequestTrackingHttpClient(baseAddress, _metricCollector);
             }
+            else
+            {
+                throw new InvalidOperationException("Server could not start");
+            }
 
             return result;
         }
@@ -117,11 +117,7 @@ namespace Stress.Framework
         public void Dispose()
         {
             ClientFactory = null;
-            if (!_serverProcess.HasExited)
-            {
-                _logger.LogInformation("Terminating server.");
-                _serverProcess?.Kill();
-            }
+            _applicationDeployer?.Dispose();
         }
 
         public Func<HttpClient> ClientFactory { get; private set; }

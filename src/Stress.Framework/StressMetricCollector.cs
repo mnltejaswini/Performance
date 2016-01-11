@@ -65,7 +65,7 @@ namespace Stress.Framework
 
         private long GetCurrentMemory()
         {
-            return _process.WorkingSet64;
+            return _process?.WorkingSet64 ?? 0;
         }
 
         private class Scope : IDisposable

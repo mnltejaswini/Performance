@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNet.Server.Testing;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -49,21 +50,33 @@ namespace Stress.Framework
                     TestMethodArguments = new object[0]
                 });
             }
+            var servers = factAttribute.GetNamedArgument<ServerType[]>(nameof(StressAttribute.Servers));
 
             var tests = new List<IXunitTestCase>();
-            foreach (var variation in variations)
+            foreach (var serverType in servers)
             {
-                var warmupMethod = ResolveWarmupMethod(testMethod, factAttribute);
-                var iterations = StressConfig.Instance.RunIterations ? factAttribute.GetNamedArgument<long>(nameof(StressAttribute.Iterations)) : 1;
+                foreach (var variation in variations)
+                {
+                    var warmupMethod = ResolveWarmupMethod(testMethod, factAttribute);
+                    var iterations = StressConfig.Instance.RunIterations ? factAttribute.GetNamedArgument<long>(nameof(StressAttribute.Iterations)) : 1;
 
-                tests.Add(new StressTestCase(
-                    factAttribute.GetNamedArgument<string>(nameof(StressAttribute.TestApplicationName)),
-                    iterations,
-                    variation.Name,
-                    warmupMethod,
-                    _diagnosticMessageSink,
-                    testMethod,
-                    variation.TestMethodArguments));
+                    var variationName = variation.Name;
+                    if (servers.Length > 1)
+                    {
+                        variationName = variationName + "_" + serverType;
+                    }
+
+                    tests.Add(new StressTestCase(
+                        factAttribute.GetNamedArgument<string>(nameof(StressAttribute.TestApplicationName)),
+                        iterations,
+                        variationName,
+                        serverType,
+                        warmupMethod,
+                        _diagnosticMessageSink,
+                        testMethod,
+                        variation.TestMethodArguments));
+                }
+
             }
 
             return tests;

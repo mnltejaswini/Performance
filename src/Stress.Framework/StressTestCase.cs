@@ -3,6 +3,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Server.Testing;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -14,6 +15,7 @@ namespace Stress.Framework
             string testApplicationName,
             long iterations,
             string variation,
+            ServerType serverType,
             IMethodInfo warmupMethod,
             IMessageSink diagnosticMessageSink,
             ITestMethod testMethod,
@@ -21,6 +23,7 @@ namespace Stress.Framework
             : base(
             testApplicationName,
             variation,
+            serverType,
             warmupMethod,
             diagnosticMessageSink,
             testMethod,

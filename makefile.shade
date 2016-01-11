@@ -29,9 +29,9 @@ k-standard-goals
           
           foreach (var framework in targetFrameworks)
           {
-              if (framework.StartsWith("dnxcore", StringComparison.OrdinalIgnoreCase))
+              if (framework.StartsWith("dnx451", StringComparison.OrdinalIgnoreCase))
               {
-                  Dnx("test -quiet -parallel none", projectFolder, "default -runtime coreclr");
+                  Dnx("test -quiet -parallel none", projectFolder, "default -runtime clr");
               }
           }
       }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNet.Server.Testing;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -19,6 +20,7 @@ namespace Stress.Framework
         public StressTestCaseBase(
             string testApplicationName,
             string variation,
+            ServerType serverType,
             IMethodInfo warmupMethod,
             IMessageSink diagnosticMessageSink,
             ITestMethod testMethod,
@@ -38,6 +40,7 @@ namespace Stress.Framework
 
             DiagnosticMessageSink = diagnosticMessageSink;
             Variation = variation;
+            ServerType = serverType;
 
             var potentialMetricCollector = testMethod.Method.GetParameters().FirstOrDefault();
 
@@ -63,6 +66,7 @@ namespace Stress.Framework
         public string TestMethodName { get; protected set; }
         public string Variation { get; protected set; }
         public IMethodInfo WarmupMethod { get; protected set; }
+        public ServerType ServerType { get; protected set; }
 
         protected override string GetSkipReason(IAttributeInfo factAttribute) => EvaluateSkipConditions(TestMethod) ?? base.GetSkipReason(factAttribute);
 
