@@ -49,7 +49,7 @@ namespace Stress.Framework
 
         protected virtual bool Visit(ITestStatisticsMessage message)
         {
-            _logger.LogImportantMessage($"##teamcity[buildStatisticValue key='{_escape(message.TestMethod.Method.Name + "_" + message.Key)}' value='{_escape(Convert.ToString(message.Value))}' flowId='{_toFlowId(message.TestCollection.DisplayName)}' ]");
+            _logger.LogImportantMessage($"##teamcity[buildStatisticValue key='{_escape(message.TestCase.DisplayName + "_" + message.Key)}' value='{_escape(Convert.ToString(message.Value))}' flowId='{_toFlowId(message.TestCollection.DisplayName)}' ]");
             return true;
         }
     }
