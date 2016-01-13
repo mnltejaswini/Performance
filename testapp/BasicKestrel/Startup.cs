@@ -22,6 +22,7 @@ namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloWorld
         {
             var application = new WebApplicationBuilder()
                 .UseConfiguration(WebApplicationConfiguration.GetDefault(args))
+                .UseIISPlatformHandlerUrl()
                 .UseStartup<Startup>()
                 .Build();
 
