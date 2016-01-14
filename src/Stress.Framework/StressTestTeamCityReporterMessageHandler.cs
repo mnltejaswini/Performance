@@ -3,6 +3,7 @@
 
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Runner.Reporters;
@@ -49,7 +50,10 @@ namespace Stress.Framework
 
         protected virtual bool Visit(ITestStatisticsMessage message)
         {
-            _logger.LogImportantMessage($"##teamcity[buildStatisticValue key='{_escape(message.TestCase.DisplayName + "_" + message.Key)}' value='{_escape(Convert.ToString(message.Value))}' flowId='{_toFlowId(message.TestCollection.DisplayName)}' ]");
+            var displayName = message.TestCase.DisplayName + " " + message.Key;
+            // Cleanup name because teamcity doesn like spaces in key
+            displayName = Regex.Replace(displayName, "[^a-zA-Z0-9]+", "_");
+            _logger.LogImportantMessage($"##teamcity[buildStatisticValue key='{_escape(displayName)}' value='{_escape(Convert.ToString(message.Value))}' flowId='{_toFlowId(message.TestCollection.DisplayName)}' ]");
             return true;
         }
     }
