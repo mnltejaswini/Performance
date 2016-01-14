@@ -35,6 +35,10 @@ namespace Microsoft.AspNet.Tests.Performance
             {
                 var source = _sampleManager.RestoreSampleInPlace(sample.Item1);
                 var parameters = new DeploymentParameters(source, ServerType.IIS, sample.Item2, RuntimeArchitecture.x64);
+
+                // This is a quick fix to turn around the build before the fix in Hosting eventually goes online
+                parameters.ApplicationBaseUriHint = "http://localhost:0";
+
                 var deployer = ApplicationDeployerFactory.Create(parameters, loggerFactory.CreateLogger<IISTestManager>());
 
                 var result = deployer.Deploy();
