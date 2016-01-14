@@ -70,23 +70,27 @@ namespace Stress.Framework
                 port: 5000,
                 command: "web",
                 metricCollector: TestCase.MetricCollector);
-            var startResult = await server.StartAsync();
 
-            if (!startResult.SuccessfullyStarted)
+            using (server)
             {
-                _diagnosticMessageSink.OnMessage(
-                    new XunitDiagnosticMessage("Failed to start application server."));
+                var startResult = await server.StartAsync();
 
-                return runSummary;
-            }
+                if (!startResult.SuccessfullyStarted)
+                {
+                    _diagnosticMessageSink.OnMessage(
+                        new XunitDiagnosticMessage("Failed to start application server."));
 
-            using (startResult.ServerHandle)
-            {
-                await (Task)TestCase.WarmupMethod?.ToRuntimeMethod().Invoke(null, new[] { server.ClientFactory() });
+                    return runSummary;
+                }
 
-                TestCase.MetricCollector.Reset();
-                var runner = CreateRunner(server, TestCase);
-                runSummary.Aggregate(await runner.RunAsync());
+                using (startResult.ServerHandle)
+                {
+                    await (Task)TestCase.WarmupMethod?.ToRuntimeMethod().Invoke(null, new[] { server.ClientFactory() });
+
+                    TestCase.MetricCollector.Reset();
+                    var runner = CreateRunner(server, TestCase);
+                    runSummary.Aggregate(await runner.RunAsync());
+                }
             }
 
             if (runSummary.Failed != 0)
