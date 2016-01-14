@@ -19,11 +19,14 @@ namespace Benchmarks.Utility.Helpers
             LoggerFactory.AddConsole();
 
             DnxHelper = new DnxHelper("perf");
+            DotnetHelper = new DotnetHelper();
         }
 
         public ILoggerFactory LoggerFactory { get; }
 
         public DnxHelper DnxHelper { get; }
+
+        public DotnetHelper DotnetHelper { get; }
 
         public string RestoreSampleInPlace(string sampleName)
         {
