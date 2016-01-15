@@ -98,17 +98,17 @@ namespace Stress.Framework
                 }
             }
 
+            result.SuccessfullyStarted = false;
             if (response != null)
             {
                 _logger.LogInformation($"Response {response.StatusCode}");
-                response.EnsureSuccessStatusCode();
-                _logger.LogInformation("Server started successfully");
-                result.SuccessfullyStarted = true;
-                ClientFactory = () => new RequestTrackingHttpClient(baseAddress, _metricCollector);
-            }
-            else
-            {
-                result.SuccessfullyStarted = false;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Server started successfully");
+                    result.SuccessfullyStarted = true;
+                    ClientFactory = () => new RequestTrackingHttpClient(baseAddress, _metricCollector);
+                }
             }
 
             return result;
