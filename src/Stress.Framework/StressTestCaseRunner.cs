@@ -79,18 +79,20 @@ namespace Stress.Framework
                 {
                     _diagnosticMessageSink.OnMessage(
                         new XunitDiagnosticMessage("Failed to start application server."));
-
-                    return runSummary;
+                    return new RunSummary() { Total = 1, Failed = 1 };
                 }
-
-                using (startResult.ServerHandle)
+                else
                 {
-                    await (Task)TestCase.WarmupMethod?.ToRuntimeMethod().Invoke(null, new[] { server.ClientFactory() });
+                    using (startResult.ServerHandle)
+                    {
+                        await (Task)TestCase.WarmupMethod?.ToRuntimeMethod().Invoke(null, new[] { server.ClientFactory() });
 
-                    TestCase.MetricCollector.Reset();
-                    var runner = CreateRunner(server, TestCase);
-                    runSummary.Aggregate(await runner.RunAsync());
+                        TestCase.MetricCollector.Reset();
+                        var runner = CreateRunner(server, TestCase);
+                        runSummary.Aggregate(await runner.RunAsync());
+                    }
                 }
+
             }
 
             if (runSummary.Failed != 0)

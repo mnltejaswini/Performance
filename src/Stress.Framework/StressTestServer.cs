@@ -108,8 +108,7 @@ namespace Stress.Framework
             }
             else
             {
-                //_applicationDeployer.Dispose();
-                throw new InvalidOperationException("Server could not start");
+                result.SuccessfullyStarted = false;
             }
 
             return result;
