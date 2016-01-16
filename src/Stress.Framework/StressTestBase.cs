@@ -2,8 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Benchmarks.Utility.Helpers;
 
@@ -43,6 +43,7 @@ namespace Stress.Framework
                             var timeoutLeft = TimeSpan.FromMilliseconds(StressConfig.Instance.FailDebuggerTimeout);
                             while (timeoutLeft > TimeSpan.Zero)
                             {
+                                Thread.Sleep((int)timeoutSpan.TotalMilliseconds);
                                 Console.WriteLine($"Waiting for debugger attach, {timeoutLeft} left");
                                 timeoutLeft = timeoutLeft - timeoutSpan;
                             }
