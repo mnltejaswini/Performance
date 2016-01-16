@@ -61,7 +61,18 @@ namespace Stress.Framework
                 ApplicationBaseUriHint = baseAddress,
                 Command = _command,
             };
-            _applicationDeployer = ApplicationDeployerFactory.Create(p, _logger);
+
+            ILogger deployerLogger;
+            if (StressConfig.Instance.DeployerLogging)
+            {
+                deployerLogger = _logger;
+            }
+            else
+            {
+                deployerLogger = new NullLogger();
+            }
+
+            _applicationDeployer = ApplicationDeployerFactory.Create(p, deployerLogger);
             var deploymentResult = _applicationDeployer.Deploy();
             baseAddress = deploymentResult.ApplicationBaseUri;
 
@@ -144,6 +155,23 @@ namespace Stress.Framework
                     _metricCollector.NewRequest();
                     return base.SendAsync(request, cancellationToken);
                 }
+            }
+        }
+
+        private class NullLogger : ILogger
+        {
+            public IDisposable BeginScopeImpl(object state)
+            {
+                return null;
+            }
+
+            public bool IsEnabled(LogLevel logLevel)
+            {
+                return false;
+            }
+
+            public void Log(LogLevel logLevel, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
+            {
             }
         }
     }

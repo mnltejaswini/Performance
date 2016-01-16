@@ -24,6 +24,7 @@ namespace Stress.Framework
                     Iterations = long.Parse(config["Stress:Iterations"]),
                     MetricReportInterval = int.Parse(config["Stress:MetricReportInterval"]),
                     FailDebuggerTimeout = int.Parse(config["Stress:FailDebuggerTimeout"]),
+                    DeployerLogging = bool.Parse(config["Stress:DeployerLogging"] ?? "true")
                 };
             });
 
@@ -40,5 +41,7 @@ namespace Stress.Framework
         public int MetricReportInterval { get; private set; }
 
         public int FailDebuggerTimeout { get; private set; }
+
+        public bool DeployerLogging{ get; private set; }
     }
 }
