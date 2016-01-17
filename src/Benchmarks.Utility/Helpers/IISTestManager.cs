@@ -2,14 +2,20 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 #if DNX451
+
 using System;
 using System.Collections.Generic;
-using Benchmarks.Utility.Helpers;
 using Microsoft.AspNet.Server.Testing;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.AspNet.Tests.Performance
+namespace Benchmarks.Utility.Helpers
 {
+    /// <summary>
+    /// Test manager helps test cases to deploy a web project to IIS.
+    /// 
+    /// This class depends on IISDeployer of Microsoft.AspNet.Server.Testing package which is DNX451 only.
+    /// https://github.com/aspnet/Hosting/tree/dev/src/Microsoft.AspNet.Server.Testing
+    /// </summary>
     public class IISTestManager : IDisposable
     {
         private bool _initalized = false;
@@ -33,7 +39,7 @@ namespace Microsoft.AspNet.Tests.Performance
 
             foreach (var sample in sampleList)
             {
-                var source = _sampleManager.RestoreSampleInPlace(sample.Item1);
+                var source = _sampleManager.EnsureRestoredSample(sample.Item1);
                 var parameters = new DeploymentParameters(source, ServerType.IIS, sample.Item2, RuntimeArchitecture.x64);
 
                 // This is a quick fix to turn around the build before the fix in Hosting eventually goes online
@@ -70,4 +76,5 @@ namespace Microsoft.AspNet.Tests.Performance
         }
     }
 }
+
 #endif

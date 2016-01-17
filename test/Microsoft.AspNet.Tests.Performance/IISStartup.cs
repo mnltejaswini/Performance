@@ -2,15 +2,20 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 #if DNX451
+
 using System;
 using System.Net.Http;
 using Benchmarks.Framework;
+using Benchmarks.Utility.Helpers;
 using Microsoft.AspNet.Server.Testing;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace Microsoft.AspNet.Tests.Performance
 {
+    /// <summary>
+    /// This test relies on Microsoft.AspNet.
+    /// </summary>
     public class IISStartup : IBenchmarkTest, IClassFixture<IISTestManager>
     {
         private readonly ILoggerFactory _loggerFactory;
@@ -49,4 +54,5 @@ namespace Microsoft.AspNet.Tests.Performance
         }
     }
 }
+
 #endif

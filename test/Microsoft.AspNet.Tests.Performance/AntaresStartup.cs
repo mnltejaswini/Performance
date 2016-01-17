@@ -8,13 +8,19 @@ using System.Net.Http;
 using Benchmarks.Framework;
 using Benchmarks.Utility.Azure;
 using Benchmarks.Utility.Helpers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace Microsoft.AspNet.Tests.Performance
 {
-    public class AntaresStartup : StartupTestBase, IDisposable
+    public class AntaresStartup : IDisposable
     {
+        protected readonly BenchmarkRunSummary _summary;
+        protected readonly int _iterationCount = 1;
+        protected readonly ILoggerFactory _loggerFactory;
+        protected readonly DnxHelper _dnx = new DnxHelper("perf");
+
         private readonly string _location = "North Central US";
         private readonly string _username;
         private readonly string _password;
@@ -25,8 +31,24 @@ namespace Microsoft.AspNet.Tests.Performance
         private string _testsitesource;
         private AzureCli _azure;
 
-        public AntaresStartup() : base(1)
+        public AntaresStartup()
         {
+            _loggerFactory = new LoggerFactory();
+            _loggerFactory.AddConsole();
+
+            _summary = new BenchmarkRunSummary
+            {
+                TestClassFullName = GetType().FullName,
+                TestClass = GetType().Name,
+                RunStarted = DateTime.Now,
+                MachineName = GetMachineName(),
+                Iterations = _iterationCount,
+                Architecture = IntPtr.Size > 4 ? "x64" : "x86",
+                WarmupIterations = 0,
+                CustomData = BenchmarkConfig.Instance.CustomData,
+                ProductReportingVersion = BenchmarkConfig.Instance.ProductReportingVersion,
+            };
+
             _rand = new Random((int)DateTime.Now.Ticks);
             _username = GenerateRandomePassword();
             _password = GenerateRandomePassword();
@@ -181,6 +203,36 @@ namespace Microsoft.AspNet.Tests.Performance
         {
             var name = Path.GetRandomFileName();
             return name.Remove(name.IndexOf('.'), 1);
+        }
+
+        protected void SaveSummary(ILogger logger)
+        {
+            foreach (var database in BenchmarkConfig.Instance.ResultDatabases)
+            {
+                try
+                {
+                    new SqlServerBenchmarkResultProcessor(database).SaveSummary(_summary);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($"Failed to save results to {ex}");
+                    throw;
+                }
+            }
+        }
+
+        private static string GetMachineName()
+        {
+#if DNXCORE50
+            var config = new ConfigurationBuilder()
+                .SetBasePath(".")
+                .AddEnvironmentVariables()
+                .Build();
+
+            return config["computerName"];
+#else
+            return Environment.MachineName;
+#endif
         }
     }
 }

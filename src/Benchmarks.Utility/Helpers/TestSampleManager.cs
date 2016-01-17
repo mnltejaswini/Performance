@@ -1,4 +1,6 @@
-using System;
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Logging;
@@ -28,7 +30,7 @@ namespace Benchmarks.Utility.Helpers
 
         public DotnetHelper DotnetHelper { get; }
 
-        public string RestoreSampleInPlace(string sampleName)
+        public string EnsureRestoredSample(string sampleName)
         {
             var source = PathHelper.GetTestAppFolder(sampleName);
             if (source == null)
