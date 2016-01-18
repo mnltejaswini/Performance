@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Benchmarks.Utility.Measurement
 {
-    public class WebApplicationFirstRequest
+    public class WebHostFirstRequest
     {
         private readonly StartupRunnerOptions _options;
         private readonly string _url;
@@ -20,7 +20,7 @@ namespace Benchmarks.Utility.Measurement
         private readonly int _retry = 10;
         private readonly TimeSpan _timeout; // in seconds
 
-        public WebApplicationFirstRequest(StartupRunnerOptions options,
+        public WebHostFirstRequest(StartupRunnerOptions options,
                                           TimeSpan timeout,
                                           int port,
                                           string path)
@@ -36,7 +36,7 @@ namespace Benchmarks.Utility.Measurement
         {
             var client = new HttpClient();
 
-            _logger.LogInformation($"Measurer: {typeof(WebApplicationFirstRequest).Name}");
+            _logger.LogInformation($"Measurer: {typeof(WebHostFirstRequest).Name}");
             _logger.LogInformation($"CommandFilename: { _options.ProcessStartInfo.FileName}");
             _logger.LogInformation($"CommandArguments: {_options.ProcessStartInfo.Arguments}");
             _logger.LogInformation($"Url: {_url}");

@@ -24,14 +24,14 @@ namespace Microbenchmarks.Tests
 
             using (Collector.StartCollection())
             {
-                var builder = new WebApplicationBuilder()
-                    .UseConfiguration(WebApplicationConfiguration.GetDefault(args))
+                var builder = new WebHostBuilder()
+                    .UseDefaultConfiguration(args)
                     .UseStartup(typeof(TestStartup))
                     .ConfigureServices(ConfigureTestServices);
 
-                var application = builder.Build();
-                application.Start();
-                application.Dispose();
+                var host = builder.Build();
+                host.Start();
+                host.Dispose();
             }
         }
 
@@ -54,12 +54,12 @@ namespace Microbenchmarks.Tests
 
             public static void Main(string[] args)
             {
-                var application = new WebApplicationBuilder()
-                    .UseConfiguration(WebApplicationConfiguration.GetDefault(args))
+                var host = new WebHostBuilder()
+                    .UseDefaultConfiguration(args)
                     .UseStartup<TestStartup>()
                     .Build();
 
-                application.Run();
+                host.Run();
             }
         }
 

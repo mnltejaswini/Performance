@@ -16,7 +16,7 @@ namespace Microbenchmarks.Tests.Mvc
         [Benchmark]
         public async Task RouteToAction()
         {
-            var builder = new WebApplicationBuilder()
+            var builder = new WebHostBuilder()
                 .Configure(app => app.UseMvcWithDefaultRoute())
                 .ConfigureServices(services => services.AddMvc());
             using (var testServer = new TestServer(builder))
