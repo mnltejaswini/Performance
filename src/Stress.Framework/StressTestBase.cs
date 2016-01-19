@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,16 +29,14 @@ namespace Stress.Framework
                         {
                             await iterate(client);
                         }
-                        catch (Exception ex) when (StressConfig.Instance.FailDebuggerTimeout > 0)
+                        catch (Exception ex) when (StressConfig.Instance.FailDebugger)
                         {
                             Console.Error.WriteLine($"Caught exception: {ex}");
-                            var timeoutSpan = TimeSpan.FromSeconds(10);
-                            var timeoutLeft = TimeSpan.FromMilliseconds(StressConfig.Instance.FailDebuggerTimeout);
-                            while (timeoutLeft > TimeSpan.Zero)
+                            var timeoutSpan = TimeSpan.FromMinutes(1);
+                            while (!Debugger.IsAttached)
                             {
                                 Thread.Sleep((int)timeoutSpan.TotalMilliseconds);
-                                Console.WriteLine($"Waiting for debugger attach, {timeoutLeft} left");
-                                timeoutLeft = timeoutLeft - timeoutSpan;
+                                Console.WriteLine($"Waiting for debugger attach");
                             }
                             throw;
                         }
