@@ -19,7 +19,7 @@ namespace Benchmarks.Utility.Helpers
     public class IISTestManager : IDisposable
     {
         private bool _initalized = false;
-        private readonly TestSampleManager _sampleManager = new TestSampleManager();
+        private readonly SampleManager _sampleManager = new SampleManager();
         private readonly List<IDisposable> _deployer = new List<IDisposable>();
         private readonly Dictionary<Tuple<string, RuntimeFlavor>, DeploymentResult> _deployments
                    = new Dictionary<Tuple<string, RuntimeFlavor>, DeploymentResult>();
@@ -39,7 +39,7 @@ namespace Benchmarks.Utility.Helpers
 
             foreach (var sample in sampleList)
             {
-                var source = _sampleManager.EnsureRestoredSample(sample.Item1);
+                var source = _sampleManager.GetRestoredSample(sample.Item1);
                 var parameters = new DeploymentParameters(source, ServerType.IIS, sample.Item2, RuntimeArchitecture.x64);
 
                 // This is a quick fix to turn around the build before the fix in Hosting eventually goes online

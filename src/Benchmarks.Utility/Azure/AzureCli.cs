@@ -28,7 +28,11 @@ namespace Benchmarks.Utility.Azure
 
         public static AzureCli Create(string workingDirectory)
         {
-            var cmdRunner = new CommandLineRunner() { RedirectOutput = true, Timeout = TimeSpan.FromSeconds(1) };
+            var cmdRunner = new CommandLineRunner()
+            {
+                RedirectOutput = true,
+                Timeout = TimeSpan.FromSeconds(1)
+            };
 
             if (cmdRunner.Execute("where azure") == -1)
             {

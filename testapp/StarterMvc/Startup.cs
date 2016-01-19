@@ -105,6 +105,7 @@ namespace StarterMvc
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
+                .UseServer("Microsoft.AspNet.Server.Kestrel")
                 .UseDefaultConfiguration(args)
                 .UseIISPlatformHandlerUrl()
                 .UseStartup<Startup>()

@@ -9,8 +9,13 @@ namespace Benchmarks.Utility.Helpers
 {
     public class DotnetHelper
     {
+        private static readonly DotnetHelper _default = new DotnetHelper();
         private readonly string _executablePath = Path.Combine("cli", "bin", "dotnet.exe");
         private readonly string _defaultDotnetHome = Path.Combine(Environment.GetEnvironmentVariable("LocalAppData"), "Microsoft", "dotnet");
+
+        public static DotnetHelper GetDefaultInstance() => _default;
+
+        private DotnetHelper() { }
 
         public ProcessStartInfo BuildStartInfo(
             string appbasePath,
@@ -42,7 +47,7 @@ namespace Benchmarks.Utility.Helpers
             return exited && proc.ExitCode == 0;
         }
 
-        public bool Publish(string workingDir, string outputDir)
+        public bool Publish(string workingDir, string outputDir, string framework)
         {
             var psi = new ProcessStartInfo(GetDotnetExecutable())
             {
@@ -51,11 +56,20 @@ namespace Benchmarks.Utility.Helpers
                 UseShellExecute = false
             };
 
-            var proc = Process.Start(psi);
+            if (!string.IsNullOrEmpty(framework))
+            {
+                psi.Arguments = $"{psi.Arguments} --framework {framework}";
+            }
 
-            var exited = proc.WaitForExit(300 * 1000);
+            var proc = Process.Start(psi);
+            var exited = proc.WaitForExit((int)TimeSpan.FromMinutes(5).TotalMilliseconds);
 
             return exited && proc.ExitCode == 0;
+        }
+
+        public bool Publish(string workingDir, string outputDir)
+        {
+            return Publish(workingDir, outputDir, framework: null);
         }
 
         public string GetDotnetPath()

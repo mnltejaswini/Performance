@@ -9,7 +9,13 @@ namespace Benchmarks.Utility.Helpers
 {
     public class CommandLineRunner
     {
+        private static readonly CommandLineRunner _default = new CommandLineRunner("cmd");
+
         private readonly string _command;
+
+        public static CommandLineRunner GetDefaultInstance() => _default;
+
+        public CommandLineRunner() : this("cmd") { }
 
         public CommandLineRunner(string command)
         {
@@ -17,8 +23,6 @@ namespace Benchmarks.Utility.Helpers
 
             Timeout = TimeSpan.FromMinutes(1);
         }
-
-        public CommandLineRunner() : this("cmd") { }
 
         public bool RedirectOutput { get; set; }
 

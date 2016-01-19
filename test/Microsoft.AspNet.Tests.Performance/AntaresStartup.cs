@@ -19,7 +19,6 @@ namespace Microsoft.AspNet.Tests.Performance
         protected readonly BenchmarkRunSummary _summary;
         protected readonly int _iterationCount = 1;
         protected readonly ILoggerFactory _loggerFactory;
-        protected readonly DnxHelper _dnx = new DnxHelper("perf");
 
         private readonly string _location = "North Central US";
         private readonly string _username;
@@ -67,7 +66,7 @@ namespace Microsoft.AspNet.Tests.Performance
         [InlineData("StarterMvc", "coreclr")]
         public void PublishAndRun(string sampleName, string framework)
         {
-            _dnx.GetDnxExecutable(framework);
+            DnxHelper.GetDefaultInstance().GetDnxExecutable(framework);
 
             _log = _loggerFactory.CreateLogger($"{nameof(AntaresStartup)}.{nameof(PublishAndRun)}.{sampleName}.{framework}");
             DeployTestSite(sampleName, framework);
@@ -112,7 +111,7 @@ namespace Microsoft.AspNet.Tests.Performance
 
             runner.Execute($"git clean -xdff .", sourcePath);
             Assert.NotEqual(-1, runner.Execute($"robocopy {sourcePath} {_testsitesource} /E /S /XD node_modules")); // robcopy doesn't return 0
-            File.WriteAllText(Path.Combine(_testsitesource, "global.json"), _dnx.BuildGlobalJson(framework));
+            File.WriteAllText(Path.Combine(_testsitesource, "global.json"), DnxHelper.GetDefaultInstance().BuildGlobalJson(framework));
             File.Copy(PathHelper.GetNuGetConfig(), Path.Combine(_testsitesource, "NuGet.config"));
 
             _log.LogInformation($"Testsite sources are copied to {_testsitesource}.");

@@ -9,11 +9,11 @@ using Xunit;
 
 namespace Microsoft.AspNet.Tests.Performance
 {
-    public class PublishTests : BenchmarkTestBase, IClassFixture<TestSampleManager>
+    public class PublishTests : BenchmarkTestBase, IClassFixture<SampleManager>
     {
-        private readonly TestSampleManager _sampleManager;
+        private readonly SampleManager _sampleManager;
 
-        public PublishTests(TestSampleManager sampleManager)
+        public PublishTests(SampleManager sampleManager)
         {
             _sampleManager = sampleManager;
         }
@@ -21,11 +21,11 @@ namespace Microsoft.AspNet.Tests.Performance
         [Benchmark(Iterations = 5)]
         [BenchmarkVariation("DnuPublish_BasicKestrel", "BasicKestrel")]
         [BenchmarkVariation("DnuPublish_StarterMvc", "StarterMvc")]
-        public void DnuPublish(string projectName)
+        public void DnuPublish(string sampleName)
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
-            var testName = $"{projectName}.{framework}.{nameof(DnuPublish)}";
-            var testProject = _sampleManager.PrepareSample(testName, projectName, true);
+            var testName = $"{sampleName}.{framework}.{nameof(DnuPublish)}";
+            var testProject = _sampleManager.GetRestoredSample(sampleName);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
             var testOutput = Path.Combine(PathHelper.GetNewTempFolder(), testName);
@@ -33,7 +33,7 @@ namespace Microsoft.AspNet.Tests.Performance
 
             using (Collector.StartCollection())
             {
-                _sampleManager.DnxHelper.Publish(
+                DnxHelper.GetDefaultInstance().Publish(
                     workingDir: testProject,
                     outputDir: testOutput,
                     framework: framework,
@@ -45,11 +45,11 @@ namespace Microsoft.AspNet.Tests.Performance
         [Benchmark(Iterations = 5)]
         [BenchmarkVariation("DnuPublish_BasicKestrel", "BasicKestrel")]
         [BenchmarkVariation("DnuPublish_StarterMvc", "StarterMvc")]
-        public void DnuPublishNoSource(string projectName)
+        public void DnuPublishNoSource(string sampleName)
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
-            var testName = $"{projectName}.{framework}.{nameof(DnuPublishNoSource)}";
-            var testProject = _sampleManager.PrepareSample(testName, projectName, true);
+            var testName = $"{sampleName}.{framework}.{nameof(DnuPublishNoSource)}";
+            var testProject = _sampleManager.GetRestoredSample(sampleName);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
             var testOutput = Path.Combine(PathHelper.GetNewTempFolder(), testName);
@@ -57,7 +57,7 @@ namespace Microsoft.AspNet.Tests.Performance
 
             using (Collector.StartCollection())
             {
-                _sampleManager.DnxHelper.Publish(
+                DnxHelper.GetDefaultInstance().Publish(
                     workingDir: testProject,
                     outputDir: testOutput,
                     framework: framework,
@@ -69,11 +69,11 @@ namespace Microsoft.AspNet.Tests.Performance
         [Benchmark(Iterations = 5)]
         [BenchmarkVariation("DotnetPublish_BasicKestrel", "BasicKestrel")]
         [BenchmarkVariation("DotnetPublish_StarterMvc", "StarterMvc")]
-        public void DotnetPublish(string projectName)
+        public void DotnetPublish(string sampleName)
         {
             var framework = PlatformServices.Default.Runtime.RuntimeType;
-            var testName = $"{projectName}.{framework}.{nameof(DotnetPublish)}";
-            var testProject = _sampleManager.PrepareSample(testName, projectName, true);
+            var testName = $"{sampleName}.{framework}.{nameof(DotnetPublish)}";
+            var testProject = _sampleManager.GetRestoredSample(sampleName);
             Assert.True(testProject != null, $"Fail to set up test project.");
 
             var testOutput = Path.Combine(PathHelper.GetNewTempFolder(), testName);
@@ -81,7 +81,7 @@ namespace Microsoft.AspNet.Tests.Performance
 
             using (Collector.StartCollection())
             {
-                _sampleManager.DotnetHelper.Publish(
+                DotnetHelper.GetDefaultInstance().Publish(
                     workingDir: testProject,
                     outputDir: testOutput);
             }

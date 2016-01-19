@@ -13,9 +13,15 @@ namespace Benchmarks.Utility.Helpers
     {
         private readonly string _alias;
 
-        public DnxHelper() : this("default") { }
+        private static readonly DnxHelper _default = new DnxHelper("default");
 
-        public DnxHelper(string alias)
+        public static DnxHelper GetDefaultInstance() => _default;
+
+        public static DnxHelper GetInstanceForAlias(string alias) => new DnxHelper(alias);
+
+        private DnxHelper() : this("default") { }
+
+        private DnxHelper(string alias)
         {
             _alias = alias;
         }

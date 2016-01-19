@@ -16,12 +16,12 @@ namespace Microsoft.AspNet.Tests.Performance
     /// <summary>
     /// This test relies on Microsoft.AspNet.
     /// </summary>
-    public class IISStartup : IBenchmarkTest, IClassFixture<IISTestManager>
+    public class WebIISPerformance : IBenchmarkTest, ICollectionFixture<IISTestManager>
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly IISTestManager _testManager;
 
-        public IISStartup(IISTestManager testManager)
+        public WebIISPerformance(IISTestManager testManager)
         {
             _loggerFactory = new LoggerFactory();
             _loggerFactory.AddConsole();
@@ -35,9 +35,9 @@ namespace Microsoft.AspNet.Tests.Performance
         [Benchmark(Iterations = 1, WarmupIterations = 0)]
         [BenchmarkVariation("StarterMvc_IISScenario", "StarterMvc", RuntimeFlavor.Clr, Framework = "DNX.Clr")]
         [BenchmarkVariation("StarterMvc_IISScenario", "StarterMvc", RuntimeFlavor.CoreClr, Framework = "DNX.CoreClr")]
-        public void IISHttpPlatformHandlerScenario(string sampleName, RuntimeFlavor runtimeFlavor)
+        public void Startup(string sampleName, RuntimeFlavor runtimeFlavor)
         {
-            var testName = $"{sampleName}.{runtimeFlavor}.{nameof(IISHttpPlatformHandlerScenario)}";
+            var testName = $"{sampleName}.{runtimeFlavor}.{nameof(Startup)}";
             var logger = _loggerFactory.CreateLogger(testName);
             var siteUrl = _testManager.GetSite(sampleName, runtimeFlavor, restart: true);
             Assert.NotNull(siteUrl);
