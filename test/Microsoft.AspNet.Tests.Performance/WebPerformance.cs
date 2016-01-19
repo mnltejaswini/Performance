@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 using Benchmarks.Framework;
 using Benchmarks.Utility.Helpers;
@@ -13,6 +13,7 @@ using Benchmarks.Utility.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 using Xunit;
+using System.Threading;
 
 namespace Microsoft.AspNet.Tests.Performance
 {
@@ -115,6 +116,40 @@ namespace Microsoft.AspNet.Tests.Performance
                 process.StandardInput.Write("\x3");
                 Assert.True(process.WaitForExit((int)TimeSpan.FromSeconds(30).TotalMilliseconds));
             }
+        }
+
+        [Benchmark(Iterations = 10, WarmupIterations = 0)]
+        [BenchmarkVariation("BasicKestrel_DevelopmentScenario", "BasicKestrel")]
+        public void Development_Update_Startup(string sampleName)
+        {
+            var framework = PlatformServices.Default.Runtime.RuntimeType;
+            var testName = $"{sampleName}.{framework}.{nameof(Development_Startup)}";
+            var logger = LogUtility.LoggerFactory.CreateLogger(testName);
+
+            var testProject = _sampleManager.GetRestoredSample(sampleName);
+            Assert.True(testProject != null, $"Fail to set up test project.");
+            logger.LogInformation($"Test project is set up at {testProject}");
+
+            var testAppStartInfo = DnxHelper.GetDefaultInstance().BuildStartInfo(testProject, framework, "run");
+
+            var process = Process.Start(testAppStartInfo);
+            Thread.Sleep(1000);
+            process.Kill();
+            logger.LogInformation("Run server before updating");
+
+            // update source code
+            var lines = File.ReadLines(Path.Combine(testProject, "Startup.cs")).ToArray();
+            for (var i = 0; i < lines.Length; ++i)
+            {
+                if (lines[i].Trim().StartsWith("private const string FixedResponse = "))
+                {
+                    lines[i] = $"private const string FixedResponse = \"{Guid.NewGuid()}\";";
+                }
+            }
+            File.WriteAllLines(Path.Combine(testProject, "Startup.cs"), lines);
+            logger.LogInformation("Update source code");
+
+            RunStartup(5000, logger, testAppStartInfo);
         }
 
         private static string GetFrameworkName(string runtimeType)

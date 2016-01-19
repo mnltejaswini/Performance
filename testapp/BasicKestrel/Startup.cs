@@ -9,12 +9,14 @@ namespace Microsoft.AspNet.Test.Perf.WebFx.Apps.HelloWorld
 {
     public class Startup
     {
+        private const string FixedResponse = "Hello world";
+
         public void Configure(IApplicationBuilder app)
         {
             app.Run(async context =>
             {
                 context.Response.ContentType = "text/plain";
-                await context.Response.WriteAsync("Hello world");
+                await context.Response.WriteAsync(FixedResponse);
             });
         }
 
