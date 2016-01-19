@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Benchmarks.Framework;
 using Benchmarks.Utility.Helpers;
@@ -82,6 +83,38 @@ namespace Microsoft.AspNet.Tests.Performance
 
             var startInfo = new ProcessStartInfo(Path.Combine(testProject, $"{sampleName}.exe")) { UseShellExecute = false };
             RunStartup(5000, logger, startInfo);
+        }
+
+        [Benchmark(Iterations = 10, WarmupIterations = 0)]
+        [BenchmarkVariation("BasicKestrel_DotNet_ProductionScenario", "BasicKestrel")]
+        public void GracefulExit(string sampleName)
+        {
+            var framework = PlatformServices.Default.Runtime.RuntimeType;
+            var appliationFramework = GetFrameworkName(framework);
+            var testName = $"{sampleName}.{framework}.{nameof(Production_DotNet_Startup)}";
+            var logger = LogUtility.LoggerFactory.CreateLogger(testName);
+
+            var testProject = _sampleManager.GetDotNetPublishedSample(sampleName, appliationFramework);
+            Assert.True(testProject != null, $"Fail to set up test project.");
+            logger.LogInformation($"Test project is set up at {testProject}");
+
+            var startInfo = new ProcessStartInfo(Path.Combine(testProject, $"{sampleName}.exe"))
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            var process = Process.Start(startInfo);
+
+            var client = new HttpClient();
+            client.GetAsync("http://localhost:5000/").Result.EnsureSuccessStatusCode();
+
+            using (Collector.StartCollection())
+            {
+                process.StandardInput.Write("\x3");
+                Assert.True(process.WaitForExit((int)TimeSpan.FromSeconds(30).TotalMilliseconds));
+            }
         }
 
         private static string GetFrameworkName(string runtimeType)
