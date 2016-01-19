@@ -5,19 +5,11 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Benchmarks.Utility.Helpers;
 
 namespace Stress.Framework
 {
     public abstract class StressTestBase
     {
-        private readonly TestSampleManager _sampleManager;
-
-        public StressTestBase()
-        {
-            _sampleManager = new TestSampleManager();
-        }
-
         internal IStressMetricCollector Collector { get; set; } = new StressMetricCollector();
 
         internal long Iterations { get; set; }

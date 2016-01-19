@@ -2,16 +2,14 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Benchmarks.Utility.Helpers;
+using Benchmarks.Utility.Logging;
+using Microsoft.AspNet.Server.Testing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
-using Xunit;
-using Microsoft.AspNet.Server.Testing;
 
 namespace Stress.Framework
 {
@@ -20,7 +18,6 @@ namespace Stress.Framework
         private readonly string _testName;
         private readonly int _port;
         private readonly IStressMetricCollector _metricCollector;
-        private readonly TestSampleManager _sampleManager;
         private readonly string _command;
         private ILogger _logger;
         private readonly string _testMethodName;
@@ -42,7 +39,6 @@ namespace Stress.Framework
             _port = port;
             _command = command;
             _metricCollector = metricCollector;
-            _sampleManager = new TestSampleManager();
         }
 
         public async Task<StressTestServerStartResult> StartAsync()
@@ -51,7 +47,7 @@ namespace Stress.Framework
             var fullTestName = $"{_testMethodName}.{_testName}.{framework}";
             fullTestName = fullTestName.Replace('_', '.');
 
-            _logger = _sampleManager.LoggerFactory.CreateLogger(fullTestName);
+            _logger = LogUtility.LoggerFactory.CreateLogger(fullTestName);
 
             var baseAddress = $"http://localhost:{_port}/";
 
