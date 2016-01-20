@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Stress.Framework
 {
@@ -41,7 +42,7 @@ namespace Stress.Framework
 
         public void NewRequest()
         {
-            _requestCount++;
+            Interlocked.Increment(ref _requestCount);
         }
 
         public void Reset()

@@ -19,6 +19,8 @@ namespace Stress.Framework
 
         public long Iterations { get; set; } = StressConfig.Instance.Iterations;
 
+        public int Clients { get; set; } = StressConfig.Instance.Clients;
+
         public string WarmupMethodName { get; set; }
 
         public string TestApplicationName { get; }

@@ -14,6 +14,7 @@ namespace Stress.Framework
         public StressTestCase(
             string testApplicationName,
             long iterations,
+            int clients,
             string variation,
             ServerType serverType,
             IMethodInfo warmupMethod,
@@ -30,6 +31,7 @@ namespace Stress.Framework
             testMethodArguments)
         {
             Iterations = iterations;
+            Clients = clients;
             MetricCollector = new StressMetricCollector();
             MetricReporter = new TimedMetricReporter();
         }
@@ -39,6 +41,8 @@ namespace Stress.Framework
         public virtual IStressMetricReporter MetricReporter { get; protected set; }
 
         public long Iterations { get; protected set; }
+
+        public int Clients { get; protected set; }
 
         public override Task<RunSummary> RunAsync(
             IMessageSink diagnosticMessageSink,

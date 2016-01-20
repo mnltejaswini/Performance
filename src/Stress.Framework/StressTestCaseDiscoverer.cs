@@ -59,6 +59,7 @@ namespace Stress.Framework
                 {
                     var warmupMethod = ResolveWarmupMethod(testMethod, factAttribute);
                     var iterations = StressConfig.Instance.RunIterations ? factAttribute.GetNamedArgument<long>(nameof(StressAttribute.Iterations)) : 1;
+                    var threads = factAttribute.GetNamedArgument<int>(nameof(StressAttribute.Clients));
 
                     var variationName = variation.Name;
                     if (servers.Length > 1)
@@ -69,6 +70,7 @@ namespace Stress.Framework
                     tests.Add(new StressTestCase(
                         factAttribute.GetNamedArgument<string>(nameof(StressAttribute.TestApplicationName)),
                         iterations,
+                        threads,
                         variationName,
                         serverType,
                         warmupMethod,

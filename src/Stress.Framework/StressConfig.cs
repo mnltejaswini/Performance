@@ -20,11 +20,13 @@ namespace Stress.Framework
 
                 return new StressConfig
                 {
-                    RunIterations = bool.Parse(config["Stress:RunIterations"]),
+                    RunIterations = bool.Parse(config["Stress:RunIterations"] ?? "false"),
                     Iterations = long.Parse(config["Stress:Iterations"]),
                     MetricReportInterval = int.Parse(config["Stress:MetricReportInterval"]),
                     FailDebugger = bool.Parse(config["Stress:FailDebugger"] ?? "false"),
-                    DeployerLogging = bool.Parse(config["Stress:DeployerLogging"] ?? "true")
+                    DeployerLogging = bool.Parse(config["Stress:DeployerLogging"] ?? "true"),
+                    StatisticOutputFolder = config["Stress:StatisticOutputFolder"],
+                    Clients = int.Parse(config["Stress:Clients"] ?? "1"),
                 };
             });
 
@@ -42,6 +44,10 @@ namespace Stress.Framework
 
         public bool FailDebugger { get; private set; }
 
-        public bool DeployerLogging{ get; private set; }
+        public bool DeployerLogging { get; private set; }
+
+        public string StatisticOutputFolder { get; private set; }
+
+        public int Clients { get; private set; }
     }
 }

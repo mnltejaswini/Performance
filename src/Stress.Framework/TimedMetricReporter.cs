@@ -17,6 +17,8 @@ namespace Stress.Framework
 
         private StressTestCase _testCase;
 
+        private long _previousRequestCount;
+
         public TimedMetricReporter()
         {
         }
@@ -25,17 +27,27 @@ namespace Stress.Framework
         {
             var collector = _testCase.MetricCollector;
             var elapsed = collector.Time.Elapsed;
+            var requests = collector.Requests;
 
             if (elapsed.TotalMilliseconds == 0)
             {
                 return;
             }
 
-            var rps = Math.Round(collector.Requests / elapsed.TotalSeconds, 1);
+            var rps = Math.Round(requests / elapsed.TotalSeconds, 1);
+
+            var momentalRps = Math.Round((requests - _previousRequestCount)/_reportInterval.TotalSeconds);
+            _previousRequestCount = requests;
 
             // TODO: Fix Memory collection and then report it.
             _messageBus.QueueMessage(
-                new StressTestProgressMessage($"Test {_testCase.DisplayName} ran {collector.Requests} requests @ {rps} RPS in {(int)Math.Round(elapsed.TotalSeconds)}s."));
+                new StressTestProgressMessage($"Test {_testCase.DisplayName} ran {requests} requests @ {momentalRps}/{rps} RPS in {(int)Math.Round(elapsed.TotalSeconds)}s."));
+
+            _messageBus.QueueMessage(new StressTestStatisticsMessage(_testCase, "TIME", collector.Time.ElapsedMilliseconds));
+            _messageBus.QueueMessage(new StressTestStatisticsMessage(_testCase, "MEM", collector.MemoryDelta / 1000));
+            _messageBus.QueueMessage(new StressTestStatisticsMessage(_testCase, "REQ", requests));
+            _messageBus.QueueMessage(new StressTestStatisticsMessage(_testCase, "RPS", rps));
+            _messageBus.QueueMessage(new StressTestStatisticsMessage(_testCase, "RPSM", momentalRps));
         }
 
         public void Start(IMessageBus messageBus, StressTestCase stressTestCase)
@@ -47,6 +59,7 @@ namespace Stress.Framework
 
             _messageBus = messageBus;
             _testCase = stressTestCase;
+            _previousRequestCount = 0;
             _timer = new Timer(Report, null, _reportInterval, _reportInterval);
         }
 

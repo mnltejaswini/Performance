@@ -232,6 +232,7 @@ namespace Stress.Framework
                 {
                     var stressTestCase = (TestCase as StressTestCase);
                     StressTestBase.Iterations = stressTestCase.Iterations;
+                    StressTestBase.Clients = stressTestCase.Clients;
                     StressTestBase.Collector = stressTestCase.MetricCollector;
                     StressTestBase.ClientFactory = _server.ClientFactory;
                 }

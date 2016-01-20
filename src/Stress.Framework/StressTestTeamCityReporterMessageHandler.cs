@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Xunit;
@@ -18,6 +20,8 @@ namespace Stress.Framework
 
         private IRunnerLogger _logger;
 
+        private string _statisticFolder;
+
         public StressTestTeamCityReporterMessageHandler(IRunnerLogger logger,
             Func<string, string> flowIdMapper = null,
             TeamCityDisplayNameFormatter displayNameFormatter = null) : base(logger, flowIdMapper, displayNameFormatter)
@@ -33,11 +37,13 @@ namespace Stress.Framework
             var toFlowIdMethodInfo = typeof(TeamCityReporterMessageHandler).GetMethod("ToFlowId", BindingFlags.Instance | BindingFlags.NonPublic);
             _toFlowId = (s) => (string)toFlowIdMethodInfo.Invoke(this, new[] { s });
 
+            _statisticFolder = StressConfig.Instance.StatisticOutputFolder;
         }
 
         public override bool OnMessage(IMessageSinkMessage message)
         {
             return DoVisit<ITestProgressMessage>(message, m => Visit(m)) &&
+                   DoVisit<ITestSummaryStatisticsMessage>(message, m => Visit(m)) &&
                    DoVisit<ITestStatisticsMessage>(message, m => Visit(m)) &&
                    base.OnMessage(message);
         }
@@ -50,11 +56,24 @@ namespace Stress.Framework
 
         protected virtual bool Visit(ITestStatisticsMessage message)
         {
-            var displayName = message.TestCase.DisplayName + " " + message.Key;
-            // Cleanup name because teamcity doesn like spaces in key
-            displayName = Regex.Replace(displayName, "[^a-zA-Z0-9]+", "_");
-            _logger.LogImportantMessage($"##teamcity[buildStatisticValue key='{_escape(displayName)}' value='{_escape(Convert.ToString(message.Value))}' flowId='{_toFlowId(message.TestCollection.DisplayName)}' ]");
+            if (!string.IsNullOrEmpty(_statisticFolder))
+            {
+                var fullName = Path.Combine(_statisticFolder, GetKey(message));
+                File.AppendAllText(fullName, Convert.ToString(message.Value, CultureInfo.InvariantCulture) + Environment.NewLine);
+            }
             return true;
+        }
+
+        protected virtual bool Visit(ITestSummaryStatisticsMessage message)
+        {
+            _logger.LogImportantMessage($"##teamcity[buildStatisticValue key='{_escape(GetKey(message))}' value='{_escape(Convert.ToString(message.Value))}' flowId='{_toFlowId(message.TestCollection.DisplayName)}' ]");
+            return true;
+        }
+
+        private static string GetKey(ITestStatisticsMessage message)
+        {
+            var key = message.TestCase.DisplayName + " " + message.Key;
+            return Regex.Replace(key, "[^a-zA-Z0-9]+", "_");
         }
     }
 }
