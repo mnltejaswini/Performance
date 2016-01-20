@@ -146,7 +146,20 @@ namespace Microsoft.AspNet.Tests.Performance
                     lines[i] = $"private const string FixedResponse = \"{Guid.NewGuid()}\";";
                 }
             }
-            File.WriteAllLines(Path.Combine(testProject, "Startup.cs"), lines);
+
+            var retry = 0;
+            while (retry < 3)
+            {
+                try
+                {
+                    File.WriteAllLines(Path.Combine(testProject, "Startup.cs"), lines);
+                }
+                catch (IOException)
+                {
+                    ++retry;
+                }
+            }
+            Assert.True(retry <= 3, "Failed to write the source code for 3 times.");
             logger.LogInformation("Update source code");
 
             RunStartup(5000, logger, testAppStartInfo);

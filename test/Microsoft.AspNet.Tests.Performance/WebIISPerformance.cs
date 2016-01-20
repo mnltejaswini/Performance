@@ -16,7 +16,7 @@ namespace Microsoft.AspNet.Tests.Performance
     /// <summary>
     /// This test relies on Microsoft.AspNet.
     /// </summary>
-    public class WebIISPerformance : IBenchmarkTest, ICollectionFixture<IISTestManager>
+    public class WebIISPerformance : IBenchmarkTest, IClassFixture<IISTestManager>
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly IISTestManager _testManager;
