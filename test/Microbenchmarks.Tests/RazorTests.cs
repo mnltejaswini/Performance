@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Benchmarks.Framework;
-using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.Mvc.Razor;
 using Microsoft.AspNet.Mvc.Razor.Directives;
 using Microsoft.AspNet.Razor;
 using Microsoft.AspNet.Razor.CodeGenerators;
 using Microsoft.AspNet.Razor.Compilation.TagHelpers;
 using Microsoft.AspNet.Razor.Runtime.TagHelpers;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using Xunit;
 
