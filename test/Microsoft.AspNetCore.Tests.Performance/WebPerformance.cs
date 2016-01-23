@@ -15,7 +15,7 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Xunit;
 using System.Threading;
 
-namespace Microsoft.AspNet.Tests.Performance
+namespace Microsoft.AspNetCore.Tests.Performance
 {
     public class WebPerformance : IBenchmarkTest, IClassFixture<SampleManager>
     {

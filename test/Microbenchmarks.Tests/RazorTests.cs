@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Benchmarks.Framework;
-using Microsoft.AspNet.Mvc.Razor;
-using Microsoft.AspNet.Mvc.Razor.Directives;
-using Microsoft.AspNet.Razor;
-using Microsoft.AspNet.Razor.CodeGenerators;
-using Microsoft.AspNet.Razor.Compilation.TagHelpers;
-using Microsoft.AspNet.Razor.Runtime.TagHelpers;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Razor.Directives;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.CodeGenerators;
+using Microsoft.AspNetCore.Razor.Compilation.TagHelpers;
+using Microsoft.AspNetCore.Razor.Runtime.TagHelpers;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using Xunit;
@@ -29,7 +29,7 @@ namespace Microbenchmarks.Tests.Razor
             var errorSink = new ErrorSink();
             var addTagHelperDirective = new TagHelperDirectiveDescriptor
             {
-                DirectiveText = "*, Microsoft.AspNet.Mvc.TagHelpers",
+                DirectiveText = "*, Microsoft.AspNetCore.Mvc.TagHelpers",
                 DirectiveType = TagHelperDirectiveType.AddTagHelper,
                 Location = SourceLocation.Zero
             };

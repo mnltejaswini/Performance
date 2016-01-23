@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "BasicKestrel", "testapp\BasicKestrel\BasicKestrel.xproj", "{33C63C7D-7CC1-49D0-82AD-7DCB8125727F}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNet.Tests.Performance", "test\Microsoft.AspNet.Tests.Performance\Microsoft.AspNet.Tests.Performance.xproj", "{76C8FD9D-615A-4741-8E03-A11F7C20A99F}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNetCore.Tests.Performance", "test\Microsoft.AspNetCore.Tests.Performance\Microsoft.AspNetCore.Tests.Performance.xproj", "{76C8FD9D-615A-4741-8E03-A11F7C20A99F}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "StarterMvc", "testapp\StarterMvc\StarterMvc.xproj", "{8397CB65-B60F-4881-B0A1-E881593A487C}"
 EndProject
@@ -35,7 +35,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Stress.Framework", "src\Str
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stress-test", "stress-test", "{29C78887-BC5D-449D-BDC5-8BC68CE43C33}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNet.Tests.Stress", "stress-test\Microsoft.AspNet.Tests.Stress\Microsoft.AspNet.Tests.Stress.xproj", "{67CEE842-1B97-4663-A509-1F18A86F9A5F}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Microsoft.AspNetCore.Tests.Stress", "stress-test\Microsoft.AspNetCore.Tests.Stress\Microsoft.AspNetCore.Tests.Stress.xproj", "{67CEE842-1B97-4663-A509-1F18A86F9A5F}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "HelloWorldMvc", "testapp\HelloWorldMvc\HelloWorldMvc.xproj", "{E5D2EE3F-672A-41A5-9B0B-0A979E333920}"
 EndProject

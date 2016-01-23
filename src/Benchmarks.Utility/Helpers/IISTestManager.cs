@@ -1,11 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 #if DNX451
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNet.Server.Testing;
+using Microsoft.AspNetCore.Server.Testing;
 using Microsoft.Extensions.Logging;
 
 namespace Benchmarks.Utility.Helpers
@@ -13,8 +13,8 @@ namespace Benchmarks.Utility.Helpers
     /// <summary>
     /// Test manager helps test cases to deploy a web project to IIS.
     /// 
-    /// This class depends on IISDeployer of Microsoft.AspNet.Server.Testing package which is DNX451 only.
-    /// https://github.com/aspnet/Hosting/tree/dev/src/Microsoft.AspNet.Server.Testing
+    /// This class depends on IISDeployer of Microsoft.AspNetCore.Server.Testing package which is DNX451 only.
+    /// https://github.com/aspnet/Hosting/tree/dev/src/Microsoft.AspNetCore.Server.Testing
     /// </summary>
     public class IISTestManager : IDisposable
     {

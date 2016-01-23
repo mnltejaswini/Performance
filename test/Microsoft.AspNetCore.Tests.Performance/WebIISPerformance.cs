@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 #if DNX451
@@ -7,14 +7,14 @@ using System;
 using System.Net.Http;
 using Benchmarks.Framework;
 using Benchmarks.Utility.Helpers;
-using Microsoft.AspNet.Server.Testing;
+using Microsoft.AspNetCore.Server.Testing;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace Microsoft.AspNet.Tests.Performance
+namespace Microsoft.AspNetCore.Tests.Performance
 {
     /// <summary>
-    /// This test relies on Microsoft.AspNet.
+    /// This test relies on Microsoft.AspNetCore.
     /// </summary>
     public class WebIISPerformance : IBenchmarkTest, IClassFixture<IISTestManager>
     {

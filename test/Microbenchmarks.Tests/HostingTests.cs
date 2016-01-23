@@ -1,12 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
 using Benchmarks.Framework;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Hosting.Server;
-using Microsoft.AspNet.Http.Features;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -16,8 +16,8 @@ namespace Microbenchmarks.Tests
     public class HostingTests : BenchmarkTestBase
     {
         [Benchmark]
-        [BenchmarkVariation("Kestrel", "Microsoft.AspNet.Server.Kestrel")]
-        [BenchmarkVariation("WebListener", "Microsoft.AspNet.Server.WebListener")]
+        [BenchmarkVariation("Kestrel", "Microsoft.AspNetCore.Server.Kestrel")]
+        [BenchmarkVariation("WebListener", "Microsoft.AspNetCore.Server.WebListener")]
         public void MainToConfigureOverhead(string variationServer)
         {
             var args = new[] { "--server", variationServer, "--captureStartupErrors", "true" };
