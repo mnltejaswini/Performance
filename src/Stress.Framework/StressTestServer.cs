@@ -18,7 +18,6 @@ namespace Stress.Framework
         private readonly string _testName;
         private readonly int _port;
         private readonly IStressMetricCollector _metricCollector;
-        private readonly string _command;
         private ILogger _logger;
         private readonly string _testMethodName;
         private readonly ServerType _serverType;
@@ -30,14 +29,12 @@ namespace Stress.Framework
             string testName,
             string testMethodName,
             int port,
-            string command,
             IStressMetricCollector metricCollector)
         {
             _serverType = serverType;
             _testName = testName;
             _testMethodName = testMethodName;
             _port = port;
-            _command = command;
             _metricCollector = metricCollector;
         }
 
@@ -55,7 +52,6 @@ namespace Stress.Framework
             {
                 SiteName = _testName,
                 ApplicationBaseUriHint = baseAddress,
-                Command = _command,
             };
 
             ILogger deployerLogger;

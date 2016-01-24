@@ -10,7 +10,8 @@
   "dependencies": {
     "Newtonsoft.Json": "8.0.2",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
-    "Microsoft.AspNetCore.IISPlatformHandler": "1.0.0-*"
+    "Microsoft.AspNetCore.IISPlatformHandler": "1.0.0-*",
+    "Microsoft.NETCore.Platforms": "1.0.1-*"
   },
   "commands": {
     "web": "BasicKestrelJson"

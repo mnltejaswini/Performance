@@ -23,6 +23,7 @@ namespace HelloWorldMvc
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
+                .UseServer("Microsoft.AspNetCore.Server.Kestrel")
                 .UseDefaultConfiguration(args)
                 .UseIISPlatformHandlerUrl()
                 .UseStartup<Startup>()

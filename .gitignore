@@ -34,3 +34,5 @@ nuget.exe
 *.sln.ide
 **/[Cc]ompiler/[Rr]esources/**/*.js
 *launchSettings.json
+.build/
+.testPublish/

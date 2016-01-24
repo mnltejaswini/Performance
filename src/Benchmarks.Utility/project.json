@@ -5,9 +5,7 @@
     "Microsoft.AspNetCore.Server.Testing": "1.0.0-*",
     "Microsoft.Extensions.Logging": "1.0.0-*",
     "Microsoft.Extensions.Logging.Console": "1.0.0-*",
-    "Microsoft.NETCore.Platforms": "1.0.1-*",
-    "Newtonsoft.Json": "8.0.2",
-    "xunit.runner.aspnet": "2.0.0-aspnet-*"
+    "Newtonsoft.Json": "8.0.2"
   },
   "frameworks": {
     "dnx451": {
@@ -18,7 +16,8 @@
     "dnxcore50": {
       "dependencies": {
         "System.Dynamic.Runtime": "4.0.11-*"
-      }
+      },
+      "imports": "portable-net451+win8"
     }
   }
 }

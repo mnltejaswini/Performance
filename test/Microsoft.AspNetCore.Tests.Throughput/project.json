@@ -2,13 +2,17 @@
   "version": "1.0.0-*",
   "dependencies": {
     "Benchmarks.Utility": "1.0.0-*",
-    "Microsoft.NETCore.Platforms": "1.0.1-*",
     "xunit.runner.aspnet": "2.0.0-aspnet-*"
   },
   "frameworks": {
-    "dnxcore50": { }
+    "dnxcore50": {
+      "imports": "portable-net451+win8"
+    }
   },
   "commands": {
     "test": "xunit.runner.aspnet"
-  }
+  },
+  "content": [
+    "xunit.runner.json"
+  ]
 }

@@ -10,17 +10,38 @@ namespace Benchmarks.Utility.Helpers
         private static readonly string ArtifactFolder = "artifacts";
         private static readonly string TestAppFolder = "testapp";
         private static readonly string ScriptFolder = "scripts";
+        private static readonly string GlobalFileName = "global.json";
+
+        public static string GetRootFolder(string projectFolder)
+        {
+            var di = new DirectoryInfo(projectFolder);
+
+            while (di.Parent != null)
+            {
+                var globalJsonPath = Path.Combine(di.FullName, GlobalFileName);
+
+                if (File.Exists(globalJsonPath))
+                {
+                    return di.FullName;
+                }
+
+                di = di.Parent;
+            }
+
+            // If we don't find any files then make the project folder the root
+            return projectFolder;
+        }
 
         public static string GetNuGetConfig()
         {
-            var testFolder = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory()));
+            var testFolder = GetRootFolder(Directory.GetCurrentDirectory());
 
             return Path.Combine(testFolder, "NuGet.config");
         }
 
         public static string GetTestAppFolder(string sampleName)
         {
-            var testFolder = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory()));
+            var testFolder = GetRootFolder(Directory.GetCurrentDirectory());
             var sampleFolder = Path.Combine(testFolder, TestAppFolder, sampleName);
 
             if (Directory.Exists(sampleFolder))
@@ -50,7 +71,7 @@ namespace Benchmarks.Utility.Helpers
 
         public static string GetArtifactFolder()
         {
-            var testFolder = Directory.GetCurrentDirectory();
+            var testFolder = GetRootFolder(Directory.GetCurrentDirectory());
             var result = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(testFolder)), ArtifactFolder);
 
             if (!Directory.Exists(result))

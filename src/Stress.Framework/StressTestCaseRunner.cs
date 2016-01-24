@@ -68,7 +68,6 @@ namespace Stress.Framework
                 TestCase.TestApplicationName,
                 TestCase.TestMethodName,
                 port: 5000,
-                command: "web",
                 metricCollector: TestCase.MetricCollector);
 
             using (server)

@@ -11,11 +11,19 @@
     "dnx451": {
       "frameworkAssemblies": {
         "System.Runtime": ""
+      },
+      "dependencies": {
+        "xunit.runner.console": "2.1.0"
       }
     },
     "dnxcore50": {
+      "dependencies": {
+        "xunit.runner.aspnet": "2.0.0-aspnet-*"
+      },
+      "imports": "portable-net451+win8"
     }
   },
+  "testRunner": "xunit",
   "commands": {
     "test": "xunit.runner.aspnet"
   }

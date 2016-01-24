@@ -3,7 +3,8 @@
 
   "compilationOptions": {
     "emitEntryPoint": true,
-    "warningsAsErrors": true
+    "warningsAsErrors": true,
+    "preserveCompilationContext": true
   },
 
   "dependencies": {
@@ -20,8 +21,10 @@
   },
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": { }
+    "dnx451": {},
+    "dnxcore50": {
+      "imports": "portable-net451+win8"
+    }
   },
 
   "publishExclude": [
@@ -36,5 +39,7 @@
     "wwwroot",
     "node_modules",
     "bower_components"
-  ]
+  ],
+
+  "content": ["Views"]
 }

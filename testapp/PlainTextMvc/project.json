@@ -4,7 +4,9 @@
     "emitEntryPoint": true
   },
   "frameworks": {
-    "dnxcore50": {},
+    "dnxcore50": {
+      "imports": "portable-net451+win8"
+    },
     "dnx451": {}
   },
   "dependencies": {
