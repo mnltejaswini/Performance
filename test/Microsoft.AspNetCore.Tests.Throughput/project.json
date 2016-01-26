@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0-*",
+  "dependencies": {
+    "Benchmarks.Utility": "1.0.0-*",
+    "xunit.runner.aspnet": "2.0.0-aspnet-*"
+  },
+  "frameworks": {
+    "dnxcore50": { }
+  },
+  "commands": {
+    "test": "xunit.runner.aspnet"
+  }
+}

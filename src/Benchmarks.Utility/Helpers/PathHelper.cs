@@ -2,14 +2,14 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
-using System.Xml.Linq;
 
 namespace Benchmarks.Utility.Helpers
 {
     public class PathHelper
     {
-        private static readonly string TestAppFolder = "testapp";
         private static readonly string ArtifactFolder = "artifacts";
+        private static readonly string TestAppFolder = "testapp";
+        private static readonly string ScriptFolder = "scripts";
 
         public static string GetNuGetConfig()
         {
@@ -26,6 +26,21 @@ namespace Benchmarks.Utility.Helpers
             if (Directory.Exists(sampleFolder))
             {
                 return sampleFolder;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static string GetScript(string scriptName)
+        {
+            var testFolder = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory()));
+            var script = Path.Combine(testFolder, ScriptFolder, scriptName);
+
+            if (File.Exists(script))
+            {
+                return script;
             }
             else
             {

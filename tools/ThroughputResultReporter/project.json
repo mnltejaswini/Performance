@@ -1,0 +1,16 @@
+﻿{
+  "version": "1.0.0-*",
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+  "dependencies": {
+    "Benchmarks.Framework": "1.0.0-*",
+    "System.Xml.XDocument": "4.0.11-*"
+  },
+  "commands": {
+    "run": "ThroughputResultReporter"
+  },
+  "frameworks": {
+    "dnxcore50": { }
+  }
+}
