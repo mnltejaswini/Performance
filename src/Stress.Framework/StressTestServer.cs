@@ -166,7 +166,7 @@ namespace Stress.Framework
                 return false;
             }
 
-            public void Log<T>(LogLevel logLevel, EventId eventId, T state, Exception exception, Func<T, Exception, string> formatter)
+            public void Log(LogLevel logLevel, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
             {
             }
         }
