@@ -20,7 +20,7 @@ namespace Stress.Framework
 
         internal Func<HttpClient> ClientFactory { get; set; }
 
-        public async Task IterateAsync(Func<HttpClient, Task> iterate)
+        public void IterateAsync(Action<HttpClient> iterate)
         {
             var iterationsPerClient = Iterations / Clients;
             var iterations = Enumerable.Repeat(iterationsPerClient, Clients).ToArray();
@@ -31,21 +31,22 @@ namespace Stress.Framework
 
             var clientRange = Enumerable.Range(0, Clients);
             var clients = clientRange.Select(i => ClientFactory()).ToArray();
+            var data = clientRange.Select(i => Tuple.Create(iterations[i], clients[i]));
 
             using (Collector.StartCollection())
             {
-                var tasks = clientRange.Select(i => IterateAsync(iterations[i], clients[i], iterate));
-                await Task.WhenAll(tasks);
+                var tasks = clientRange.Select(i => Task.Run(()=>IterateAsync(iterations[i], clients[i], iterate)));
+                Task.WhenAll(tasks).Wait();
             }
         }
 
-        private async Task IterateAsync(long iterations, HttpClient client, Func<HttpClient, Task> iterate)
+        private void IterateAsync(long iterations, HttpClient client, Action<HttpClient> iterate)
         {
             for (var i = 0; i < iterations; i++)
             {
                 try
                 {
-                    await iterate(client);
+                    iterate(client);
                 }
                 catch (Exception ex) when (StressConfig.Instance.FailDebugger)
                 {

@@ -9,28 +9,28 @@ namespace Microsoft.AspNetCore.Tests.Stress
 {
     public class HelloWorldTests : StressTestBase
     {
-        public static async Task HelloWorld_Warmup(HttpClient client)
+        public static void HelloWorld_Warmup(HttpClient client)
         {
-            var response = await client.GetAsync("/");
+            var response = client.GetAsync("/").GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
         }
 
         [Stress("BasicKestrel", WarmupMethodName = nameof(HelloWorld_Warmup))]
-        public async Task Middleware_HelloWorld()
+        public void Middleware_HelloWorld()
         {
-            await IterateAsync(async client =>
+            IterateAsync(client =>
             {
-                var response = await client.GetAsync("/");
+                var response = client.GetAsync("/").GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
             });
         }
 
         [Stress("HelloWorldMvc", WarmupMethodName = nameof(HelloWorld_Warmup))]
-        public async Task Mvc_HelloWorld()
+        public void Mvc_HelloWorld()
         {
-            await IterateAsync(async client =>
+            IterateAsync(client =>
             {
-                var response = await client.GetAsync("/");
+                var response = client.GetAsync("/").GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
             });
         }

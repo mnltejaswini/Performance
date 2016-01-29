@@ -28,69 +28,69 @@ namespace Microsoft.AspNetCore.Tests.Stress
         }
 
         [Stress("StarterMvc", WarmupMethodName = nameof(StarterMvc_Warmup))]
-        public async Task StarterMvc()
+        public void StarterMvc()
         {
-            await IterateAsync(async client =>
+            IterateAsync(client =>
             {
-                var response = await client.GetAsync("/");
+                var response = client.GetAsync("/").GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
-                response = await client.GetAsync("/Home/About");
+                response = client.GetAsync("/Home/About").GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
-                response = await client.GetAsync("/Home/Contact");
+                response = client.GetAsync("/Home/Contact").GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
 
                 // Register
-                var getResponse = await client.GetAsync("/Account/Register");
+                var getResponse = client.GetAsync("/Account/Register").GetAwaiter().GetResult();
                 getResponse.EnsureSuccessStatusCode();
 
-                var responseContent = await getResponse.Content.ReadAsStringAsync();
+                var responseContent = getResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 var verificationToken = ExtractVerificationToken(responseContent);
 
                 var testUser = GetUniqueUserId();
                 var requestContent = CreateRegisterPost(verificationToken, testUser, "Asd!123$$", "Asd!123$$");
 
-                var postResponse = await client.PostAsync("/Account/Register", requestContent);
+                var postResponse = client.PostAsync("/Account/Register", requestContent).GetAwaiter().GetResult();
                 postResponse.EnsureSuccessStatusCode();
 
-                var postResponseContent = await postResponse.Content.ReadAsStringAsync();
+                var postResponseContent = postResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 Assert.Contains("Learn how to build ASP.NET apps that can run anywhere.", postResponseContent); // Home page
 
                 // Verify manage page
-                var manageResponse = await client.GetAsync("/Manage");
+                var manageResponse = client.GetAsync("/Manage").GetAwaiter().GetResult();
                 manageResponse.EnsureSuccessStatusCode();
 
-                var manageContent = await manageResponse.Content.ReadAsStringAsync();
+                var manageContent = manageResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 verificationToken = ExtractVerificationToken(manageContent);
 
                 // Verify Logoff
                 var logoffRequestContent = CreateLogOffPost(verificationToken);
-                var logoffResponse = await client.PostAsync("/Account/LogOff", logoffRequestContent);
+                var logoffResponse = client.PostAsync("/Account/LogOff", logoffRequestContent).GetAwaiter().GetResult();
                 logoffResponse.EnsureSuccessStatusCode();
 
-                var logOffResponseContent = await logoffResponse.Content.ReadAsStringAsync();
+                var logOffResponseContent = logoffResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 Assert.Contains("Learn how to build ASP.NET apps that can run anywhere.", postResponseContent); // Home page
 
                 // Verify relogin
-                var loginResponse = await client.GetAsync("/Account/Login");
+                var loginResponse = client.GetAsync("/Account/Login").GetAwaiter().GetResult();
                 loginResponse.EnsureSuccessStatusCode();
-                var loginResponseContent = await loginResponse.Content.ReadAsStringAsync();
+                var loginResponseContent = loginResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                 verificationToken = ExtractVerificationToken(responseContent);
                 var loginRequestContent = CreateLoginPost(verificationToken, testUser, "Asd!123$$");
 
-                var loginPostResponse = await client.PostAsync("/Account/Login", loginRequestContent);
+                var loginPostResponse = client.PostAsync("/Account/Login", loginRequestContent).GetAwaiter().GetResult();
                 loginPostResponse.EnsureSuccessStatusCode();
 
-                var longPostResponseContent = await loginPostResponse.Content.ReadAsStringAsync();
+                var longPostResponseContent = loginPostResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 Assert.DoesNotContain("Invalid login attempt.", longPostResponseContent); // Errored Login page
 
                 // Logoff to get the HttpClient back into a working state.
-                manageResponse = await client.GetAsync("/Manage");
+                manageResponse = client.GetAsync("/Manage").GetAwaiter().GetResult();
                 manageResponse.EnsureSuccessStatusCode();
-                manageContent = await manageResponse.Content.ReadAsStringAsync();
+                manageContent = manageResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 verificationToken = ExtractVerificationToken(manageContent);
                 logoffRequestContent = CreateLogOffPost(verificationToken);
-                logoffResponse = await client.PostAsync("/Account/LogOff", logoffRequestContent);
+                logoffResponse = client.PostAsync("/Account/LogOff", logoffRequestContent).GetAwaiter().GetResult();
                 logoffResponse.EnsureSuccessStatusCode();
             });
         }
