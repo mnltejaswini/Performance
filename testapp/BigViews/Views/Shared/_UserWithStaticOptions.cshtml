@@ -1,0 +1,45 @@
+﻿@using BigViews
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model User
+
+<div class="contact-card">
+    <strong>@Model.FirstName @Model.LastName</strong>
+    <br />
+
+    <label asp-for="HomePhone"></label>
+    <b id="@Html.IdFor(m => m.HomePhone)">@Model.HomePhone</b>
+    <br />
+
+    <label asp-for="Mobile"></label>
+    <b id="@Html.IdFor(m => m.Mobile)">@Model.Mobile</b>
+    <br />
+
+    <label asp-for="MailId"></label>
+    <b id="@Html.IdFor(m => m.MailId)">@Model.MailId</b>
+    <br />
+
+    <label asp-for="CurrentJob"></label>
+    <b id="@Html.IdFor(m => m.CurrentJob)">@Model.CurrentJob</b>
+    <br />
+
+    <label asp-for="PastJobs"></label>
+    <br />
+    <select asp-for="PastJobs" disabled="disabled">
+        <option>Construction Foreman</option>
+        <option>Apprentice Carpenter</option>
+        <option>Journeyman Carpenter</option>
+        <option>Master Carpenter</option>
+        <option>Apprentice Electrician</option>
+        <option>Journeyman Electrician</option>
+        <option>Master Electrician</option>
+        <option>Apprentice Mason</option>
+        <option>Journeyman Mason</option>
+        <option>Master Mason</option>
+        <option>Apprentice Plumber</option>
+        <option>Journeyman Plumber</option>
+        <option>Master Plumber</option>
+    </select>
+    <br />
+
+    <a asp-action="Edit" asp-controller="Home" asp-route-id="@Model.MailId">Edit</a>
+</div>

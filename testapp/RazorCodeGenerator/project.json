@@ -1,0 +1,20 @@
+﻿{
+  "version": "1.0.0-*",
+
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Microsoft.AspNetCore.Mvc.Razor": "1.0.0-*"
+  },
+
+  "commands": {
+    "run": "RazorCodeGenerator"
+  },
+
+  "frameworks": {
+    "dnx451": { },
+    "dnxcore50": { }
+  }
+}

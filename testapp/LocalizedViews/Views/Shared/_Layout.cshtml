@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@Localizer["MVC with views"]</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="~/css/site.min.css" asp-fallback-href="~/css/site.css"
+              asp-fallback-test-class="test-it" asp-fallback-test-property="float"
+              asp-fallback-test-value="right" asp-append-version="true" />
+    </environment>
+</head>
+<body>
+    <p>@Localizer["Hello {0}!", await Component.InvokeAsync("CurrentUser")]</p>
+
+    <div>
+        @RenderBody()
+    </div>
+
+    <environment names="Development">
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/js/site.min.js" asp-fallback-src="~/js/site.js"
+                asp-fallback-test="test" asp-append-version="true"></script>
+    </environment>
+</body>
+</html>

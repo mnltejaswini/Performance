@@ -1,0 +1,31 @@
+﻿{
+  "version": "1.0.0-*",
+  "commands": {
+    "run": "xunit.runner.aspnet",
+    "test": "xunit.runner.aspnet"
+  },
+  "dependencies": {
+    "BasicViews": "",
+    "BigModelBinding": "",
+    "BigViews": "",
+    "LargeStaticView": "",
+    "LocalizedViews": "",
+    "MediumApi": "",
+    "RazorCodeGenerator": "",
+
+    "Microsoft.AspNetCore.TestHost": "1.0.0-*",
+    "Microsoft.Extensions.Configuration": "1.0.0-*",
+    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-*",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-*",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-*",
+    "System.Net.Http": "4.0.1-beta-*",
+    "xunit.runner.aspnet": "2.0.0-aspnet-*"
+  },
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Reflection": ""
+      }
+    }
+  }
+}

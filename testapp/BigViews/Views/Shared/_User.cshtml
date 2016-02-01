@@ -1,0 +1,30 @@
+﻿@using BigViews
+@model User
+
+<div class="contact-card">
+    <strong>@Model.FirstName @Model.LastName</strong>
+    <br />
+
+    @Html.LabelFor(m => m.HomePhone)
+    <b id="@Html.IdFor(m => m.HomePhone)">@Model.HomePhone</b>
+    <br />
+
+    @Html.LabelFor(m => m.Mobile)
+    <b id="@Html.IdFor(m => m.Mobile)">@Model.Mobile</b>
+    <br />
+
+    @Html.LabelFor(m => m.MailId)
+    <b id="@Html.IdFor(m => m.MailId)">@Model.MailId</b>
+    <br />
+
+    @Html.LabelFor(m => m.CurrentJob)
+    <b id="@Html.IdFor(m => m.CurrentJob)">@Model.CurrentJob</b>
+    <br />
+
+    @Html.LabelFor(m => m.PastJobs)
+    <br />
+    @Html.ListBoxFor(m => m.PastJobs, BigViews.User.PastJobSelections, htmlAttributes: new { disabled = "disabled" })
+    <br />
+
+    @Html.ActionLink("Edit", "Edit", new { id = Model.MailId })
+</div>
