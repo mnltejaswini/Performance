@@ -4,6 +4,7 @@
     "Benchmarks.Utility": "1.0.0-*",
     "Microsoft.Extensions.Logging": "1.0.0-*",
     "Microsoft.Extensions.Logging.Console": "1.0.0-*",
+    "Microsoft.NETCore.Platforms": "1.0.1-*",
     "Stress.Framework": "1.0.0-*"
   },
   "frameworks": {
