@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Benchmarks.Framework;
+using Benchmarks.Framework.ResultsLogging;
 
 namespace ThroughputResultReporter
 {
@@ -55,18 +56,11 @@ namespace ThroughputResultReporter
                     summary.Aggregate(new BenchmarkIterationSummary { TimeElapsed = rps });
                     summary.PopulateMetrics();
 
-                    foreach (var database in BenchmarkConfig.Instance.ResultDatabases)
+                    var processor = new BenchmarkResultProcessor();
+                    processor.SaveSummary(summary, BenchmarkConfig.Instance.ResultDatabases, (ex, database) =>
                     {
-                        try
-                        {
-                            new SqlServerBenchmarkResultProcessor(database).SaveSummary(summary);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.Error.WriteLine($"Failed to save results to {ex}");
-                            throw;
-                        }
-                    }
+                        Console.Error.WriteLine($"Failed to save results to {database}{Environment.NewLine} {ex}");
+                    });
                 }
             }
         }

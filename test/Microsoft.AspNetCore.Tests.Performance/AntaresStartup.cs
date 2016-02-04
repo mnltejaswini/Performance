@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using Benchmarks.Framework;
+using Benchmarks.Framework.ResultsLogging;
 using Benchmarks.Utility.Azure;
 using Benchmarks.Utility.Helpers;
 using Microsoft.Extensions.Configuration;
@@ -206,18 +207,11 @@ namespace Microsoft.AspNetCore.Tests.Performance
 
         protected void SaveSummary(ILogger logger)
         {
-            foreach (var database in BenchmarkConfig.Instance.ResultDatabases)
+            var processor = new BenchmarkResultProcessor();
+            processor.SaveSummary(_summary, BenchmarkConfig.Instance.ResultDatabases, (ex, database) =>
             {
-                try
-                {
-                    new SqlServerBenchmarkResultProcessor(database).SaveSummary(_summary);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError($"Failed to save results to {ex}");
-                    throw;
-                }
-            }
+                logger.LogError($"Failed to save results to {database}{Environment.NewLine} {ex}");
+            });
         }
 
         private static string GetMachineName()

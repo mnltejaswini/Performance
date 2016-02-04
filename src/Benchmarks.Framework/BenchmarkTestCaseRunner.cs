@@ -12,6 +12,7 @@ using Microsoft.Extensions.PlatformAbstractions;
 using XunitDiagnosticMessage = Xunit.DiagnosticMessage;
 using System.Collections.Generic;
 using System.Reflection;
+using Benchmarks.Framework.ResultsLogging;
 
 namespace Benchmarks.Framework
 {
@@ -90,19 +91,12 @@ namespace Benchmarks.Framework
                 runSummary.PopulateMetrics();
                 _diagnosticMessageSink.OnMessage(new XunitDiagnosticMessage(runSummary.ToString()));
 
-                foreach (var database in BenchmarkConfig.Instance.ResultDatabases)
+                var processor = new BenchmarkResultProcessor();
+                processor.SaveSummary(runSummary, BenchmarkConfig.Instance.ResultDatabases, (ex, database) =>
                 {
-                    try
-                    {
-                        new SqlServerBenchmarkResultProcessor(database).SaveSummary(runSummary);
-                    }
-                    catch (Exception ex)
-                    {
-                        _diagnosticMessageSink.OnMessage(
+                    _diagnosticMessageSink.OnMessage(
                             new XunitDiagnosticMessage($"Failed to save results to {database}{Environment.NewLine} {ex}"));
-                        throw;
-                    }
-                }
+                });
             }
 
             return runSummary;
