@@ -5,7 +5,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace Benchmarks.Framework.ResultsLogging
+namespace Benchmarks.Framework
 {
     public class SqlServerBenchmarkResultProcessor
     {
