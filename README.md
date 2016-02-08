@@ -7,9 +7,11 @@ Travis:   [![Travis](https://travis-ci.org/aspnet/Performance.svg?branch=dev)](h
 
 Performance tests and infrastructure for ASP.NET.
 
-In order to execute the tests, first ensure that the peformance dashboard database has been created in your system by running the PerformanceDashboard web project. Once the database is generated then we can run the performance tests and see the results logged.
+In order to execute the tests:
+  * Ensure that the peformance dashboard database has been created in your system by running the PerformanceDashboard web project. Once the database is generated then we can run the performance tests and see the results logged.
+  * The performance tests depend on npm, bower and gulp being installed on your system. Ensure you have them.
 
-The tests can be run by executing .\build.cmd from the project root.
+The tests can be run by executing .\build.cmd from the project root. At this point this repository only works under Windows.
 
 This project is part of ASP.NET 5. You can find samples, documentation and getting started instructions for ASP.NET 5 at the [Home](https://github.com/aspnet/home) repo.
 
