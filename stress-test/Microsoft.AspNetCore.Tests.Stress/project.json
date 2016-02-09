@@ -10,7 +10,8 @@
   "frameworks": {
     "dnx451": {
       "frameworkAssemblies": {
-        "System.Runtime": ""
+        "System.Runtime": "",
+        "System.Xml.Linq": ""
       },
       "dependencies": {
         "xunit.runner.console": "2.1.0"

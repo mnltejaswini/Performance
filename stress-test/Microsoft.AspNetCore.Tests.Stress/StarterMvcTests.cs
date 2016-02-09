@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -140,8 +139,7 @@ namespace Microsoft.AspNetCore.Tests.Stress
 
         private string ExtractVerificationToken(string response)
         {
-            string tokenElement = String.Empty;
-            var builder = new StringBuilder();
+            string tokenElement = string.Empty;
             var writer = new StreamWriter(new MemoryStream());
             writer.Write(response);
 
