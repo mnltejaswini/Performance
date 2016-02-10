@@ -1,9 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.Data.Entity;
+using Benchmarks.Framework.Model;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.AspNetCore.Server.Kestrel;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -69,6 +72,15 @@ namespace PerformanceDashboard
             });
         }
 
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+        public static void Main(string[] args)
+        {
+            var host = new WebHostBuilder()
+                .UseDefaultConfiguration(args)
+                .UseIISPlatformHandlerUrl()
+                .UseStartup<Startup>()
+                .UseServer(new ServerFactory(new ApplicationLifetime(), new LoggerFactory()))
+                .Build();
+            host.Run();
+        }
     }
 }

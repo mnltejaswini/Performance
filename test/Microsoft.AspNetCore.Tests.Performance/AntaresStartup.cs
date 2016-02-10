@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using Benchmarks.Framework;
+using Benchmarks.Framework.BenchmarkPersistence;
 using Benchmarks.Utility.Azure;
 using Benchmarks.Utility.Helpers;
 using Microsoft.Extensions.Configuration;
@@ -214,7 +215,7 @@ namespace Microsoft.AspNetCore.Tests.Performance
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError($"Failed to save results to {ex}");
+                    logger.LogError($"Failed to save results to {database}{Environment.NewLine} {ex}");
                     throw;
                 }
             }

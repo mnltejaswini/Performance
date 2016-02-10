@@ -4,29 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Data.Entity;
-using PerformanceDashboard.ViewModels;
+using Benchmarks.Framework.Model;
 
 namespace PerformanceDashboard.Models
 {
     public class BenchmarkRepository
     {
         private readonly BenchmarkContext _context;
-        private static readonly string _latestResultsSql =
-@"SELECT Runs.*
-FROM
-	dbo.Runs AS Runs
-	INNER JOIN (SELECT TestClass, TestMethod, Variation, ProductReportingVersion, Framework, MAX(RunStarted) LastRun
-				FROM dbo.Runs
-                WHERE RunStarted > GETDATE() - 30
-				GROUP BY TestClass, TestMethod, Variation, ProductReportingVersion, Framework) AS LastRuns
-	ON
-		Runs.TestClass = LastRuns.TestClass
-		AND Runs.TestMethod = LastRuns.TestMethod
-		AND Runs.Variation = LastRuns.Variation
-		AND Runs.ProductReportingVersion = LastRuns.ProductReportingVersion
-		AND Runs.Framework = LastRuns.Framework
-		AND Runs.RunStarted = LastRuns.LastRun";
 
         public BenchmarkRepository(BenchmarkContext context)
         {
@@ -38,15 +22,41 @@ FROM
             if (days > 0)
             {
                 return _context.Runs
-                   .Where(r => r.RunStarted > DateTime.Today.AddDays(days * -1))
-                   .ToArray();
+                   .Where(r => r.RunStarted > DateTime.Today.AddDays(-days))
+                   .ToList();
             }
-            else
-            {
-                return _context.Runs
-                    .FromSql(_latestResultsSql)
-                    .ToArray();
-            }
+
+            var thirtyDaysAgo = DateTime.Today.AddDays(-30);
+            return _context.Runs
+                .Where(r => r.RunStarted > thirtyDaysAgo)
+                .GroupBy(
+                    r => 
+                        new
+                        {
+                            r.TestClass,
+                            r.TestMethod,
+                            r.Variation,
+                            r.ProductReportingVersion,
+                            r.Framework
+                        })
+                .Select(
+                    g =>
+                        new
+                        {
+                            g.Key.TestClass,
+                            g.Key.TestMethod,
+                            g.Key.Variation,
+                            g.Key.ProductReportingVersion,
+                            g.Key.Framework,
+                            LastRun = g.Max(r => r.RunStarted)
+                        })
+                .SelectMany(x => _context.Runs.Where(r =>
+                    r.TestClass == x.TestClass &&
+                    r.Variation == x.Variation &&
+                    r.ProductReportingVersion == x.ProductReportingVersion &&
+                    r.Framework == x.Framework &&
+                    r.RunStarted == x.LastRun
+                    ).Select(r => r)).ToList();
         }
 
         public IEnumerable<Run> GetTestHistory(string testClass, string testMethod, int days)

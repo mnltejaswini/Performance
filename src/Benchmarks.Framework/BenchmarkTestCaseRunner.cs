@@ -12,6 +12,7 @@ using Microsoft.Extensions.PlatformAbstractions;
 using XunitDiagnosticMessage = Xunit.DiagnosticMessage;
 using System.Collections.Generic;
 using System.Reflection;
+using Benchmarks.Framework.BenchmarkPersistence;
 
 namespace Benchmarks.Framework
 {
