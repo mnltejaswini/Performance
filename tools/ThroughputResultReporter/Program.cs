@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Benchmarks.Framework;
+using Benchmarks.Framework.BenchmarkPersistence;
 
 namespace ThroughputResultReporter
 {
@@ -63,7 +64,7 @@ namespace ThroughputResultReporter
                         }
                         catch (Exception ex)
                         {
-                            Console.Error.WriteLine($"Failed to save results to {ex}");
+                            Console.Error.WriteLine($"Failed to save results to {database}{Environment.NewLine} {ex}");
                             throw;
                         }
                     }

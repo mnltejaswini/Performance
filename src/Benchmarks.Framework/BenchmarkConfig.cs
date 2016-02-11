@@ -23,7 +23,7 @@ namespace Benchmarks.Framework
                 return new BenchmarkConfig
                 {
                     RunIterations = bool.Parse(config["Benchmarks:RunIterations"]),
-                    ResultDatabases = resultDatabasesSection.GetChildren().Select(s => s.Value).ToArray(),
+                    ResultDatabases = resultDatabasesSection.GetChildren().Select(s => s.Value).ToList(),
                     BenchmarkDatabaseInstance = config["Benchmarks:BenchmarkDatabaseInstance"],
                     ProductReportingVersion = config["Benchmarks:ProductReportingVersion"],
                     CustomData = config["Benchmarks:CustomData"]

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Benchmarks.Framework.Model;
 
 namespace PerformanceDashboard.ViewModels
 {
