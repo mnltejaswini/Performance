@@ -4,19 +4,24 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using System.Text;
 
 namespace Microsoft.AspNetCore.Test.Perf.WebFx.Apps.HelloWorld
 {
     public class Startup
     {
-        private const string FixedResponse = "Hello world";
+        private static readonly byte[] _helloWorldPayload = Encoding.UTF8.GetBytes("Hello, World!");
 
         public void Configure(IApplicationBuilder app)
         {
-            app.Run(async context =>
+            app.Run(context =>
             {
+                context.Response.StatusCode = 200;
                 context.Response.ContentType = "text/plain";
-                await context.Response.WriteAsync(FixedResponse);
+                // HACK: Setting the Content-Length header manually avoids the cost of serializing the int to a string.
+                //       This is instead of: httpContext.Response.ContentLength = _helloWorldPayload.Length;
+                context.Response.Headers["Content-Length"] = "13";
+                return context.Response.Body.WriteAsync(_helloWorldPayload, 0, _helloWorldPayload.Length);
             });
         }
 
