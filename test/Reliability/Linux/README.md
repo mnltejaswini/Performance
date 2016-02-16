@@ -4,8 +4,17 @@ This setup is intended for reliability or performance tests for Kestrel and ASP.
 # Server Setup
 
 - Create A2 Standard Ubuntu VM on Azure
-- Install dnvm and DNX, and libuv
-https://docs.asp.net/en/latest/getting-started/installing-on-linux.html
+- Install dotnet cli - http://dotnet.github.io
+- Install libuv
+        sudo apt-get install make automake libtool curl
+        curl -sSL https://github.com/libuv/libuv/archive/v1.8.0.tar.gz | sudo tar zxfv - -C /usr/local/src
+        cd /usr/local/src/libuv-1.8.0
+        sudo sh autogen.sh
+        sudo ./configure
+        sudo make
+        sudo make install
+        sudo rm -rf /usr/local/src/libuv-1.8.0 && cd ~/
+        sudo ldconfig
 - Install Nginx
 ```sh
 $ sudo apt-get install nginx
@@ -41,7 +50,8 @@ $ sudo apt-get install nginx
 # Client Setup
 
 - Create A2 Standard windows VM on Azure
-- Copy the contents of this folder
+- Install wcat - http://www.iis.net/downloads/community/2007/05/wcat-63-x86
+- Copy the contents of this folder to %programfiles(x86)%\wcat 
 - Replace the server name/IP in settings.ubr file with the server name/ip that you created during "Server Setup" steps above. 
 - Update scenario.ubr with the duration needed (in seconds).
 - Run 
