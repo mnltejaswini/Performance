@@ -55,18 +55,15 @@ namespace ThroughputResultReporter
                     var rps = (long)double.Parse(data["rps"]);
                     summary.Aggregate(new BenchmarkIterationSummary { TimeElapsed = rps });
                     summary.PopulateMetrics();
-
-                    foreach (var database in BenchmarkConfig.Instance.ResultDatabases)
+                    
+                    try
                     {
-                        try
-                        {
-                            new SqlServerBenchmarkResultProcessor(database).SaveSummary(summary);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.Error.WriteLine($"Failed to save results to {database}{Environment.NewLine} {ex}");
-                            throw;
-                        }
+                        BenchmarkResultProcessor.SaveSummary(summary);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine($"Failed to save results {Environment.NewLine} {ex}");
+                        throw;
                     }
                 }
             }
