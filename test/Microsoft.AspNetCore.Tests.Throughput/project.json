@@ -8,11 +8,5 @@
     "dnxcore50": {
       "imports": "portable-net451+win8"
     }
-  },
-  "commands": {
-    "test": "xunit.runner.aspnet"
-  },
-  "content": [
-    "xunit.runner.json"
-  ]
+  }
 }

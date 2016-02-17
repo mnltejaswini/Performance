@@ -7,7 +7,7 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0-*"
   },
   "frameworks": {
-    "dnx451": {
+    "net451": {
       "frameworkAssemblies": {
         "System.Runtime": ""
       },
@@ -23,11 +23,7 @@
     }
   },
   "testRunner": "xunit",
-  "commands": {
-    "test": "xunit.runner.aspnet"
-  },
   "content": [
-    "config.json",
-    "xunit.runner.json"
+    "config.json"
   ]
 }

@@ -1,9 +1,5 @@
 ﻿{
   "version": "1.0.0-*",
-  "commands": {
-    "run": "xunit.runner.aspnet",
-    "test": "xunit.runner.aspnet"
-  },
   "dependencies": {
     "BasicViews": "1.0.0-*",
     "BigModelBinding": "1.0.0-*",
@@ -28,7 +24,5 @@
       }
     }
   },
-  "content": [
-    "xunit.runner.json" 
-  ]
+  "testRunner": "xunit"
 }

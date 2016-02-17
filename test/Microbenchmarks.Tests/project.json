@@ -11,9 +11,6 @@
     "Microsoft.AspNetCore.Testing": "1.0.0-*"
   },
   "testRunner": "xunit",
-  "commands": {
-    "test": "xunit.runner.aspnet"
-  },
   "frameworks": {
     "dnxcore50": {
       "dependencies": {
@@ -21,7 +18,7 @@
       },
       "imports": "portable-net451+win8"
     },
-    "dnx451": {
+    "net451": {
       "dependencies": {
         "xunit.runner.console": "2.1.0"
       }
@@ -31,7 +28,6 @@
     "dotnet-razor-tooling": "1.0.0-*"
   },
   "content": [
-    "config.json",
-    "xunit.runner.json"
+    "config.json"
   ]
 }
