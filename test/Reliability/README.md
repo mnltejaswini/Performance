@@ -1,7 +1,39 @@
 # Description
 This setup is intended for reliability or performance tests for Kestrel and ASP.NET core on Linux
 
-# Server Setup
+# Server Setup - Windows
+- Create A2 Standard Windows 2012 R2 Server VM on Azure
+- Install dotnet cli - http://dotnet.github.io
+- Install libuv
+
+        sudo apt-get install make automake libtool curl
+        curl -sSL https://github.com/libuv/libuv/archive/v1.8.0.tar.gz | sudo tar zxfv - -C /usr/local/src
+        cd /usr/local/src/libuv-1.8.0
+        sudo sh autogen.sh
+        sudo ./configure
+        sudo make
+        sudo make install
+        sudo rm -rf /usr/local/src/libuv-1.8.0 && cd ~/
+        sudo ldconfig
+- Install IIS from server manager -> Manage -> Add Roles and features
+- Install HttpPlatformHandler from http://www.iis.net/downloads/microsoft/httpplatformhandler
+- Publish the binaries
+      
+        cd testapp\HelloWorldMvc
+        dotnet restore
+        publish --runtime dnx-coreclr-win-x86.<your version> --configuration release
+- Create new site in IIS and point its wwwroot to testapp\HelloWorldMvc\bin\Output\wwwroot
+- Give AppPool User full permissions to this folder.
+- Edit site bindings to set the machine name as hostname
+- Create perfmon user defined report as following:
+    - Run perfmont
+    - Go to Data Collector Sets, right click on user defined -> New -> Data Collector set
+    - Choose "create from template"
+    - click next -> browse and choose the perfmon.xml file
+     click on Finish and the new Data collector set should be created, modify the duration in stop condition match the run duration.
+- Start perfmon data collector on server               
+
+# Server Setup - Ubuntu
 
 - Create A2 Standard Ubuntu VM on Azure
 - Install dotnet cli - http://dotnet.github.io
@@ -53,7 +85,7 @@ $ sudo apt-get install nginx
         sudo apt-get install atop
         atop -M -m -p 1 >atoplog.log
 
-# Client Setup
+# Client Setup - Wcat
 
 - Create A2 Standard windows VM on Azure
 - Install wcat - http://www.iis.net/downloads/community/2007/05/wcat-63-x86
