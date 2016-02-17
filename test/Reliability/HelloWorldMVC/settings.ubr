@@ -1,4 +1,4 @@
 settings
 {
-    server= "138.91.141.216";
+    server= "<your-server>";
 }

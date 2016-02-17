@@ -1,6 +1,6 @@
 scenario
 {
-    name = "Linux + ASP.NET Core + Kestrel + HelloWorldMVC";
+    name = "ASP.NET Core + Kestrel + HelloWorldMVC";
 
     warmup = 1;
     duration = 10;

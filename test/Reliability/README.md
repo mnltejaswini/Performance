@@ -1,5 +1,5 @@
 # Description
-This setup is intended for reliability or performance tests for Kestrel and ASP.NET core on Linux
+This setup is intended for reliability or performance tests for Kestrel and ASP.NET core 
 
 # Server Setup - Windows
 - Create A2 Standard Windows 2012 R2 Server VM on Azure
@@ -89,7 +89,7 @@ $ sudo apt-get install nginx
 
 - Create A2 Standard windows VM on Azure
 - Install wcat - http://www.iis.net/downloads/community/2007/05/wcat-63-x86
-- Copy the contents of this folder to %programfiles(x86)%\wcat 
+- Copy the contents of the test folder to %programfiles(x86)%\wcat 
 - Replace the server name/IP in settings.ubr file with the server name/ip that you created during "Server Setup" steps above. 
 - Update scenario.ubr with the duration needed (in seconds).
 - Run 
