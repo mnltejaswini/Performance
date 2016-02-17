@@ -7,14 +7,35 @@ Travis:   [![Travis](https://travis-ci.org/aspnet/Performance.svg?branch=dev)](h
 
 Performance tests and infrastructure for ASP.NET.
 
-In order to execute the tests:
-  * Ensure that the peformance dashboard database has been created in your system by running the PerformanceDashboard web project. Once the database is generated then we can run the performance tests and see the results logged.
-  * The performance tests depend on npm, bower and gulp being installed on your system. Ensure you have them.
-
-The tests can be run by executing .\build.cmd from the project root. At this point this repository only works under Windows.
-
 This project is part of ASP.NET 5. You can find samples, documentation and getting started instructions for ASP.NET 5 at the [Home](https://github.com/aspnet/home) repo.
 
+## Dependencies
+Your system must have `gulp` and `bower` readily available from the command line. Feel free to install them in any way you want. If you don't know how to go about it, here are some suggestions.
+
+### Windows
+  * [npm](https://nodejs.org/en/)
+  * gulp: `npm install -g gulp`
+  * bower: `npm install -g bower`
+
+To build, execute `.\build.cmd`.
+
+### Ubuntu
+  * nodejs-legacy: `sudo apt-get install nodejs-legacy`
+  * npm: `sudo apt-get install npm`
+  * gulp: `npm install -g gulp`
+  * bower: `npm install -g bower`
+  * [Mono](http://www.mono-project.com/docs/getting-started/install/linux/#debian-ubuntu-and-derivatives) (use package mono-complete)
+
+To build, execute `./build.sh`.
+
+### OSX
+  * [brew](http://brew.sh/)
+  * npm: `brew install npm`
+  * gulp: `npm install -g gulp`
+  * bower: `npm install -g bower`
+  * [Mono](http://www.mono-project.com/docs/getting-started/install/mac/)
+
+To build, execute `./build.sh`.
 
 ## [Microbenchmark tests](testapp)
 These are targeted tests covering specific feature areas. The tests are quite self explanatory. You can use the `loadtests.ps1` script to load test the specific scenario. We use the [loadtest npm module](https://www.npmjs.com/package/loadtest) in these scripts to keep them as simple as possible.
