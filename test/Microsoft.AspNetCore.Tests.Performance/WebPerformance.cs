@@ -153,6 +153,7 @@ namespace Microsoft.AspNetCore.Tests.Performance
                 try
                 {
                     File.WriteAllLines(Path.Combine(testProject, "Startup.cs"), lines);
+                    break;
                 }
                 catch (IOException)
                 {
