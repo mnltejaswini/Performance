@@ -65,11 +65,8 @@ namespace Benchmarks.Framework.BenchmarkPersistence
         {
             if (disposing)
             {
-                if (_context != null)
-                {
-                    _context.Dispose();
-                    _context = null;
-                }
+                _context?.Dispose();
+                _context = null;
             }
         }
     }

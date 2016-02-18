@@ -8,26 +8,35 @@ using System.Linq;
 
 namespace Benchmarks.Framework.BenchmarkPersistence
 {
-    public static class BenchmarkResultProcessor
+    public class BenchmarkResultProcessor : IDisposable
     {
-        private static readonly Lazy<List<string>> GoodConnectionStrings =
-            new Lazy<List<string>>(() => BenchmarkConfig.Instance.ResultDatabases.Where(CanConnect).ToList());
+        private Lazy<List<SqlServerBenchmarkResultProcessor>> _connections =
+            new Lazy<List<SqlServerBenchmarkResultProcessor>>(
+                () => BenchmarkConfig.Instance.ResultDatabases.Where(CanConnect).Select(
+                    connection => new SqlServerBenchmarkResultProcessor(connection)).ToList());
 
-        private static readonly Dictionary<string, SqlServerBenchmarkResultProcessor> Connections =
-            new Dictionary<string, SqlServerBenchmarkResultProcessor>();
+        private static Lazy<BenchmarkResultProcessor> _singleton = new Lazy<BenchmarkResultProcessor>(() => new BenchmarkResultProcessor());
 
-        public static void SaveSummary(BenchmarkRunSummary summary)
+        private BenchmarkResultProcessor() { }
+
+        public static BenchmarkResultProcessor Instance => _singleton.Value;
+
+        internal static void ReleaseInstance()
+        {
+            _singleton = null;
+        }
+
+        public void SaveSummary(BenchmarkRunSummary summary)
         {
             Console.WriteLine(summary.ToString());
-            foreach (var connectionString in GoodConnectionStrings.Value)
+            foreach (var connection in _connections.Value)
             {
-                ObtainConnection(connectionString).SaveSummary(summary);
+                connection.SaveSummary(summary);
             }
         }
 
         private static bool CanConnect(string connectionString)
         {
-            var canConnect = false;
             var csb = new SqlConnectionStringBuilder(connectionString);
             try
             {
@@ -35,23 +44,33 @@ namespace Benchmarks.Framework.BenchmarkPersistence
                 var connection = new SqlConnection(csb.ConnectionString);
                 connection.Open();
                 connection.Close();
-                canConnect = true;
+                return true;
             }
             catch
             {
                 Console.Error.WriteLine($"Can't connect to the specified datasource { csb.DataSource }");
             }
-            return canConnect;
+            return false;
         }
 
-        private static SqlServerBenchmarkResultProcessor ObtainConnection(string connectionString)
+        public void Dispose()
         {
-            SqlServerBenchmarkResultProcessor result;
-            if (!Connections.TryGetValue(connectionString, out result))
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                Connections[connectionString] = result = new SqlServerBenchmarkResultProcessor(connectionString);
+                if (_connections != null)
+                {
+                    var connections = _connections.Value;
+                    connections.ForEach(c => c.Dispose());
+                    connections.Clear();
+                    _connections = null;
+                }
             }
-            return result;
         }
     }
 }
