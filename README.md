@@ -20,16 +20,22 @@ Your system must have `gulp` and `bower` readily available from the command line
 To build, execute `.\build.cmd`.
 
 ### Ubuntu
+First, update the package index by running `sudo apt-get update`. Follow by installing basic libraries required by all ASP.NET projects on Linux as described [here](https://docs.asp.net/en/latest/getting-started/installing-on-linux.html).
+
+Then proceed to install `gulp`, `bower` and `mono`:
+  * unzip: `sudo apt-get install unzip`
   * nodejs-legacy: `sudo apt-get install nodejs-legacy`
   * npm: `sudo apt-get install npm`
-  * gulp: `npm install -g gulp`
-  * bower: `npm install -g bower`
+  * gulp: `sudo npm install -g gulp`
+  * bower: `sudo npm install -g bower`
   * [Mono](http://www.mono-project.com/docs/getting-started/install/linux/#debian-ubuntu-and-derivatives) (use package mono-complete)
 
 To build, execute `./build.sh`.
 
+If you run into the "Cannot handle address family xxxxx" error, please refer to [mono bug 30018](https://bugzilla.xamarin.com/show_bug.cgi?id=30018).
+
 ### OSX
-  * [brew](http://brew.sh/)
+  * [brew](http://brew.sh/), and run `brew update` after install to update the package index.
   * npm: `brew install npm`
   * gulp: `npm install -g gulp`
   * bower: `npm install -g bower`
