@@ -4,17 +4,6 @@ This setup is intended for reliability or performance tests for Kestrel and ASP.
 # Server Setup - Windows
 - Create A2 Standard Windows 2012 R2 Server VM on Azure
 - Install dotnet cli - http://dotnet.github.io
-- Install libuv
-
-        sudo apt-get install make automake libtool curl
-        curl -sSL https://github.com/libuv/libuv/archive/v1.8.0.tar.gz | sudo tar zxfv - -C /usr/local/src
-        cd /usr/local/src/libuv-1.8.0
-        sudo sh autogen.sh
-        sudo ./configure
-        sudo make
-        sudo make install
-        sudo rm -rf /usr/local/src/libuv-1.8.0 && cd ~/
-        sudo ldconfig
 - Install IIS from server manager -> Manage -> Add Roles and features
 - Install HttpPlatformHandler from http://www.iis.net/downloads/microsoft/httpplatformhandler
 - Publish the binaries
