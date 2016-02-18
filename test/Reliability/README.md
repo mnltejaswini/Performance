@@ -41,9 +41,9 @@ This setup is intended for reliability or performance tests for Kestrel and ASP.
 ```sh
 $ sudo apt-get install nginx
 ```
-- Run testapp\HelloWorldMVC application on a specific port, say http://*:5000
+- Run testapp\<AnyTestApp> application on a specific port, say http://*:5000
         
-        cd testapp\HelloWorldMvc
+        cd testapp\<AnyTestApp>
         dotnet restore
         dotnet run server.urls=http://*:5000
 - Create and enable the site/application
@@ -78,7 +78,7 @@ $ sudo apt-get install nginx
 
 - Create A2 Standard windows VM on Azure
 - Install wcat - http://www.iis.net/downloads/community/2007/05/wcat-63-x86
-- Copy the contents of the test folder to %programfiles(x86)%\wcat 
+- Copy the contents of the test\Reliability\<<AnyTestApp> folder to %programfiles(x86)%\wcat 
 - Replace the server name/IP in settings.ubr file with the server name/ip that you created during "Server Setup" steps above. 
 - Update scenario.ubr with the duration needed (in seconds).
 - Run 
