@@ -6,15 +6,15 @@ This setup is intended for reliability or performance tests for Kestrel and ASP.
 - Install dotnet cli - http://dotnet.github.io
 - Install IIS from server manager -> Manage -> Add Roles and features
 - Install HttpPlatformHandler from http://www.iis.net/downloads/microsoft/httpplatformhandler
+- Edit Application Pool to set '.NET CLR version' to  'No Managed Code'.
+- In IIS manager, Open Configuration editor and make sure system.webserver/handlers section is unlocked.
 - Publish the binaries
       
         cd testapp\HelloWorldMvc
         dotnet restore
-        publish --runtime dnx-coreclr-win-x86.<your version> --configuration release
+        dnu publish --runtime dnx-coreclr-win-x86.<your version> --configuration release
 - Create new site in IIS and point its wwwroot to testapp\HelloWorldMvc\bin\Output\wwwroot
 - Give AppPool User full permissions to this folder.
-- Edit Application Pool to set '.NET CLR version' to  'No Managed Code'.
-- In IIS manager, Open Configuration editor and make sure system.webserver/handlers section is unlocked.
 - Edit site bindings to set the machine name as hostname
 - Create perfmon user defined report as following:
     - Run perfmont
