@@ -11,13 +11,13 @@ This setup is intended for reliability or performance tests for Kestrel and ASP.
 - Install HttpPlatformHandler from http://www.iis.net/downloads/microsoft/httpplatformhandler
 - In IIS manager, Open Configuration editor and make sure system.webserver/handlers section is unlocked (i.e. write access is enabled).
 - Upgrade to latest clr
-        - set DNX_FEED=https://www.myget.org/F/aspnetcidev/api/v2dnvm
-        - dnvm upgrade -r CoreCLR
+    - set DNX_FEED=https://www.myget.org/F/aspnetcidev/api/v2dnvm
+    - dnvm upgrade -r CoreCLR
 - Publish the binaries
-        - Go to Permformance repo
-        - cd testapp\HelloWorldMvc
-        - dnu restore
-        - dnu publish --runtime dnx-coreclr-win-x64.<your version> --configuration release
+    - Go to Permformance repo
+    - cd testapp\HelloWorldMvc
+    - dnu restore
+    - dnu publish --runtime dnx-coreclr-win-x64.<your version> --configuration release
 - Create new site (not application or vdir) in IIS; set its Physical Path to testapp\HelloWorldMvc\bin\Output\wwwroot and
   the Host Name to the machine name.
 - Make sure user for site AppPool has full permissions to this folder. 
