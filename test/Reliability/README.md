@@ -22,7 +22,7 @@ This setup is intended for reliability or performance tests for Kestrel and ASP.
   the Host Name to the machine name.
 - Make sure user for site AppPool has full permissions to this folder. 
 - In IIS manager, edit the site Application Pool to set '.NET CLR version' to  'No Managed Code'.
-- Open the Site's port in the fire wall and test the site from a remote machine
+- Open the Site's port in the fire wall
 - Test the new  site with a browser specifying the machine name in the URL both locally and remotely
 - Create perfmon user defined report as following:
     - Run perfmon
@@ -37,7 +37,7 @@ This setup is intended for reliability or performance tests for Kestrel and ASP.
 # Server Setup - Ubuntu
 
 - Create A2 Standard Ubuntu VM on Azure
-- install an SSH clinet such Putty from http://www.putty.org/ on a Windows machine connect to the linux VM
+- install an SSH clinet such Putty from http://www.putty.org/ on a Windows machine and connect to the linux VM
 - Install dotnet cli - http://dotnet.github.io
 - Install libuv
 
@@ -73,6 +73,7 @@ $  git clone https://github.com/aspnet/Performance.git
 - Create and enable the site/application in ngnix.  Ngnix is a popular proxy for exposing endpoints on a linux server.
     - Open a new SSH session
     - Create a configuration file for a new site to enable the reverse proxy in the nginx sites-available dir.  You can call the file anything.  We'll call it Performance here.  We'll edit it usng the nano editor.
+    
             cd /
             /cd tc/nginx/sites-available/
             sudo touch Performance
