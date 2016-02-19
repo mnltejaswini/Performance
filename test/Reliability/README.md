@@ -3,26 +3,35 @@ This setup is intended for reliability or performance tests for Kestrel and ASP.
 
 # Server Setup - Windows
 - Create A2 Standard Windows 2012 R2 Server VM on Azure
+- Install git - http://git-scm.com/download for example
+- Clone the Performance repo - git clone https://github.com/aspnet/Performance.git
 - Install dotnet cli - http://dotnet.github.io
+- Install ASP.NET 5 - https://go.microsoft.com/fwlink/?LinkId=627627
 - Install IIS from server manager -> Manage -> Add Roles and features
 - Install HttpPlatformHandler from http://www.iis.net/downloads/microsoft/httpplatformhandler
-- Edit Application Pool to set '.NET CLR version' to  'No Managed Code'.
-- In IIS manager, Open Configuration editor and make sure system.webserver/handlers section is unlocked.
+- In IIS manager, Open Configuration editor and make sure system.webserver/handlers section is unlocked (i.e. write access is enabled).
+- Upgrade to latest clr
+        set DNX_FEED=https://www.myget.org/F/aspnetcidev/api/v2dnvm
+        dnvm upgrade -r CoreCLR
 - Publish the binaries
-      
+        Go to Permformance repo
         cd testapp\HelloWorldMvc
-        dotnet restore
-        dnu publish --runtime dnx-coreclr-win-x86.<your version> --configuration release
-- Create new site in IIS and point its wwwroot to testapp\HelloWorldMvc\bin\Output\wwwroot
-- Give AppPool User full permissions to this folder.
-- Edit site bindings to set the machine name as hostname
+        dnu restore
+        dnu publish --runtime dnx-coreclr-win-x64.<your version> --configuration release
+- Create new site (not application or vdir) in IIS; set its Physical Path to testapp\HelloWorldMvc\bin\Output\wwwroot and
+  the Host Name to the machine name.
+- Make sure user for site AppPool has full permissions to this folder. 
+- In IIS manager, edit the site Application Pool to set '.NET CLR version' to  'No Managed Code'.
+- Test the new  site with a browser specifying the machine name in the URL
 - Create perfmon user defined report as following:
-    - Run perfmont
+    - Run perfmon
     - Go to Data Collector Sets, right click on user defined -> New -> Data Collector set
     - Choose "create from template"
-    - click next -> browse and choose the perfmon.xml file
-     click on Finish and the new Data collector set should be created, modify the duration in stop condition match the run duration.
-- Start perfmon data collector on server               
+    - click next -> browse and choose the test\Reliability\HelloWorldMVC\perfmon.xml file
+    - click on Finish and the new Data collector set should be created 
+    - modify the duration in the DataCollector properties stop condition to match the run duration.
+- Start perfmon data collector on server         
+- Execute your test run     
 
 # Server Setup - Ubuntu
 
