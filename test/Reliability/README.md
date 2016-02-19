@@ -17,12 +17,13 @@ This setup is intended for reliability or performance tests for Kestrel and ASP.
     - Go to Permformance repo
     - cd testapp\HelloWorldMvc
     - dnu restore
-    - dnu publish --runtime dnx-coreclr-win-x64.<your version> --configuration release
+    - dnu publish --runtime dnx-coreclr-win-x64.&lt;your version&gt; --configuration release
 - Create new site (not application or vdir) in IIS; set its Physical Path to testapp\HelloWorldMvc\bin\Output\wwwroot and
   the Host Name to the machine name.
 - Make sure user for site AppPool has full permissions to this folder. 
 - In IIS manager, edit the site Application Pool to set '.NET CLR version' to  'No Managed Code'.
-- Test the new  site with a browser specifying the machine name in the URL
+- Open the Site's port in the fire wall and test the site from a remote machine
+- Test the new  site with a browser specifying the machine name in the URL both locally and remotely
 - Create perfmon user defined report as following:
     - Run perfmon
     - Go to Data Collector Sets, right click on user defined -> New -> Data Collector set
