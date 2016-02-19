@@ -79,7 +79,8 @@ $  git clone https://github.com/aspnet/Performance.git
             sudo touch Performance
             sudo nano Peformance
             
-                    
+       Paste the following into nano and save.      
+              
             server {
                 listen 8080;		 
                 location / {
