@@ -16,7 +16,6 @@
     "Microsoft.AspNetCore.Mvc.TagHelpers": "1.0.0-*",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0-*",
-    "Microsoft.AspNetCore.Tooling.Razor": "1.0.0-*",
     "Microsoft.NETCore.Platforms": "1.0.1-*",
     "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-*",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-*",
@@ -26,12 +25,15 @@
     "Microsoft.Extensions.Logging.Debug": "1.0.0-*",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-*"
   },
+  "tools": {
+    "dotnet-razor-tooling": "1.0.0-*"
+  },
   "commands": {
     "web": "StarterMvc",
     "ef": "Microsoft.EntityFrameworkCore.Commands"
   },
   "frameworks": {
-    "dnx451": {},
+    "dnx451": { },
     "dnxcore50": {
       "imports": "portable-net451+win8"
     }
@@ -52,5 +54,5 @@
       "gulp min"
     ]
   },
-  "content": ["appsettings.json", "Views"]
+  "content": [ "appsettings.json", "Views" ]
 }
