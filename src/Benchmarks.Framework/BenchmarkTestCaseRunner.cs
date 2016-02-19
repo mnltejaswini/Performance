@@ -90,19 +90,16 @@ namespace Benchmarks.Framework
             {
                 runSummary.PopulateMetrics();
                 _diagnosticMessageSink.OnMessage(new XunitDiagnosticMessage(runSummary.ToString()));
-
-                foreach (var database in BenchmarkConfig.Instance.ResultDatabases)
+                
+                try
                 {
-                    try
-                    {
-                        new SqlServerBenchmarkResultProcessor(database).SaveSummary(runSummary);
-                    }
-                    catch (Exception ex)
-                    {
-                        _diagnosticMessageSink.OnMessage(
-                            new XunitDiagnosticMessage($"Failed to save results to {database}{Environment.NewLine} {ex}"));
-                        throw;
-                    }
+                    BenchmarkResultProcessor.Instance.SaveSummary(runSummary);
+                }
+                catch (Exception ex)
+                {
+                    _diagnosticMessageSink.OnMessage(
+                        new XunitDiagnosticMessage($"Failed to save results {Environment.NewLine} {ex}"));
+                    throw;
                 }
             }
 

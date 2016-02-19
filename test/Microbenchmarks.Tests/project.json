@@ -15,7 +15,7 @@
     "test": "xunit.runner.aspnet"
   },
   "frameworks": {
-    "dnxcore50": { 
+    "dnxcore50": {
       "dependencies": {
         "xunit.runner.aspnet": "2.0.0-aspnet-*"
       },
@@ -27,6 +27,7 @@
       }
     }
   },
+  "compile": "..\\..\\src\\Benchmarks.Framework\\BenchmarkFrameworkInitialization.cs",
   "content": [
     "config.json",
     "xunit.runner.json"

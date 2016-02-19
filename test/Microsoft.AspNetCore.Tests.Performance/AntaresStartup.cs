@@ -207,17 +207,14 @@ namespace Microsoft.AspNetCore.Tests.Performance
 
         protected void SaveSummary(ILogger logger)
         {
-            foreach (var database in BenchmarkConfig.Instance.ResultDatabases)
+            try
             {
-                try
-                {
-                    new SqlServerBenchmarkResultProcessor(database).SaveSummary(_summary);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError($"Failed to save results to {database}{Environment.NewLine} {ex}");
-                    throw;
-                }
+                BenchmarkResultProcessor.Instance.SaveSummary(_summary);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Failed to save results {Environment.NewLine} {ex}");
+                throw;
             }
         }
 
