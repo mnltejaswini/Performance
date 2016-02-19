@@ -15,7 +15,7 @@ namespace BigModelBinding.Controllers
             }
             else
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
         }
     }
