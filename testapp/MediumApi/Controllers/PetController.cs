@@ -24,7 +24,7 @@ namespace MediumApi.Controllers
             var pet = Repository.FindPet(id);
             if (pet == null)
             {
-                return new HttpNotFoundResult();
+                return new NotFoundResult();
             }
 
             return new ObjectResult(pet);
