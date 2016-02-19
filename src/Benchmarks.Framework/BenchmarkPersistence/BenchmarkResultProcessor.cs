@@ -23,6 +23,7 @@ namespace Benchmarks.Framework.BenchmarkPersistence
 
         internal static void ReleaseInstance()
         {
+            _singleton?.Value?.Dispose();
             _singleton = null;
         }
 
