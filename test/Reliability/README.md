@@ -75,7 +75,7 @@ $  git clone https://github.com/aspnet/Performance.git
     - Create a configuration file for a new site to enable the reverse proxy in the nginx sites-available dir.  You can call the file anything.  We'll call it Performance here.  We'll edit it usng the nano editor.
     
             cd /
-            /cd etc/nginx/sites-available/
+            cd etc/nginx/sites-available/
             sudo touch Performance
             sudo nano Peformance
             
