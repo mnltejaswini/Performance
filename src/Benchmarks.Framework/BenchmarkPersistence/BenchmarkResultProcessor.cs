@@ -8,29 +8,17 @@ using System.Linq;
 
 namespace Benchmarks.Framework.BenchmarkPersistence
 {
-    public class BenchmarkResultProcessor : IDisposable
+    public class BenchmarkResultProcessor
     {
-        private Lazy<List<SqlServerBenchmarkResultProcessor>> _connections =
+        private static readonly Lazy<List<SqlServerBenchmarkResultProcessor>> Connections =
             new Lazy<List<SqlServerBenchmarkResultProcessor>>(
                 () => BenchmarkConfig.Instance.ResultDatabases.Where(CanConnect).Select(
                     connection => new SqlServerBenchmarkResultProcessor(connection)).ToList());
 
-        private static Lazy<BenchmarkResultProcessor> _singleton = new Lazy<BenchmarkResultProcessor>(() => new BenchmarkResultProcessor());
-
-        private BenchmarkResultProcessor() { }
-
-        public static BenchmarkResultProcessor Instance => _singleton.Value;
-
-        internal static void ReleaseInstance()
-        {
-            _singleton?.Value?.Dispose();
-            _singleton = null;
-        }
-
-        public void SaveSummary(BenchmarkRunSummary summary)
+        public static void SaveSummary(BenchmarkRunSummary summary)
         {
             Console.WriteLine(summary.ToString());
-            foreach (var connection in _connections.Value)
+            foreach (var connection in Connections.Value)
             {
                 connection.SaveSummary(summary);
             }
@@ -52,26 +40,6 @@ namespace Benchmarks.Framework.BenchmarkPersistence
                 Console.Error.WriteLine($"Can't connect to the specified datasource { csb.DataSource }");
             }
             return false;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_connections != null)
-                {
-                    var connections = _connections.Value;
-                    connections.ForEach(c => c.Dispose());
-                    connections.Clear();
-                    _connections = null;
-                }
-            }
         }
     }
 }

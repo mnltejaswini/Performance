@@ -93,7 +93,7 @@ namespace Benchmarks.Framework
                 
                 try
                 {
-                    BenchmarkResultProcessor.Instance.SaveSummary(runSummary);
+                    BenchmarkResultProcessor.SaveSummary(runSummary);
                 }
                 catch (Exception ex)
                 {

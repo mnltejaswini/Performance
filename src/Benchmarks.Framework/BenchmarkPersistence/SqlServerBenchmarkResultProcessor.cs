@@ -4,69 +4,62 @@
 using System;
 using Benchmarks.Framework.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Benchmarks.Framework.BenchmarkPersistence
 {
-    public class SqlServerBenchmarkResultProcessor : IDisposable
+    public class SqlServerBenchmarkResultProcessor
     {
-        private BenchmarkContext _context;
+        private readonly DbContextOptions _contextOptions;
 
         public SqlServerBenchmarkResultProcessor(string connectionString)
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection
-                .AddEntityFramework()
-                .AddSqlServer()
-                .AddDbContext<BenchmarkContext>(
-                    options => options.UseSqlServer(connectionString));
 
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            _context = serviceProvider.GetRequiredService<BenchmarkContext>();
-            _context.Database.EnsureCreated();
+            var contextOptionsBuilder = new DbContextOptionsBuilder();
+            contextOptionsBuilder.UseSqlServer(connectionString);
+            _contextOptions = contextOptionsBuilder.Options;
+
+            InitializeDatabase();
+        }
+
+        internal void InitializeDatabase()
+        {
+            using (var context = new BenchmarkContext(_contextOptions))
+            {
+                context.Database.EnsureCreated();
+            }
         }
 
         public void SaveSummary(BenchmarkRunSummary summary)
         {
-            _context.Runs.Add(new Run()
+            using (var context = new BenchmarkContext(_contextOptions))
             {
-                TestClassFullName = summary.TestClassFullName,
-                TestClass = summary.TestClass,
-                TestMethod = summary.TestMethod,
-                Variation = summary.Variation,
-                MachineName = summary.MachineName,
-                ProductReportingVersion = summary.ProductReportingVersion,
-                Framework = summary.Framework,
-                Architecture = summary.Architecture,
-                CustomData = summary.CustomData,
-                RunStarted = summary.RunStarted,
-                WarmupIterations = summary.WarmupIterations,
-                Iterations = summary.Iterations,
-                TimeElapsedAverage = summary.TimeElapsedAverage,
-                TimeElapsedPercentile99 = summary.TimeElapsedPercentile99,
-                TimeElapsedPercentile95 = summary.TimeElapsedPercentile95,
-                TimeElapsedPercentile90 = summary.TimeElapsedPercentile90,
-                MemoryDeltaAverage = summary.MemoryDeltaAverage,
-                MemoryDeltaPercentile99 = summary.MemoryDeltaPercentile99,
-                MemoryDeltaPercentile95 = summary.MemoryDeltaPercentile95,
-                MemoryDeltaPercentile90 = summary.MemoryDeltaPercentile90,
-                MemoryDeltaStandardDeviation = summary.MemoryDeltaStandardDeviation,
-            });
-            _context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _context?.Dispose();
-                _context = null;
+                context.Runs.Add(new Run()
+                {
+                    TestClassFullName = summary.TestClassFullName,
+                    TestClass = summary.TestClass,
+                    TestMethod = summary.TestMethod,
+                    Variation = summary.Variation,
+                    MachineName = summary.MachineName,
+                    ProductReportingVersion = summary.ProductReportingVersion,
+                    Framework = summary.Framework,
+                    Architecture = summary.Architecture,
+                    CustomData = summary.CustomData,
+                    RunStarted = summary.RunStarted,
+                    WarmupIterations = summary.WarmupIterations,
+                    Iterations = summary.Iterations,
+                    TimeElapsedAverage = summary.TimeElapsedAverage,
+                    TimeElapsedPercentile99 = summary.TimeElapsedPercentile99,
+                    TimeElapsedPercentile95 = summary.TimeElapsedPercentile95,
+                    TimeElapsedPercentile90 = summary.TimeElapsedPercentile90,
+                    MemoryDeltaAverage = summary.MemoryDeltaAverage,
+                    MemoryDeltaPercentile99 = summary.MemoryDeltaPercentile99,
+                    MemoryDeltaPercentile95 = summary.MemoryDeltaPercentile95,
+                    MemoryDeltaPercentile90 = summary.MemoryDeltaPercentile90,
+                    MemoryDeltaStandardDeviation = summary.MemoryDeltaStandardDeviation,
+                });
+                context.SaveChanges();
             }
         }
     }

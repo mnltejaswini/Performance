@@ -58,7 +58,7 @@ namespace ThroughputResultReporter
                     
                     try
                     {
-                        BenchmarkResultProcessor.Instance.SaveSummary(summary);
+                        BenchmarkResultProcessor.SaveSummary(summary);
                     }
                     catch (Exception ex)
                     {

@@ -209,7 +209,7 @@ namespace Microsoft.AspNetCore.Tests.Performance
         {
             try
             {
-                BenchmarkResultProcessor.Instance.SaveSummary(_summary);
+                BenchmarkResultProcessor.SaveSummary(_summary);
             }
             catch (Exception ex)
             {
