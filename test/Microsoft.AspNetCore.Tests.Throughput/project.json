@@ -12,7 +12,6 @@
   "commands": {
     "test": "xunit.runner.aspnet"
   },
-  "compile": "..\\..\\src\\Benchmarks.Framework\\BenchmarkFrameworkInitialization.cs",
   "content": [
     "xunit.runner.json"
   ]

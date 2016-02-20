@@ -29,7 +29,6 @@
   "tools": {
     "dotnet-razor-tooling": "1.0.0-*"
   },
-  "compile": "..\\..\\src\\Benchmarks.Framework\\BenchmarkFrameworkInitialization.cs",
   "content": [
     "config.json",
     "xunit.runner.json"
