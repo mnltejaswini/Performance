@@ -7,6 +7,7 @@ nugetPath=$buildFolder/nuget.exe
 
 if test `uname` = Darwin; then
     cachedir=~/Library/Caches/KBuild
+    ulimit -n 1024
 else
     if [ -z $XDG_DATA_HOME ]; then
         cachedir=$HOME/.local/share
