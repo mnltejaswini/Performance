@@ -10,12 +10,13 @@ Performance tests and infrastructure for ASP.NET.
 This project is part of ASP.NET 5. You can find samples, documentation and getting started instructions for ASP.NET 5 at the [Home](https://github.com/aspnet/home) repo.
 
 ## Dependencies
-Your system must have `gulp` and `bower` readily available from the command line. Feel free to install them in any way you want. If you don't know how to go about it, here are some suggestions.
+Your system must have `gulp`, `bower` and `loadtest` readily available from the command line. Feel free to install them in any way you want. If you don't know how to go about it, here are some suggestions.
 
 ### Windows
   * [npm](https://nodejs.org/en/)
   * gulp: `npm install -g gulp`
   * bower: `npm install -g bower`
+  * loadtest: `npm install -g loadtest`
 
 To build, execute `.\build.cmd`.
 
@@ -28,6 +29,7 @@ Then proceed to install `gulp`, `bower` and `mono`:
   * npm: `sudo apt-get install npm`
   * gulp: `sudo npm install -g gulp`
   * bower: `sudo npm install -g bower`
+  * loadtest: `sudo npm install -g loadtest`
   * [Mono](http://www.mono-project.com/docs/getting-started/install/linux/#debian-ubuntu-and-derivatives) (use package mono-complete)
 
 To build, execute `./build.sh`.
@@ -39,6 +41,7 @@ If you run into the "Cannot handle address family xxxxx" error, please refer to 
   * npm: `brew install npm`
   * gulp: `npm install -g gulp`
   * bower: `npm install -g bower`
+  * loadtest: `npm install -g loadtest`
   * [Mono](http://www.mono-project.com/docs/getting-started/install/mac/)
 
 To build, execute `./build.sh`.
