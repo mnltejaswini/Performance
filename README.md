@@ -1,7 +1,7 @@
 ASP.NET Performance Tests
 =========================
 
-AppVeyor: [![AppVeyor](https://ci.appveyor.com/api/projects/status/8e82uv0i2xi3dnv7/branch/dev?svg=true)](https://ci.appveyor.com/project/aspnetci/Performance/branch/dev)
+AppVeyor: [![AppVeyor](https://ci.appveyor.com/api/projects/status/nnon47ayo1luvi3f/branch/dev?svg=true)](https://ci.appveyor.com/project/aspnetci/Performance/branch/dev)
 
 Travis:   [![Travis](https://travis-ci.org/aspnet/Performance.svg?branch=dev)](https://travis-ci.org/aspnet/Performance)
 
