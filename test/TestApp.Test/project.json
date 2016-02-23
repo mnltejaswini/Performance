@@ -5,13 +5,13 @@
     "test": "xunit.runner.aspnet"
   },
   "dependencies": {
-    "BasicViews": "",
-    "BigModelBinding": "",
-    "BigViews": "",
-    "LargeStaticView": "",
-    "LocalizedViews": "",
-    "MediumApi": "",
-    "RazorCodeGenerator": "",
+    "BasicViews": "1.0.0-*",
+    "BigModelBinding": "1.0.0-*",
+    "BigViews": "1.0.0-*",
+    "LargeStaticView": "1.0.0-*",
+    "LocalizedViews": "1.0.0-*",
+    "MediumApi": "1.0.0-*",
+    "RazorCodeGenerator": "1.0.0-*",
 
     "Microsoft.AspNetCore.TestHost": "1.0.0-*",
     "Microsoft.Extensions.Configuration": "1.0.0-*",

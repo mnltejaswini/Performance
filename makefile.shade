@@ -12,43 +12,32 @@ k-standard-goals
 
     projectFiles.ForEach(projectFile => 
     {
-      var projectText = File.ReadAllText(projectFile);
-      var project = (JsonObject)Json.Deserialize(projectText);
-  
-      if (project.Keys.Contains("testRunner"))
-      {    
-          var projectFolder = Path.GetDirectoryName(projectFile);
-          var projectName = Path.GetFileName(projectFolder);
-  
-          var testArgs = " -parallel none";
+      var projectFolder = Path.GetDirectoryName(projectFile);
+      var projectName = Path.GetFileName(projectFolder);
 
-          var configs = project.ValueAsJsonObject("frameworks");
-          IEnumerable<string> targetFrameworks = configs == null? 
-              new string[0]: 
-              configs.Keys.Where(k => k.StartsWith("dnx", StringComparison.OrdinalIgnoreCase));
-          
-          var runnerFolder = Path.GetFullPath(Path.Combine(KoreBuildFolderPath, "build", "xunit.runner.console", "tools"));
-          var xunitCoreFolder = Path.GetFullPath(Path.Combine(KoreBuildFolderPath, "build", "xunit.core", "build", "_desktop"));
+      var framework = "dnx451";
+      var configuration = "Debug";
+      var testArgs = " -parallel none";
+      var runnerFolder = Path.GetFullPath(Path.Combine(KoreBuildFolderPath, "build", "xunit.runner.console", "tools"));
+      var xunitCoreFolder = Path.GetFullPath(Path.Combine(KoreBuildFolderPath, "build", "xunit.core", "build", "_desktop"));
 
-          foreach (var framework in targetFrameworks)
-          {
-              if (framework.StartsWith("dnx451", StringComparison.OrdinalIgnoreCase))
-              {
-                    var publishFolder = Path.Combine(projectFolder, ".testPublish", framework);
-                    DotnetPublish(projectFile, publishFolder, framework);
-                    Copy(runnerFolder, publishFolder, "*.*", true);
-                    
-                    // Copy xunit.execution.desktop. This is required in order to load the binding
-                    // redirects for dlls. See this thread for more details:
-                    // https://github.com/xunit/xunit/issues/732
-                    Copy(xunitCoreFolder, publishFolder, "*.*", true);
-
-                    var targetTestDll = projectName + ".dll";
-
-                    var runnerExe = Path.GetFullPath(Path.Combine(publishFolder, "xunit.console.exe"));
-                    ExecClr(runnerExe, targetTestDll + " " + testArgs, publishFolder);
-              }
-          }
+      if (IsLinux)
+      {
+        // Work around issue with testing in parallel on Mono
+        // and issue https://github.com/xunit/xunit/issues/158
+        testArgs = " -parallel none -noappdomain";
       }
+
+      var publishFolder = Path.Combine(projectFolder, "obj", "testPublish-" + framework);
+      DotnetPublish(projectFile, publishFolder, framework, configuration);
+
+      var runnerExe = "xunit.console.exe";
+      Copy(runnerFolder, publishFolder, "*.*", true);
+      Copy(xunitCoreFolder, publishFolder, "*.*", true);
+      var runnerFullPath = Path.GetFullPath(Path.Combine(publishFolder, runnerExe));
+
+      var targetTestDll = projectName + ".dll";
+
+      ExecClr(runnerFullPath, targetTestDll + " " + testArgs, publishFolder);
     });
   }
