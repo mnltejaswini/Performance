@@ -68,7 +68,7 @@ $  git clone https://github.com/aspnet/Performance.git
         dotnet restore
         dotnet run server.urls=http://*:5000
         
-        On another machine, test the site with a browser (http://serverName:5000
+        On another machine, test the site with a browser ( http://serverName:5000 )
        
 - Create and enable the site/application in ngnix.  Ngnix is a popular proxy for exposing endpoints on a linux server.
     - Open a new SSH session
@@ -98,6 +98,12 @@ $  git clone https://github.com/aspnet/Performance.git
             sudo service nginx restart
         Now all requests to 8080 will be proxied to 5000 where the Kestrel server listens
         On another machine, test the site with a browser (http://serverName:8080)
+        
+        Note that if the nginx restart fails, a likely reason is that some other service, such as apache is using port 80.  
+        Nginx logs are at:  /var/log/nginx
+        To stop Apache,  run the command:  
+        
+             sudo /etc/init.d/apache2 stop
 
 - Collect server perf counters for process dnx an nginx:
        	
