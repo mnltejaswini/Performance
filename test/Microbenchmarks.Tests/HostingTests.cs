@@ -7,14 +7,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Testing.xunit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Microbenchmarks.Tests
 {
     public class HostingTests : BenchmarkTestBase
     {
+        [OSSkipCondition(OperatingSystems.MacOSX)]
+        [OSSkipCondition(OperatingSystems.Linux)]
         [Benchmark]
         [BenchmarkVariation("Kestrel", "Microsoft.AspNetCore.Server.Kestrel")]
         [BenchmarkVariation("WebListener", "Microsoft.AspNetCore.Server.WebListener")]

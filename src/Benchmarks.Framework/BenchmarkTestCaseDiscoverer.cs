@@ -1,10 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+using XunitDiagnosticMessage = Xunit.DiagnosticMessage;
 
 namespace Benchmarks.Framework
 {
@@ -22,6 +24,15 @@ namespace Benchmarks.Framework
             ITestMethod testMethod,
             IAttributeInfo factAttribute)
         {
+            var skipReason = EvaluateSkipConditions(testMethod);
+
+            if(skipReason != null)
+            {
+                _diagnosticMessageSink.OnMessage(
+                        new XunitDiagnosticMessage($"Skipping { testMethod.Method.Name }{ Environment.NewLine }Reason: { skipReason }"));
+                return new List<IXunitTestCase>();
+            }
+
             var variations = testMethod.Method
                 .GetCustomAttributes(typeof(BenchmarkVariationAttribute))
                 .Select(a => new
@@ -67,6 +78,19 @@ namespace Benchmarks.Framework
             }
 
             return tests;
+        }
+
+        private string EvaluateSkipConditions(ITestMethod testMethod)
+        {
+            return
+                testMethod.Method
+                .GetCustomAttributes(typeof(ITestCondition))
+                .OfType<ReflectionAttributeInfo>()
+                .Select(attributeInfo => attributeInfo.Attribute)
+                .OfType<ITestCondition>()
+                .Where(condition => !condition.IsMet)
+                .Select(condition => condition.SkipReason)
+                .FirstOrDefault();
         }
     }
 }
