@@ -1,4 +1,4 @@
-param([int] $server = "10.194.216.39",
+param([int] $server ,
 [int] $sites = 100,
 [int] $max_rps = 10
  ) 
