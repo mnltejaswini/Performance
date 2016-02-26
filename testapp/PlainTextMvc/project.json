@@ -5,6 +5,9 @@
   },
   "frameworks": {
     "dnxcore50": {
+      "dependencies": {
+        "NETStandard.Library": "1.0.0-*"
+      },
       "imports": "portable-net451+win8"
     },
     "dnx451": {}
@@ -12,8 +15,7 @@
   "dependencies": {
     "Microsoft.AspNetCore.Mvc": "1.0.0-*",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
-    "Microsoft.AspNetCore.IISPlatformHandler": "1.0.0-*",
-    "Microsoft.NETCore.Platforms": "1.0.1-*"
+    "Microsoft.AspNetCore.IISPlatformHandler": "1.0.0-*"
   },
   "commands": {
     "web": "PlainTextMvc"

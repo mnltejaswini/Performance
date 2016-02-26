@@ -9,8 +9,7 @@
   "dependencies": {
     "Microsoft.AspNetCore.Mvc": "1.0.0-*",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
-    "Microsoft.AspNetCore.Server.WebListener": "0.1.0-*",
-    "Microsoft.NETCore.Platforms": "1.0.1-*"
+    "Microsoft.AspNetCore.Server.WebListener": "0.1.0-*"
   },
 
   "commands": {
@@ -25,7 +24,7 @@
     },
     "dnxcore50": {
       "dependencies": {
-        "System.ComponentModel.Annotations": "4.0.11-*"
+        "NETStandard.Library": "1.0.0-*"
       },
       "imports": "portable-net451+win8"
     }
